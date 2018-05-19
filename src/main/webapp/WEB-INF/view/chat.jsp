@@ -54,6 +54,10 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <% } else { %>
       <a href="/login">Login</a>
     <% } %>
+    <%-- Checks if the user is admin, if it is it allows the user to go to the admin page --%>
+    <% if(request.getSession().getAttribute("admin") != null){ %>
+      <a href="/admin">Admin</a>
+    <% } %>
     <a href="/about.jsp">About</a>
   </nav>
 

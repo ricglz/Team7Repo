@@ -126,5 +126,10 @@ public class UserStore {
   public void setUsers(List<User> users) {
     this.users = users;
   }
+
+  public int amountOfUsers(){
+    return users.size();
+  }
+  
 }
 

@@ -58,4 +58,8 @@ public class User {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public Boolean isAdmin() {
+    return (name.equals("Ricardo") || name.equals("Manjil") || name.equals("Kirielle"));
+  }
 }
