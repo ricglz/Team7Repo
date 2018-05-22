@@ -51,7 +51,7 @@
       <button type="submit">Login</button>
     </form>
 
-    <p>New users can register <a href="/register">here</a>.</p>
+    <p>New users can register 3 <a href="/register">here</a>.</p>
   </div>
 </body>
 </html>
