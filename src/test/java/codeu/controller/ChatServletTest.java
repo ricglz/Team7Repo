@@ -181,6 +181,33 @@ public class ChatServletTest {
         Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
     }
 
+    @Test
+    public void testDoPost_CleansHtmlContent() throws IOException, ServletException {
+        setupInputSanitationTest("Contains <b>html</b> and <script>JavaScript</script> content.");
+
+        chatServlet.doPost(mockRequest, mockResponse);
+
+        verifyProperSanitation("Contains html and  content.");
+    }
+
+    @Test
+    public void testDoPost_BoldStyling() throws IOException, ServletException {
+        setupInputSanitationTest("[b]Contains[/b] bold [b]styled[/b] content[/b].");
+
+        chatServlet.doPost(mockRequest, mockResponse);
+
+        verifyProperSanitation("<b>Contains</b> bold <b>styled</b> content[/b].");
+    }
+
+    @Test
+    public void testDoPost_ItalicsStyling() throws IOException, ServletException {
+        setupInputSanitationTest("[i]Contains[/i] italics [i]styled[/i] content[/b].");
+
+        chatServlet.doPost(mockRequest, mockResponse);
+
+        verifyProperSanitation("<i>Contains</i> italics <i>styled</i> content[/b].");
+    }
+
     private void setupInputSanitationTest(String userMessage) {
         Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
         Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
@@ -210,23 +237,5 @@ public class ChatServletTest {
             expectedOutput, messageArgumentCaptor.getValue().getContent());
 
         Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
-    }
-
-    @Test
-    public void testDoPost_CleansHtmlContent() throws IOException, ServletException {
-        setupInputSanitationTest("Contains <b>html</b> and <script>JavaScript</script> content.");
-
-        chatServlet.doPost(mockRequest, mockResponse);
-
-        verifyProperSanitation("Contains html and  content.");
-    }
-
-    @Test
-    public void testDoPost_BoldStyling() throws IOException, ServletException {
-        setupInputSanitationTest("Contains [b]bold styled[/b] content.");
-
-        chatServlet.doPost(mockRequest, mockResponse);
-
-        verifyProperSanitation("Contains <b>bold styled</b> content.");
     }
 }

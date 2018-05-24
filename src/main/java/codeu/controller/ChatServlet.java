@@ -143,11 +143,10 @@ public class ChatServlet extends HttpServlet {
 
         // this removes any HTML from the message content
         String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
-        System.out.println(messageContent);
-        System.out.println(cleanedMessageContent);
-
+        // converts BBCode bold sytax to HTML
         cleanedMessageContent = processString(cleanedMessageContent, Styling.BOLD);
-        System.out.println(cleanedMessageContent);
+        // converts BBCode italics sytax to HTML
+        cleanedMessageContent = processString(cleanedMessageContent, Styling.ITALICS);
 
         Message message =
             new Message(
@@ -164,6 +163,7 @@ public class ChatServlet extends HttpServlet {
     }
 
 
+    // Defines supported styling of our BBCode processor.
     private enum Styling {
         BOLD ("b"),
         ITALICS ("i");
@@ -199,18 +199,28 @@ public class ChatServlet extends HttpServlet {
         }
     }
 
+    /**
+     * A recursive method for converting a string from BBO to HTML given the desired styling.
+     * This mehtod is recursive because we want to make sure we are processing pairs
+     * of tags (so we dont process an open tag that has no close or vice versa).
+     *
+     * -- ex: bolding text --
+     * input: "[b] I am writing [b] bold text [/b]"
+     * output: "<b> I am writing [b] bold text </b>"
+     */
     private String processString(String messageToProcess, Styling styling) {
         int openIndex = messageToProcess.indexOf(styling.getOpenTag());
         int closeIndex = messageToProcess.indexOf(styling.getCloseTag());
-        System.out.format("OpenIndex, CloseIndex = (%d, %d).%n", openIndex, closeIndex);
+
+        // If we do not have both an opening and a closing tag we do not want to process the string
+        // since we want to make sure we are replacing both the opening and closing tag with html.
+        // This is also our base conditions for this recursive function. We know we are done
+        // when we can no longer replace a tag pairing.
         if (openIndex == -1 || closeIndex == -1) {
-            System.out.format("Returning formatted string = %s.%n", messageToProcess);
             return messageToProcess;
         } else {
             messageToProcess = messageToProcess.replaceFirst(styling.getOpenTagRegex(), styling.getConvertedOpenTag());
-            System.out.format("Replacing open tag = %s, %s.%n", styling.getOpenTagRegex(), messageToProcess);
             messageToProcess = messageToProcess.replaceFirst(styling.getCloseTagRegex(), styling.getConvertedCloseTag());
-            System.out.format("Replacing close tag = %s, %s.%n", styling.getCloseTagRegex(), messageToProcess);
             return processString(messageToProcess, styling);
         }
     }
