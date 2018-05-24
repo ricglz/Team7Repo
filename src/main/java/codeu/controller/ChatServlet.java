@@ -148,7 +148,6 @@ public class ChatServlet extends HttpServlet {
 
         cleanedMessageContent = processString(cleanedMessageContent, Styling.BOLD);
         System.out.println(cleanedMessageContent);
-        //cleanedMessageContent = processString(cleanedMessageContent, Styling.ITALICS);
 
         Message message =
             new Message(
