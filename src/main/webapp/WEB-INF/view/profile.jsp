@@ -37,7 +37,16 @@
     <h2 style="color:red"><%= request.getAttribute("error") %> </h2>
     <% } %>
 
-    <h1>About <%= request.getAttribute("user")%> <h2>
+    <h3> <%= request.getSession().getAttribute("user")%> Profile Page. <h3>
+
+       <%-- <% if(request.getSession().getAttribute("user").equals(request.getAttribute("user"))){%>
+            <br>
+            <p> Edit your Profile Section. </p>
+            <form action = "" method = "POST">
+                <textarea cols = "200" id="description" name = "description"></textarea>
+                <br>
+                <button type = "Submit">Submit</button>
+            </form>  --%>
 
 </div>
 </body>

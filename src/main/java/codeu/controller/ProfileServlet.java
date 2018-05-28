@@ -16,7 +16,6 @@ public class ProfileServlet extends HttpServlet {
      */
     private UserStore userStore;
 
-
     @Override
     public void init() throws ServletException {
         super.init();
@@ -33,7 +32,10 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String username = (String) request.getSession().getAttribute("user");
-        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+        String requestUrl = request.getRequestURI();
+        String username = requestUrl.substring("/users/".length());
+        User user = userStore.getUser(username);
+        request.setAttribute("user", username);
+        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request,response);
     }
 }
