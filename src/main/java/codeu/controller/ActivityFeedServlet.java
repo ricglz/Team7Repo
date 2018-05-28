@@ -14,7 +14,7 @@ public class ActivityFeedServlet extends HttpServlet {
   private UserStore userStore;
 
   /**
-   * Set up state for handling admin-related requests. This method is only called when running in a
+   * Set up state for handling activity feed-related requests. This method is only called when running in a
    * server, not when running in a test.
    */
   @Override
