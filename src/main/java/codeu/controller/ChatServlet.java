@@ -147,9 +147,6 @@ public class ChatServlet extends HttpServlet {
     // converts BBCode italics sytax to HTML
     cleanedMessageContent = processString(cleanedMessageContent, Styling.ITALICS);
 
-    // this removes any HTML from the message content
-    String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
-
     Message message =
         new Message(
             UUID.randomUUID(),
