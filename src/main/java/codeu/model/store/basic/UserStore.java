@@ -127,7 +127,8 @@ public class UserStore {
     this.users = users;
   }
 
-  public int amountOfUsers(){
+  /** Returns total amount of users */
+  public int getUserCount(){
     return users.size();
   }
   

@@ -37,22 +37,18 @@
     <% } else{ %>
       <a href="/login">Login</a>
     <% } %>
-    <%-- Checks if the user is admin, if it is it allows the user to go to the admin page --%>
     <% if(request.getSession().getAttribute("admin") != null){ %>
       <a href="/admin">Admin</a>
     <% } %>
     <a href="/about.jsp">About</a>
   </nav>
 
-  <div id="container">
-    <div
-      style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
-      <h1>Statistics</h1>
-      <ul>
-        <li>Total amount of conversations: <%=conversationStore.amountOfConversations()%></li>
-        <li>Total amount of user: <%=userStore.amountOfUsers()%></li>
-      </ul>
-    </div>
+  <div class="stat-information" id="container">
+    <h1>Statistics</h1>
+    <ul>
+      <li>Total amount of conversations: <%=conversationStore.getConversationCount()%></li>
+      <li>Total amount of user: <%=userStore.getUserCount()%></li>
+    </ul>
   </div>
 </body>
 </html>

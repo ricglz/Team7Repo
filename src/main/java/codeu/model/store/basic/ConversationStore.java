@@ -101,7 +101,8 @@ public class ConversationStore {
     this.conversations = conversations;
   }
 
-  public int amountOfConversations(){
+  /** Returns the count of total conversations stored */
+  public int getConversationCount(){
     return conversations.size();
   }
 }
