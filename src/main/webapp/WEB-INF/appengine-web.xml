@@ -15,7 +15,6 @@
   limitations under the License.
 -->
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-    <!-- <application>okurrrt-201419</application> -->
     <application>teamseven-203719</application>
     <version>1</version>
     <threadsafe>false</threadsafe>
