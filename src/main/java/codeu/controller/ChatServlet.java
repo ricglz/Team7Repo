@@ -199,7 +199,7 @@ public class ChatServlet extends HttpServlet {
 
   /**
    * A recursive method for converting a string from BBO to HTML given the desired styling.
-   * This mehtod is recursive because we want to make sure we are processing pairs
+   * This method is recursive because we want to make sure we are processing pairs
    * of tags (so we dont process an open tag that has no close or vice versa).
    *
    * -- ex: bolding text --
