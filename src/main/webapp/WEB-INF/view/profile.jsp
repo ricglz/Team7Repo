@@ -25,7 +25,7 @@
     <a id="navTitle" href="/">CodeU Chat App</a>
     <a href="/conversations">Conversations</a>
     <% if (request.getSession().getAttribute("user") != null) { %>
-    <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
+    <a href="/users/"<%=request.getSession().getAttribute("user")%>"My Profile </a>
     <% } else { %>
     <a href="/login">Login</a>
     <% } %>
@@ -34,19 +34,26 @@
 
 <div id="container">
     <% if (request.getAttribute("error") != null) { %>
-    <h2 style="color:red"><%= request.getAttribute("error") %> </h2>
+    <h2 style="color:red"><%= request.getAttribute("error") %>
+    </h2>
     <% } %>
 
-    <h3> <%= request.getSession().getAttribute("user")%> Profile Page. <h3>
+    <h2><a><%=request.getSession().getAttribute("user")%> Profile </a></h2>
+    <br>
+    <br>
+    <!--About Section -->
+    <h3>About Yourelf!</h3>
+    <!-- info from descriptions -->
+    <p> Input your Response! </p>
+    <br>
 
-       <%-- <% if(request.getSession().getAttribute("user").equals(request.getAttribute("user"))){%>
-            <br>
-            <p> Edit your Profile Section. </p>
-            <form action = "" method = "POST">
-                <textarea cols = "200" id="description" name = "description"></textarea>
-                <br>
-                <button type = "Submit">Submit</button>
-            </form>  --%>
+    <h3> Edit your About Me (only you can see this)</h3>
+    <form action="/register" method="POST">
+        <label for="description">Description</label>
+        <input type="text" name="description" id="description">
+        <input type="submit" value="Submit">
+    </form>
+    <hr>
 
 </div>
 </body>

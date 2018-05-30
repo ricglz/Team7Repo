@@ -33,9 +33,28 @@ public class ProfileServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String requestUrl = request.getRequestURI();
-        String username = requestUrl.substring("/users/".length());
+        String userPage = requestUrl.substring("/users/".length());
+        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+    }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
+        String username = (String) request.getSession().getAttribute("user");
+        if (username == null) {
+            // user is not logged in, don't let them create a conversation
+            response.sendRedirect("/login");
+            return;
+        }
         User user = userStore.getUser(username);
-        request.setAttribute("user", username);
-        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request,response);
+        if (user == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        String description = request.getParameter("description");
+        request.getSession().setAttribute("description", username);
+        String requestUrl = request.getRequestURI();
+        String userPage = requestUrl.substring("/users/".length());
+        response.sendRedirect("/users/" + username);
     }
 }
