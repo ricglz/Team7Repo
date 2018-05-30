@@ -1,6 +1,8 @@
 package codeu.controller;
 
 import codeu.model.store.basic.UserStore;
+import codeu.model.data.User;
+
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,10 +33,25 @@ public class ActivityFeedServlet extends HttpServlet {
     this.userStore = userStore;
   }
 
-  // Forwards the request to activity-feed.jsp.
+  // Forwards the request to activityfeed.jsp.
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    
+    String username = (String) request.getSession().getAttribute("user");
+    if (username == null) {
+      // user is not logged in, don't let them access the activity feed
+      response.sendRedirect("/login");
+      return;
+    }
+
+    User user = userStore.getUser(username);
+    if (user == null) {
+      // user is not logged in, don't let them access the activity feed
+      response.sendRedirect("/login");
+      return;
+    }
+    
     request.getRequestDispatcher("/WEB-INF/view/activityfeed.jsp").forward(request, response);
   }
 
@@ -42,6 +59,5 @@ public class ActivityFeedServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
   }
 }
