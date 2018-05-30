@@ -29,6 +29,9 @@
     <% } else{ %>
       <a href="/login">Login</a>
     <% } %>
+    <% if(request.getSession().getAttribute("admin") != null){ %>
+      <a href="/admin">Admin</a>
+    <% } %>
     <a href="/about.jsp">About</a>
   </nav>
 
