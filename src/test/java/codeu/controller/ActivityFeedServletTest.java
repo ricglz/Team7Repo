@@ -41,8 +41,7 @@ public class ActivityFeedServletTest {
         activityFeedServlet.setUserStore(mockUserStore);
     }
 
-    @ Test
-
+    @Test
     public void testDoGet() throws IOException, ServletException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
         mockUser = Mockito.mock(User.class);        
@@ -55,8 +54,7 @@ public class ActivityFeedServletTest {
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 
-    @ Test
-
+    @Test
     public void testDoGet_UserNotLoggedIn() throws IOException, ServletException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
@@ -65,8 +63,7 @@ public class ActivityFeedServletTest {
         Mockito.verify(mockResponse).sendRedirect("/login");
     }
 
-    @ Test
-
+    @Test
     public void testDoGet_InvalidUser() throws IOException, ServletException {
         Mockito.when(mockRequest.getSession().getAttribute("user")).thenReturn("test_username");
         Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);   
