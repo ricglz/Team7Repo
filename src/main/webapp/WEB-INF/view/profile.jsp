@@ -16,43 +16,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile Page</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
 <nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <a href="/conversations">Conversations</a>
-    <% if (request.getSession().getAttribute("user") != null) { %>
-    <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
-    <% } else { %>
-    <a href="/login">Login</a>
-    <% } %>
-    <a href="/about.jsp">About</a>
     <%@ include file="navbar.jsp" %>
 </nav>
 
 <div id="container">
-    <% if (request.getAttribute("error") != null) { %>
-    <h2 style="color:red"><%= request.getAttribute("error") %>
-    </h2>
-    <% } %>
-
-    <h2><a>My Profile Page </a></h2>
-    <br>
-    <br>
+    <h1><%= request.getSession().getAttribute("user") %>'s Profile page </h1>
     <!--About Section -->
     <h3>About You!</h3>
     <!-- info from descriptions -->
     <%=request.getSession().getAttribute("description")%>
     <br>
-
+    <br>
+    <br>
     <h3> Edit your About Me (only you can see this)</h3>
+    
     <form action="/profile" method="POST">
         <label for="description">Description</label>
         <input type="text" name="description" id="description">
-        <button style="height:20px;width:20px" button type = submit>Submit</button>
+        <button style="height:20px;width:20px" button type=submit>Submit</button>
     </form>
     <hr>
 
