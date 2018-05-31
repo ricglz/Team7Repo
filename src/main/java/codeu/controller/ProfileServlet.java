@@ -30,31 +30,21 @@ public class ProfileServlet extends HttpServlet {
         this.userStore = userStore;
     }
 
+    /**
+     * This function fires when a user navigates to the profile page. It gets all of the
+     * profile from the model and forwards to profile.jsp for rendering the list.
+     */
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String requestUrl = request.getRequestURI();
-        String userPage = requestUrl.substring("/users/".length());
-        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request,response);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        String username = (String) request.getSession().getAttribute("user");
-        if (username == null) {
-            // user is not logged in, don't let them create a conversation
-            response.sendRedirect("/login");
-            return;
-        }
-        User user = userStore.getUser(username);
-        if (user == null) {
-            response.sendRedirect("/login");
-            return;
-        }
         String description = request.getParameter("description");
-        request.getSession().setAttribute("description", username);
-        String requestUrl = request.getRequestURI();
-        String userPage = requestUrl.substring("/users/".length());
-        response.sendRedirect("/users/" + username);
+        request.getSession().setAttribute("description", description);
+        response.sendRedirect("/profile");
     }
 }

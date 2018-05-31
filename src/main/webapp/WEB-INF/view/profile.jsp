@@ -25,11 +25,12 @@
     <a id="navTitle" href="/">CodeU Chat App</a>
     <a href="/conversations">Conversations</a>
     <% if (request.getSession().getAttribute("user") != null) { %>
-    <a href="/users/"<%=request.getSession().getAttribute("user")%>"My Profile </a>
+    <a>Hello <%= request.getSession().getAttribute("user") %>!</a>
     <% } else { %>
     <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
+    <a href="/profile.jsp">Profile</a>
 </nav>
 
 <div id="container">
@@ -38,20 +39,20 @@
     </h2>
     <% } %>
 
-    <h2><a><%=request.getSession().getAttribute("user")%> Profile </a></h2>
+    <h2><a>My Profile Page </a></h2>
     <br>
     <br>
     <!--About Section -->
-    <h3>About Yourelf!</h3>
+    <h3>About You!</h3>
     <!-- info from descriptions -->
-    <p> Input your Response! </p>
+    <%=request.getSession().getAttribute("description")%>
     <br>
 
     <h3> Edit your About Me (only you can see this)</h3>
-    <form action="/register" method="POST">
+    <form action="/profile" method="POST">
         <label for="description">Description</label>
         <input type="text" name="description" id="description">
-        <input type="submit" value="Submit">
+        <button style="height:20px;width:20px" button type = submit>Submit</button>
     </form>
     <hr>
 

@@ -16,26 +16,15 @@ public class ProfileServletTest {
     private ProfileServlet profileServlet;
     private HttpServletRequest mockRequest;
     private HttpServletResponse mockResponse;
-    private HttpSession mockSession;
-    private UserStore mockUserStore;
     private RequestDispatcher mockRequestDispatcher;
+    private HttpSession mockSession;
 
     @Before
     public void setup() throws IOException {
 
         profileServlet = new ProfileServlet();
-
-        mockSession = Mockito.mock(HttpSession.class);
-        mockRequest = Mockito.mock(HttpServletRequest.class);
-
-        Mockito.when(mockRequest.getParameter("username")).thenReturn("test name");
-        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
-        Mockito.when(mockRequest.getRequestURI()).thenReturn("/users/test username");
         mockRequest = Mockito.mock(HttpServletRequest.class);
         mockResponse = Mockito.mock(HttpServletResponse.class);
-        mockUserStore = Mockito.mock(UserStore.class);
-        profileServlet.setUserStore(mockUserStore);
-
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
                 .thenReturn(mockRequestDispatcher);
@@ -45,6 +34,15 @@ public class ProfileServletTest {
     public void testdoGet() throws IOException, ServletException {
         profileServlet.doGet(mockRequest, mockResponse);
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
+    }
+    @Test
+    public void testDoPost_NewUser() throws IOException, ServletException {
+        Mockito.when(mockRequest.getParameter("description")).thenReturn("test description");
+        HttpSession mockSession = Mockito.mock(HttpSession.class);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+        profileServlet.doPost(mockRequest, mockResponse);
+        Mockito.verify(mockSession).setAttribute("description", "test description");
+        Mockito.verify(mockResponse).sendRedirect("/profile");
     }
     }
 
