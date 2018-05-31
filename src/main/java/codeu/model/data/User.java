@@ -58,4 +58,9 @@ public class User {
   public Instant getCreationTime() {
     return creation;
   }
+
+  /** Allows to know if the user is an admin */
+  public Boolean isAdmin() {
+    return (name.equals("Ricardo") || name.equals("Manjil") || name.equals("Kirielle"));
+  }
 }

@@ -106,6 +106,14 @@ public class ConversationServlet extends HttpServlet {
       return;
     }
 
+
+    if(conversationTitle.isEmpty()) {
+      // conversationTitle is empty, don't let it be created
+      request.setAttribute("error", "Please enter text.");
+      request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
+      return;
+    }
+
     if (conversationStore.isTitleTaken(conversationTitle)) {
       // conversation title is already taken, just go into that conversation instead of creating a
       // new one

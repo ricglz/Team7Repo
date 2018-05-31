@@ -13,38 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%@ page import="codeu.model.store.basic.ConversationStore" %>
+<%@ page import="codeu.model.store.basic.UserStore" %>
+
+<%
+  UserStore userStore = UserStore.getInstance();
+  ConversationStore conversationStore = ConversationStore.getInstance();
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Admin</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
   <nav>
-    <%@ include file="navbar.jsp" %>    
+    <%@ include file="navbar.jsp" %>
   </nav>
 
-  <div id="container">
-    <h1>Login</h1>
-
-    <% if(request.getAttribute("error") != null){ %>
-        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
-
-    <form action="/login" method="POST">
-      <label for="username">Username: </label>
-      <br/>
-      <input type="text" name="username" id="username">
-      <br/>
-      <label for="password">Password: </label>
-      <br/>
-      <input type="password" name="password" id="password">
-      <br/><br/>
-      <button type="submit">Login</button>
-    </form>
-
-    <p>New users can register <a href="/register">here</a>.</p>
+  <div class="stat-information" id="container">
+    <h1>Statistics</h1>
+    <ul>
+      <li>Total amount of conversations: <%=conversationStore.getConversationCount()%></li>
+      <li>Total amount of user: <%=userStore.getUserCount()%></li>
+    </ul>
   </div>
 </body>
 </html>
