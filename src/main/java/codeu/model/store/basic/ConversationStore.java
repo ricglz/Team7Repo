@@ -100,4 +100,9 @@ public class ConversationStore {
   public void setConversations(List<Conversation> conversations) {
     this.conversations = conversations;
   }
+
+  /** Returns the count of total conversations stored */
+  public int getConversationCount(){
+    return conversations.size();
+  }
 }

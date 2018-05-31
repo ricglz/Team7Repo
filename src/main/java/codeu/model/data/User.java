@@ -75,6 +75,7 @@ public class User {
     return creation;
   }
 
+
   /** Returns the description */
   public String getDescription(){
     return description;
@@ -82,6 +83,11 @@ public class User {
 
   /** Updates the description */
   public void setDescription(String Description){
-    description = Description;
+    description = Description;}
+
+  /** Allows to know if the user is an admin */
+  public Boolean isAdmin() {
+    return (name.equals("Ricardo")||name.equals("Manjil")|| name.equals("Kirielle"));
+
   }
 }

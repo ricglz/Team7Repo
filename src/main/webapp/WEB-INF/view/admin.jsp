@@ -13,33 +13,32 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%@ page import="codeu.model.store.basic.ConversationStore" %>
+<%@ page import="codeu.model.store.basic.UserStore" %>
+
+<%
+  UserStore userStore = UserStore.getInstance();
+  ConversationStore conversationStore = ConversationStore.getInstance();
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Admin</title>
   <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
 
   <nav>
-    <%@ include file="/WEB-INF/view/navbar.jsp" %>
+    <%@ include file="navbar.jsp" %>
   </nav>
 
-  <div id="container">
-    <div
-      style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
-
-      <h1>CodeU Chat App</h1>
-      <h2>Welcome!</h2>
-
-      <ul>
-        <li><a href="/login">Login</a> to get started.</li>
-        <li>Go to the <a href="/conversations">conversations</a> page to
-            create or join a conversation.</li>
-        <li>View the <a href="/about.jsp">about</a> page to learn more about the
-            project.</li>
-      </ul>
-    </div>
+  <div class="stat-information" id="container">
+    <h1>Statistics</h1>
+    <ul>
+      <li>Total amount of conversations: <%=conversationStore.getConversationCount()%></li>
+      <li>Total amount of user: <%=userStore.getUserCount()%></li>
+    </ul>
   </div>
 </body>
 </html>
