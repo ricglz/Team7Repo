@@ -58,7 +58,7 @@ public class PersistentDataStore {
     List<User> users = new ArrayList<>();
 
     // Retrieve all users from the datastore.
-    Query query = new Query("chat-users");
+    Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);;
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
@@ -67,7 +67,8 @@ public class PersistentDataStore {
         String userName = (String) entity.getProperty("username");
         String passwordHash = (String) entity.getProperty("password_hash");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        User user = new User(uuid, userName, passwordHash, creationTime);
+        long messageCount = (Long) entity.getProperty("message_count");
+        User user = new User(uuid, userName, passwordHash, creationTime, messageCount);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -92,7 +93,7 @@ public class PersistentDataStore {
     List<Conversation> conversations = new ArrayList<>();
 
     // Retrieve all conversations from the datastore.
-    Query query = new Query("chat-conversations").addSort("creation_time", SortDirection.ASCENDING);
+    Query query = new Query("chat-conversations").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
@@ -101,7 +102,8 @@ public class PersistentDataStore {
         UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
         String title = (String) entity.getProperty("title");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+        long messageCount = (Long) entity.getProperty("message_count");
+        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime, messageCount);
         conversations.add(conversation);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -156,6 +158,7 @@ public class PersistentDataStore {
     userEntity.setProperty("username", user.getName());
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
+    userEntity.setProperty("message_count", user.getMessageCount());
     datastore.put(userEntity);
   }
 
@@ -177,7 +180,7 @@ public class PersistentDataStore {
     conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    conversationEntity.setProperty("message_count", conversation.getMessageCount());
     datastore.put(conversationEntity);
   }
 }
-

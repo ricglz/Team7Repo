@@ -17,9 +17,11 @@ package codeu.controller;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -152,6 +154,14 @@ public class ChatServlet extends HttpServlet {
             Instant.now());
 
     messageStore.addMessage(message);
+
+    //Updating user
+    user.increaseMessageCount();
+    userStore.updateUser(user);
+
+    //Updating conversation
+    conversation.increaseMessageCount();
+    conversationStore.updateConversation(conversation);
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);

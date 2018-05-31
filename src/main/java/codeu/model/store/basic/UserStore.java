@@ -16,6 +16,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.User;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -99,6 +100,7 @@ public class UserStore {
    */
   public void addUser(User user) {
     users.add(user);
+    users.sort(User.userComparator);
     persistentStorageAgent.writeThrough(user);
   }
 
@@ -106,6 +108,7 @@ public class UserStore {
    * Update an existing User.
    */
   public void updateUser(User user) {
+    users.sort(User.userComparator);
     persistentStorageAgent.writeThrough(user);
   }
 
@@ -128,9 +131,20 @@ public class UserStore {
   }
 
   /** Returns total amount of users */
-  public int getUserCount(){
+  public int getUserCount() {
     return users.size();
   }
-  
-}
 
+  public String getMostActiveUser() {
+    return getLastUser().getName();
+  }
+
+  public long getMaxMessageCount() {
+    return getLastUser().getMessageCount();
+  }
+
+  public User getLastUser() {
+    return users.get(users.size() - 1);
+  }
+
+}

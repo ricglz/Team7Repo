@@ -14,6 +14,7 @@
 
 package codeu.model.data;
 
+import java.util.Comparator;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -23,20 +24,35 @@ public class User {
   private final String name;
   private final String passwordHash;
   private final Instant creation;
+  private long messageCount;
 
   /**
    * Constructs a new User.
    *
-   * @param id the ID of this User
-   * @param name the username of this User
+   * @param id           the ID of this User
+   * @param name         the username of this User
    * @param passwordHash the password hash of this User
-   * @param creation the creation time of this User
+   * @param creation     the creation time of this User
    */
   public User(UUID id, String name, String passwordHash, Instant creation) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    this.messageCount = 0;
+  }
+
+  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount) {
+    this.id = id;
+    this.name = name;
+    this.passwordHash = passwordHash;
+    this.creation = creation;
+    this.messageCount = messageCount;
+  }
+
+  /** Increases the message count amount by one */
+  public void increaseMessageCount(){
+    messageCount++;
   }
 
   /** Returns the ID of this User. */
@@ -48,7 +64,7 @@ public class User {
   public String getName() {
     return name;
   }
-  
+
   /** Returns the password hash of this User. */
   public String getPasswordHash() {
     return passwordHash;
@@ -59,8 +75,27 @@ public class User {
     return creation;
   }
 
+  /** Returns the message count of this User. */
+  public long getMessageCount() {
+    return messageCount;
+  }
+
   /** Allows to know if the user is an admin */
   public Boolean isAdmin() {
     return (name.equals("Ricardo") || name.equals("Manjil") || name.equals("Kirielle"));
   }
+
+  public static Comparator<User> userComparator 
+                          = new Comparator<User>() {
+
+	    public int compare(User User1, User User2) {
+        
+        long messageCount1 = User1.getMessageCount();
+        long messageCount2 = User2.getMessageCount();
+	      
+	      //ascending order
+	      return (int) (messageCount1-messageCount2);
+	    }
+
+	};
 }

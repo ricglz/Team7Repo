@@ -15,10 +15,12 @@
 --%>
 <%@ page import="codeu.model.store.basic.ConversationStore" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
 
 <%
   UserStore userStore = UserStore.getInstance();
   ConversationStore conversationStore = ConversationStore.getInstance();
+  MessageStore messageStore = MessageStore.getInstance();
 %>
 
 <!DOCTYPE html>
@@ -46,8 +48,15 @@
   <div class="stat-information" id="container">
     <h1>Statistics</h1>
     <ul>
-      <li>Total amount of conversations: <%=conversationStore.getConversationCount()%></li>
-      <li>Total amount of user: <%=userStore.getUserCount()%></li>
+      <li>Conversations: <%=conversationStore.getConversationCount()%></li>
+      <li>Users: <%=userStore.getUserCount()%></li>
+      <li>Messages: <%=messageStore.getMessagesCount()%></li>
+      <%if(userStore.getUserCount() != 0) {%>
+        <li>Most active user: <%=userStore.getMostActiveUser()%> with <%=userStore.getMaxMessageCount()%> messages</li>
+      <%}%>
+      <%if(conversationStore.getConversationCount() != 0){%>
+        <li>Most active conversation: <%=conversationStore.getMostActiveConversation()%> with <%=conversationStore.getMaxMessageCount()%> messages
+      <%}%>
     </ul>
   </div>
 </body>

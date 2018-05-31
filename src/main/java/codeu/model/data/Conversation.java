@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,7 @@ public class Conversation {
   public final UUID owner;
   public final Instant creation;
   public final String title;
+  private long messageCount;
 
   /**
    * Constructs a new Conversation.
@@ -40,6 +42,27 @@ public class Conversation {
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+  }
+
+  /**
+   * Constructs a new Conversation.
+   *
+   * @param id the ID of this Conversation
+   * @param owner the ID of the User who created this Conversation
+   * @param title the title of this Conversation
+   * @param creation the creation time of this Conversation
+   * @param messageCount the message count of this Conversation
+   */
+  public Conversation(UUID id, UUID owner, String title, Instant creation, long messageCount) {
+    this.id = id;
+    this.owner = owner;
+    this.creation = creation;
+    this.title = title;
+    this.messageCount = messageCount;
+  }
+
+  public void increaseMessageCount() {
+    messageCount++;
   }
 
   /** Returns the ID of this Conversation. */
@@ -61,4 +84,22 @@ public class Conversation {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public long getMessageCount() {
+    return messageCount;
+  }
+
+  public static Comparator<Conversation> conversationComparator
+                          = new Comparator<Conversation>() {
+
+	    public int compare(Conversation User1, Conversation User2) {
+
+        long messageCount1 = User1.getMessageCount();
+        long messageCount2 = User2.getMessageCount();
+
+	      //ascending order
+	      return (int) (messageCount1-messageCount2);
+	    }
+
+	};
 }

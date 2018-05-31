@@ -16,6 +16,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +73,12 @@ public class ConversationStore {
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {
     conversations.add(conversation);
+    conversations.sort(Conversation.conversationComparator);
+    persistentStorageAgent.writeThrough(conversation);
+  }
+
+  public void updateConversation(Conversation conversation) {
+    conversations.sort(Conversation.conversationComparator);
     persistentStorageAgent.writeThrough(conversation);
   }
 
@@ -102,7 +109,19 @@ public class ConversationStore {
   }
 
   /** Returns the count of total conversations stored */
-  public int getConversationCount(){
+  public int getConversationCount() {
     return conversations.size();
+  }
+
+  public String getMostActiveConversation() {
+    return getLastConversation().getTitle();
+  }
+
+  public long getMaxMessageCount() {
+    return getLastConversation().getMessageCount();
+  }
+
+  public Conversation getLastConversation() {
+    return conversations.get(conversations.size()-1);
   }
 }
