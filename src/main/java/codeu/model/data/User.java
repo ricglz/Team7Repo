@@ -33,6 +33,7 @@ public class User {
    * @param name the username of this User
    * @param passwordHash the password hash of this User
    * @param creation the creation time of this User
+   * @param description of the username from profile section
    */
   public User(UUID id, String name, String passwordHash, Instant creation, String description) {
     this.id = id;
@@ -42,6 +43,14 @@ public class User {
     this.description = description;
   }
 
+  /**
+   *
+   * @param id the ID of this User
+   * @param name the username of this User
+   * @param passwordHash the password hash of this User
+   * @param creation the creation time of this User
+   * @param "" for the user who is writing their description for first time
+   */
   public User(UUID id, String name, String passwordHash, Instant creation) {
     this(id, name, passwordHash, creation, "");
   }

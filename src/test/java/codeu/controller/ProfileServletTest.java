@@ -1,16 +1,16 @@
 package codeu.controller;
 
-    import codeu.model.store.basic.UserStore;
-    import org.junit.Before;
-    import org.junit.Test;
-    import org.mockito.Mockito;
+import codeu.model.store.basic.UserStore;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
 
-    import javax.servlet.RequestDispatcher;
-    import javax.servlet.ServletException;
-    import javax.servlet.http.HttpServletRequest;
-    import javax.servlet.http.HttpServletResponse;
-    import javax.servlet.http.HttpSession;
-    import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 public class ProfileServletTest {
     private ProfileServlet profileServlet;
@@ -35,6 +35,7 @@ public class ProfileServletTest {
         profileServlet.doGet(mockRequest, mockResponse);
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
+
     @Test
     public void testDoPost_NewUser() throws IOException, ServletException {
         Mockito.when(mockRequest.getParameter("description")).thenReturn("test description");
@@ -44,5 +45,5 @@ public class ProfileServletTest {
         Mockito.verify(mockSession).setAttribute("description", "test description");
         Mockito.verify(mockResponse).sendRedirect("/profile");
     }
-    }
+}
 

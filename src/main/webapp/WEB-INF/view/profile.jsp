@@ -30,7 +30,7 @@
     <a href="/login">Login</a>
     <% } %>
     <a href="/about.jsp">About</a>
-    <a href="/profile.jsp">Profile</a>
+    <%@ include file="navbar.jsp" %>
 </nav>
 
 <div id="container">
