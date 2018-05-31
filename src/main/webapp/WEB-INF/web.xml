@@ -83,6 +83,6 @@
 
   <servlet-mapping>
     <servlet-name>ActivityFeedServlet</servlet-name>
-    <url-pattern>/activity-feed</url-pattern>
+    <url-pattern>/activity</url-pattern>
   </servlet-mapping>
 </web-app>
