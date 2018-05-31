@@ -16,6 +16,7 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Comparator;
 
 /** Class representing a message. Messages are sent by a User in a Conversation. */
 public class Message {
@@ -67,4 +68,18 @@ public class Message {
   public Instant getCreationTime() {
     return creation;
   }
+
+  public static Comparator<Message> messageComparator
+                          = new Comparator<Message>() {
+
+	    public int compare(Message message1, Message message2) {
+
+        String content1 = message1.getContent().replaceAll("\\s","");
+        String content2 = message2.getContent().replaceAll("\\s","");
+
+	      //ascending order
+	      return (int) (content1.length()-content2.length());
+	    }
+
+	};
 }

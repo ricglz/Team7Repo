@@ -16,11 +16,13 @@
 <%@ page import="codeu.model.store.basic.ConversationStore" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%@ page import="codeu.model.store.basic.MessageStore" %>
+<%@ page import="codeu.model.data.Message" %>
 
 <%
   UserStore userStore = UserStore.getInstance();
   ConversationStore conversationStore = ConversationStore.getInstance();
   MessageStore messageStore = MessageStore.getInstance();
+  Message longestMessage;
 %>
 
 <!DOCTYPE html>
@@ -47,6 +49,7 @@
 
   <div class="stat-information" id="container">
     <h1>Statistics</h1>
+    <hr>
     <ul>
       <li>Conversations: <%=conversationStore.getConversationCount()%></li>
       <li>Users: <%=userStore.getUserCount()%></li>
@@ -56,6 +59,11 @@
       <%}%>
       <%if(conversationStore.getConversationCount() != 0){%>
         <li>Most active conversation: <%=conversationStore.getMostActiveConversation()%> with <%=conversationStore.getMaxMessageCount()%> messages
+      <%}%>
+      <%if(messageStore.getMessagesCount() != 0) {
+        longestMessage = messageStore.getLongestMessage();
+      %>
+        <li>Longest message: <%=longestMessage.getContent().length()-1%> letters
       <%}%>
     </ul>
   </div>

@@ -20,7 +20,7 @@ import java.util.UUID;
 
 /**
  * Class representing a conversation, which can be thought of as a chat room. Conversations are
- * created by a User and contain Messages.
+ * created by a conversation and contain Messages.
  */
 public class Conversation {
   public final UUID id;
@@ -33,7 +33,7 @@ public class Conversation {
    * Constructs a new Conversation.
    *
    * @param id the ID of this Conversation
-   * @param owner the ID of the User who created this Conversation
+   * @param owner the ID of the conversation who created this Conversation
    * @param title the title of this Conversation
    * @param creation the creation time of this Conversation
    */
@@ -48,7 +48,7 @@ public class Conversation {
    * Constructs a new Conversation.
    *
    * @param id the ID of this Conversation
-   * @param owner the ID of the User who created this Conversation
+   * @param owner the ID of the conversation who created this Conversation
    * @param title the title of this Conversation
    * @param creation the creation time of this Conversation
    * @param messageCount the message count of this Conversation
@@ -70,7 +70,7 @@ public class Conversation {
     return id;
   }
 
-  /** Returns the ID of the User who created this Conversation. */
+  /** Returns the ID of the conversation who created this Conversation. */
   public UUID getOwnerId() {
     return owner;
   }
@@ -92,10 +92,10 @@ public class Conversation {
   public static Comparator<Conversation> conversationComparator
                           = new Comparator<Conversation>() {
 
-	    public int compare(Conversation User1, Conversation User2) {
+	    public int compare(Conversation conversation1, Conversation conversation2) {
 
-        long messageCount1 = User1.getMessageCount();
-        long messageCount2 = User2.getMessageCount();
+        long messageCount1 = conversation1.getMessageCount();
+        long messageCount2 = conversation2.getMessageCount();
 
 	      //ascending order
 	      return (int) (messageCount1-messageCount2);

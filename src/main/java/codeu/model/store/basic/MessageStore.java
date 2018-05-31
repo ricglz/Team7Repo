@@ -68,6 +68,7 @@ public class MessageStore {
   /** Add a new message to the current set of messages known to the application. */
   public void addMessage(Message message) {
     messages.add(message);
+    messages.sort(Message.messageComparator);
     persistentStorageAgent.writeThrough(message);
   }
 
@@ -91,7 +92,11 @@ public class MessageStore {
   }
 
   /** Returns the count of total messages stored */
-  public int getMessagesCount(){
+  public int getMessagesCount() {
     return messages.size();
+  }
+
+  public Message getLongestMessage() {
+    return messages.get(messages.size()-1);
   }
 }
