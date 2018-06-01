@@ -54,7 +54,7 @@ public class LoginServletTest {
   }
 
   @Test
-  public void testDoPost_NewUser() throws IOException, ServletException {
+  public void testDoPost_NewUser() throws IOException, ServletException { 
     Mockito.when(mockRequest.getParameter("username")).thenReturn("test username");
     Mockito.when(mockRequest.getParameter("password")).thenReturn("test password");
 
@@ -93,6 +93,35 @@ public class LoginServletTest {
 
     Mockito.verify(mockUserStore, Mockito.never()).addUser(Mockito.any(User.class));
     Mockito.verify(mockSession).setAttribute("user", "test username");
+    Mockito.verify(mockResponse).sendRedirect("/conversations");
+  }
+
+  @Test
+  public void testDoPost_ExistingAdminUser() throws IOException, ServletException {
+
+    User user =
+        new User(
+            UUID.randomUUID(),
+            "test username",
+            "$2a$10$.e.4EEfngEXmxAO085XnYOmDntkqod0C384jOR9oagwxMnPNHaGLa",
+            Instant.now(), true);
+
+    Mockito.when(mockRequest.getParameter("username")).thenReturn("test username");
+    Mockito.when(mockRequest.getParameter("password")).thenReturn("test password");
+
+    UserStore mockUserStore = Mockito.mock(UserStore.class);
+    Mockito.when(mockUserStore.isUserRegistered("test username")).thenReturn(true);
+    Mockito.when(mockUserStore.getUser("test username")).thenReturn(user);
+    loginServlet.setUserStore(mockUserStore);
+
+    HttpSession mockSession = Mockito.mock(HttpSession.class);
+    Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+
+    loginServlet.doPost(mockRequest, mockResponse);
+
+    Mockito.verify(mockUserStore, Mockito.never()).addUser(Mockito.any(User.class));
+    Mockito.verify(mockSession).setAttribute("user", "test username");
+    Mockito.verify(mockSession).setAttribute("admin", true);
     Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 }

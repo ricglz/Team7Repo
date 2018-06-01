@@ -48,6 +48,12 @@ public class AdminServlet extends HttpServlet {
       throws IOException, ServletException {
     String username = request.getParameter("username");
 
+    if(username.isEmpty()) {
+      request.setAttribute("error", "Introduce a username please.");
+      request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
+      return;
+    }
+
     if (!userStore.isUserRegistered(username)) {
       request.setAttribute("error", "That username was not found.");
       request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
