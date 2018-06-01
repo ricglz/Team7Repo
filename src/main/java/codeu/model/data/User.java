@@ -23,6 +23,8 @@ public class User {
   private final String name;
   private final String passwordHash;
   private final Instant creation;
+  private  String description;
+
 
   /**
    * Constructs a new User.
@@ -31,12 +33,26 @@ public class User {
    * @param name the username of this User
    * @param passwordHash the password hash of this User
    * @param creation the creation time of this User
+   * @param description of the username from profile section
    */
-  public User(UUID id, String name, String passwordHash, Instant creation) {
+  public User(UUID id, String name, String passwordHash, Instant creation, String description) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    this.description = description;
+  }
+
+  /**
+   *
+   * @param id the ID of this User
+   * @param name the username of this User
+   * @param passwordHash the password hash of this User
+   * @param creation the creation time of this User
+   * @param "" for the user who is writing their description for first time
+   */
+  public User(UUID id, String name, String passwordHash, Instant creation) {
+    this(id, name, passwordHash, creation, "");
   }
 
   /** Returns the ID of this User. */
@@ -59,8 +75,19 @@ public class User {
     return creation;
   }
 
+
+  /** Returns the description */
+  public String getDescription(){
+    return description;
+  }
+
+  /** Updates the description */
+  public void setDescription(String Description){
+    description = Description;}
+
   /** Allows to know if the user is an admin */
   public Boolean isAdmin() {
-    return (name.equals("Ricardo") || name.equals("Manjil") || name.equals("Kirielle"));
+    return (name.equals("Ricardo")||name.equals("Manjil")|| name.equals("Kirielle"));
+
   }
 }
