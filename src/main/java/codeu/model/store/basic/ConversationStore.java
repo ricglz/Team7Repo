@@ -112,15 +112,17 @@ public class ConversationStore {
   public int getConversationCount() {
     return conversations.size();
   }
-
+  /** Returns the title of the most active conversation */
   public String getMostActiveConversation() {
     return getLastConversation().getTitle();
   }
 
+  /** Returns the amount of messages of the most active conversation */
   public long getMaxMessageCount() {
     return getLastConversation().getMessageCount();
   }
 
+  /** Returns the last Conversation of the conversations list */
   public Conversation getLastConversation() {
     return conversations.get(conversations.size()-1);
   }

@@ -88,10 +88,12 @@ public class User {
     return isAdmin;
   }
 
+  /** Makes this User an admin */
   public void makeAdmin() {
     isAdmin = true;
   }
 
+  /** Function to compare the diferent Users for sorting */
   public static Comparator<User> userComparator
                           = new Comparator<User>() {
 

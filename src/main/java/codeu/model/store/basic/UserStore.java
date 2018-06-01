@@ -135,14 +135,17 @@ public class UserStore {
     return users.size();
   }
 
+  /** Returns the name of the most active User */
   public String getMostActiveUser() {
     return getLastUser().getName();
   }
 
+  /** Returns the amount of messages of the most active user */
   public long getMaxMessageCount() {
     return getLastUser().getMessageCount();
   }
 
+  /** Returns the last User of the users list */
   public User getLastUser() {
     return users.get(users.size() - 1);
   }

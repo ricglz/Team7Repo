@@ -32,7 +32,7 @@ public class AdminServlet extends HttpServlet {
     this.userStore = userStore;
   }
 
-  /** 
+  /**
    * Makes that the actual page is the admin.jsp .
   */
   @Override
@@ -41,7 +41,7 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/admin.jsp").forward(request, response);
   }
   /**
-   * It allows to import the data of a play or any text.
+   * It allows to add a user as an admin
   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)

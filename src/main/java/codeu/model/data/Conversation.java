@@ -61,6 +61,7 @@ public class Conversation {
     this.messageCount = messageCount;
   }
 
+  /** Increases the count of messages fo this conversation by one*/
   public void increaseMessageCount() {
     messageCount++;
   }
@@ -85,10 +86,12 @@ public class Conversation {
     return creation;
   }
 
+  /** Returns the count of messages of this Conversation */
   public long getMessageCount() {
     return messageCount;
   }
 
+  /** Function to compare the diferent Conversations for sorting */
   public static Comparator<Conversation> conversationComparator
                           = new Comparator<Conversation>() {
 

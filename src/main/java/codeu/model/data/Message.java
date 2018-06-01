@@ -69,6 +69,7 @@ public class Message {
     return creation;
   }
 
+  /** Function to compare the diferent Messages for sorting */
   public static Comparator<Message> messageComparator
                           = new Comparator<Message>() {
 
