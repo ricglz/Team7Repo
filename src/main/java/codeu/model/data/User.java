@@ -25,6 +25,7 @@ public class User {
   private final String passwordHash;
   private final Instant creation;
   private long messageCount;
+  private boolean isAdmin;
 
   /**
    * Constructs a new User.
@@ -34,20 +35,22 @@ public class User {
    * @param passwordHash the password hash of this User
    * @param creation     the creation time of this User
    */
-  public User(UUID id, String name, String passwordHash, Instant creation) {
+  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = 0;
+    this.isAdmin = isAdmin;
   }
 
-  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount) {
+  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, boolean isAdmin) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = messageCount;
+    this.isAdmin = isAdmin;
   }
 
   /** Increases the message count amount by one */
@@ -81,18 +84,22 @@ public class User {
   }
 
   /** Allows to know if the user is an admin */
-  public Boolean isAdmin() {
-    return (name.equals("Ricardo") || name.equals("Manjil") || name.equals("Kirielle"));
+  public boolean isAdmin() {
+    return isAdmin;
   }
 
-  public static Comparator<User> userComparator 
+  public void makeAdmin() {
+    isAdmin = true;
+  }
+
+  public static Comparator<User> userComparator
                           = new Comparator<User>() {
 
 	    public int compare(User User1, User User2) {
-        
+
         long messageCount1 = User1.getMessageCount();
         long messageCount2 = User2.getMessageCount();
-	      
+
 	      //ascending order
 	      return (int) (messageCount1-messageCount2);
 	    }

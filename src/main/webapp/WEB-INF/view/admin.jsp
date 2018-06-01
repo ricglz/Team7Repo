@@ -49,7 +49,6 @@
 
   <div class="stat-information" id="container">
     <h1>Statistics</h1>
-    <hr>
     <ul>
       <li>Conversations: <%=conversationStore.getConversationCount()%></li>
       <li>Users: <%=userStore.getUserCount()%></li>
@@ -66,6 +65,22 @@
         <li>Longest message: <%=longestMessage.getContent().length()-1%> letters
       <%}%>
     </ul>
+    <hr>
+    <% if(request.getAttribute("error") != null){ %>
+        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+    <% } %>
+
+    <% if(request.getAttribute("message") != null){ %>
+        <h2 style="color:blue"><%= request.getAttribute("message") %></h2>
+    <% } %>
+    <h1>Add admin</h1>
+    <form action="/admin" method="POST">
+      <label for="username">Username: </label>
+      <br/>
+      <input type="text" name="username" id="username">
+      <br/><br/>
+      <button type="submit">Login</button>
+    </form>
   </div>
 </body>
 </html>
