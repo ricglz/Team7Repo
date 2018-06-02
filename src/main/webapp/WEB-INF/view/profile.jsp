@@ -1,4 +1,4 @@
-<%--
++<%--
   Copyright 2017 Google Inc.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Profile</title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
@@ -23,25 +23,23 @@
 </nav>
 
 <div id="container">
-    <h1>Login</h1>
+    <h1><%= request.getSession().getAttribute("user") %>'s Profile page </h1>
+    <!--About Section -->
+    <h3>About You!</h3>
+    <!-- info from descriptions -->
+    <%=request.getSession().getAttribute("description")%>
+    <br>
+    <br>
+    <br>
+    <h3> Edit your About Me (only you can see this)</h3>
 
-    <% if(request.getAttribute("error") != null){ %>
-    <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
-
-    <form action="/login" method="POST">
-        <label for="username">Username: </label>
-        <br/>
-        <input type="text" name="username" id="username">
-        <br/>
-        <label for="password">Password: </label>
-        <br/>
-        <input type="password" name="password" id="password">
-        <br/><br/>
-        <button type="submit">Login</button>
+    <form action="/profile" method="POST">
+        <label for="description">Description</label>
+        <input type="text" name="description" id="description">
+        <button style="height:20px;width:20px" button type=submit>Submit</button>
     </form>
+    <hr>
 
-    <p>New users can register <a href="/register">here</a>.</p>
 </div>
 </body>
 </html>
