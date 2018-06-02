@@ -22,7 +22,7 @@
         <% } else { %>
             <a>Hello, <%= request.getSession().getAttribute("user") %>!</a>
         <% } %>
-        <a href="/activity">Activity Feed</a>
+        <a href="/activity">Activity</a>
         <% if(request.getSession().getAttribute("admin") != null) { %>
             <a href="/admin">Admin Page</a>
         <% } %>  

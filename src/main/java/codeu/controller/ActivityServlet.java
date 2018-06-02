@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet class responsible for the activity feed page. */
-public class ActivityFeedServlet extends HttpServlet {
+public class ActivityServlet extends HttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -52,7 +52,7 @@ public class ActivityFeedServlet extends HttpServlet {
       return;
     }
     
-    request.getRequestDispatcher("/WEB-INF/view/activityfeed.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
   }
 
   // Right now there are no submissions for the activity feed page, so this does nothing.
