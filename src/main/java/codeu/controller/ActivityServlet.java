@@ -6,7 +6,6 @@ import codeu.model.store.basic.ActivityStore;
 import codeu.model.data.Activity;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -68,7 +67,7 @@ public class ActivityServlet extends HttpServlet {
       return;
     }
 
-    List<Activity> activities = activityStore.getAllActivities();
+    List<Activity> activities = activityStore.getAllSortedActivities();
     request.setAttribute("activities", activities);
     request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
   }
