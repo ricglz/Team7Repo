@@ -1,5 +1,6 @@
 package codeu.controller;
 
+import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.UUID;
 
 public class ProfileServletTest {
     private ProfileServlet profileServlet;
@@ -18,31 +21,62 @@ public class ProfileServletTest {
     private HttpServletResponse mockResponse;
     private RequestDispatcher mockRequestDispatcher;
     private HttpSession mockSession;
+    private UserStore mockUserStore;
+    private User fakeUser;
+    private final String TEST_USERNAME = "test_username";
 
     @Before
     public void setup() throws IOException {
 
         profileServlet = new ProfileServlet();
         mockRequest = Mockito.mock(HttpServletRequest.class);
+        mockSession = Mockito.mock(HttpSession.class);
+
+        setupFakeUser();
+
+        mockUserStore = Mockito.mock(UserStore.class);
+        profileServlet.setUserStore(mockUserStore);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
         mockResponse = Mockito.mock(HttpServletResponse.class);
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
+
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/profile.jsp"))
                 .thenReturn(mockRequestDispatcher);
+
+
+    }
+
+    //Creating fakeUser
+    private void setupFakeUser() {
+        fakeUser =
+                new User(
+                        UUID.randomUUID(),
+                        "test username",
+                        "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",
+                        Instant.now(), "test description");
     }
 
     @Test
     public void testdoGet() throws IOException, ServletException {
+        Mockito.when(mockSession.getAttribute("user")).thenReturn(TEST_USERNAME);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+
+        Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
+        System.out.println("name" + mockUserStore.getUser(TEST_USERNAME));
+
         profileServlet.doGet(mockRequest, mockResponse);
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 
     @Test
-    public void testDoPost_NewUser() throws IOException, ServletException {
-        Mockito.when(mockRequest.getParameter("description")).thenReturn("test description");
-        HttpSession mockSession = Mockito.mock(HttpSession.class);
+    public void testDoPost() throws IOException, ServletException {
+        Mockito.when(mockRequest.getParameter("description")).thenReturn("updated test description");
+        Mockito.when(mockSession.getAttribute("user")).thenReturn(TEST_USERNAME);
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+        Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
         profileServlet.doPost(mockRequest, mockResponse);
-        Mockito.verify(mockSession).setAttribute("description", "test description");
+        assert (mockUserStore.getUser(TEST_USERNAME).getDescription().equals("updated test description"));
+        Mockito.verify(mockSession).setAttribute("description", "updated test description");
         Mockito.verify(mockResponse).sendRedirect("/profile");
     }
 }

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 public class ProfileServlet extends HttpServlet {
 
@@ -37,13 +38,34 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request,response);
+        //Checks whether user is logged in or not
+        String userName = (String) request.getSession().getAttribute("user");
+        System.out.println("The user store is " + userStore);
+        User loggedInUser = this.userStore.getUser(userName);
+        if (loggedInUser == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        System.out.println(loggedInUser.getDescription());
+        request.getSession().setAttribute("description", loggedInUser.getDescription());
+        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String description = request.getParameter("description");
+        String userName = (String) request.getSession().getAttribute("user");
+        // read user from database using username
+        // get all the information of that loggedin user from datastore
+        User userToUpdate = this.userStore.getUser(userName);
+        //Setting Description of that Particular User in datastore
+        if (userToUpdate == null){
+            response.sendRedirect("/login");
+            return;
+        }
+        userToUpdate.setDescription(description);
+        userStore.updateUser(userToUpdate);
         request.getSession().setAttribute("description", description);
         response.sendRedirect("/profile");
     }

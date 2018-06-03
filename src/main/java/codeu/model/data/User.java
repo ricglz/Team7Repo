@@ -44,12 +44,11 @@ public class User {
   }
 
   /**
-   *
    * @param id the ID of this User
+   * @param name
    * @param name the username of this User
-   * @param passwordHash the password hash of this User
    * @param creation the creation time of this User
-   * @param "" for the user who is writing their description for first time
+   *
    */
   public User(UUID id, String name, String passwordHash, Instant creation) {
     this(id, name, passwordHash, creation, "");
@@ -88,6 +87,5 @@ public class User {
   /** Allows to know if the user is an admin */
   public Boolean isAdmin() {
     return (name.equals("Ricardo")||name.equals("Manjil")|| name.equals("Kirielle"));
-
   }
 }
