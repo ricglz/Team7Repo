@@ -69,7 +69,13 @@ public class Message {
     return creation;
   }
 
-  /** Function to compare the diferent Messages for sorting */
+  /** Function to compare the diferent Messages for sorting 
+   * First the content is store in a seperate variable which
+   * is obtain by the content atribute and the message but
+   * without the whitespaces. Then messages are compared, 
+   * leaving the message with the new content that is shortest
+   * at the start and the longest at the end.
+  */
   public static Comparator<Message> messageComparator
                           = new Comparator<Message>() {
 
@@ -78,7 +84,10 @@ public class Message {
         String content1 = message1.getContent().replaceAll("\\s","");
         String content2 = message2.getContent().replaceAll("\\s","");
 
-	      //ascending order
+	      /** If value is < 0 then the message 1 has less value or weight
+         * than the second one. Else if the operation is > 0 the 
+         * message 1 has more value. Else both have the same value
+        */
 	      return (int) (content1.length()-content2.length());
 	    }
 

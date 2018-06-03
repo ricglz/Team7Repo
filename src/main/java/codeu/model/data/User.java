@@ -93,7 +93,11 @@ public class User {
     isAdmin = true;
   }
 
-  /** Function to compare the diferent Users for sorting */
+  /** Function to compare the diferent Users for sorting 
+   * The sorting compares the message count of each user
+   * of an array. Leaving the user with less message count
+   * at the start and the one with more at the end.
+  */
   public static Comparator<User> userComparator
                           = new Comparator<User>() {
 

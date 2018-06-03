@@ -91,7 +91,11 @@ public class Conversation {
     return messageCount;
   }
 
-  /** Function to compare the diferent Conversations for sorting */
+  /** Function to compare the diferent Conversartions for sorting. 
+   * The sorting compares the message count of each conversation
+   * of an array. Leaving the conversation with less message count
+   * at the start and the one with more at the end.
+  */
   public static Comparator<Conversation> conversationComparator
                           = new Comparator<Conversation>() {
 
