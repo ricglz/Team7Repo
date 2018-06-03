@@ -26,6 +26,7 @@ public class User {
   private final Instant creation;
   private long messageCount;
   private boolean isAdmin;
+  private  String description;
 
   /**
    * Constructs a new User.
@@ -34,8 +35,10 @@ public class User {
    * @param name         the username of this User
    * @param passwordHash the password hash of this User
    * @param creation     the creation time of this User
+   * @param creation the creation time of this User
+   * @param description of the username from profile section
    */
-  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
+  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin, String description) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
@@ -44,7 +47,7 @@ public class User {
     this.isAdmin = isAdmin;
   }
 
-  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, boolean isAdmin) {
+  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, boolean isAdmin, String description) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
@@ -56,6 +59,19 @@ public class User {
   /** Increases the message count amount by one */
   public void increaseMessageCount(){
     messageCount++;
+    this.description = description;
+  }
+
+  /**
+   *
+   * @param id the ID of this User
+   * @param name the username of this User
+   * @param passwordHash the password hash of this User
+   * @param creation the creation time of this User
+   * @param "" for the user who is writing their description for first time
+   */
+  public User(UUID id, String name, String passwordHash, Instant creation) {
+    this(id, name, passwordHash, creation, "");
   }
 
   /** Returns the ID of this User. */
@@ -78,6 +94,17 @@ public class User {
     return creation;
   }
 
+
+  /** Returns the description */
+  public String getDescription(){
+    return description;
+  }
+
+  /** Updates the description */
+  public void setDescription(String Description){
+    description = Description;
+  }
+
   /** Returns the message count of this User. */
   public long getMessageCount() {
     return messageCount;
@@ -93,7 +120,7 @@ public class User {
     isAdmin = true;
   }
 
-  /** Function to compare the diferent Users for sorting 
+  /** Function to compare the diferent Users for sorting
    * The sorting compares the message count of each user
    * of an array. Leaving the user with less message count
    * at the start and the one with more at the end.

@@ -25,6 +25,7 @@ import codeu.model.store.basic.UserStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -144,6 +145,10 @@ public class ChatServlet extends HttpServlet {
 
     // this removes any HTML from the message content
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
+    // converts BBCode bold sytax to HTML
+    cleanedMessageContent = processString(cleanedMessageContent, Styling.BOLD);
+    // converts BBCode italics sytax to HTML
+    cleanedMessageContent = processString(cleanedMessageContent, Styling.ITALICS);
 
     Message message =
         new Message(
@@ -165,5 +170,67 @@ public class ChatServlet extends HttpServlet {
 
     // redirect to a GET request
     response.sendRedirect("/chat/" + conversationTitle);
+  }
+
+  // Defines supported styling of our BBCode processor.
+  private enum Styling {
+      BOLD ("b"),
+      ITALICS ("i");
+
+      private final String tag;
+
+      Styling(String tag) {
+          this.tag = tag;
+      }
+
+      public String getOpenTag() {
+          return String.format("[%s]", tag);
+      }
+
+      public String getCloseTag() {
+          return String.format("[/%s]", tag);
+      }
+
+      public String getOpenTagRegex() {
+          return Pattern.quote(getOpenTag());
+      }
+
+      public String getCloseTagRegex() {
+          return Pattern.quote(getCloseTag());
+      }
+
+      public String getConvertedOpenTag() {
+          return String.format("<%s>", tag);
+      }
+
+      public String getConvertedCloseTag() {
+          return String.format("</%s>", tag);
+      }
+  }
+
+  /**
+   * A recursive method for converting a string from BBO to HTML given the desired styling.
+   * This method is recursive because we want to make sure we are processing pairs
+   * of tags (so we dont process an open tag that has no close or vice versa).
+   *
+   * -- ex: bolding text --
+   * input: "[b] I am writing [b] bold text [/b]"
+   * output: "<b> I am writing [b] bold text </b>"
+   */
+  private String processString(String messageToProcess, Styling styling) {
+      int openIndex = messageToProcess.indexOf(styling.getOpenTag());
+      int closeIndex = messageToProcess.indexOf(styling.getCloseTag());
+
+      // If we do not have both an opening and a closing tag we do not want to process the string
+      // since we want to make sure we are replacing both the opening and closing tag with html.
+      // This is also our base conditions for this recursive function. We know we are done
+      // when we can no longer replace a tag pairing.
+      if (openIndex == -1 || closeIndex == -1) {
+          return messageToProcess;
+      } else {
+          messageToProcess = messageToProcess.replaceFirst(styling.getOpenTagRegex(), styling.getConvertedOpenTag());
+          messageToProcess = messageToProcess.replaceFirst(styling.getCloseTagRegex(), styling.getConvertedCloseTag());
+          return processString(messageToProcess, styling);
+      }
   }
 }

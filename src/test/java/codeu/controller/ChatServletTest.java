@@ -211,4 +211,53 @@ public class ChatServletTest {
 
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
   }
+
+  @Test
+  public void testDoPost_BoldStyling() throws IOException, ServletException {
+      setupInputSanitationTest("[b]Contains[/b] bold [b]styled[/b] content[/b].");
+
+      chatServlet.doPost(mockRequest, mockResponse);
+
+      verifyProperSanitation("<b>Contains</b> bold <b>styled</b> content[/b].");
+  }
+
+  @Test
+  public void testDoPost_ItalicsStyling() throws IOException, ServletException {
+      setupInputSanitationTest("[i]Contains[/i] italics [i]styled[/i] content[/b].");
+
+      chatServlet.doPost(mockRequest, mockResponse);
+
+      verifyProperSanitation("<i>Contains</i> italics <i>styled</i> content[/b].");
+  }
+
+  private void setupInputSanitationTest(String userMessage) {
+      Mockito.when(mockRequest.getRequestURI()).thenReturn("/chat/test_conversation");
+      Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
+
+      User fakeUser =
+          new User(
+          UUID.randomUUID(),
+          "test_username",
+          "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",
+          Instant.now());
+      Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
+
+      Conversation fakeConversation =
+          new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
+      Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
+      .thenReturn(fakeConversation);
+
+
+      Mockito.when(mockRequest.getParameter("message"))
+      .thenReturn(userMessage);
+  }
+
+  private void verifyProperSanitation(String expectedOutput) throws IOException {
+      ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+      Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+      Assert.assertEquals(
+          expectedOutput, messageArgumentCaptor.getValue().getContent());
+
+      Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
+  }
 }

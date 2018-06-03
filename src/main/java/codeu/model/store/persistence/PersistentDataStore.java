@@ -65,11 +65,12 @@ public class PersistentDataStore {
       try {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         String userName = (String) entity.getProperty("username");
+        String description = (String) entity.getProperty("description");
         String passwordHash = (String) entity.getProperty("password_hash");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         long messageCount = (Long) entity.getProperty("message_count");
         boolean isAdmin = (boolean) entity.getProperty("is_admin");
-        User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin);
+        User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -157,6 +158,7 @@ public class PersistentDataStore {
     Entity userEntity = new Entity("chat-users", user.getId().toString());
     userEntity.setProperty("uuid", user.getId().toString());
     userEntity.setProperty("username", user.getName());
+    userEntity.setProperty("description", user.getDescription());
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("message_count", user.getMessageCount());
