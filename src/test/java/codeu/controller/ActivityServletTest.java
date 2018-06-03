@@ -1,6 +1,7 @@
 package codeu.controller;
 
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ActivityStore;
 import codeu.model.data.User;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class ActivityServletTest {
     private HttpServletResponse mockResponse;
     private UserStore mockUserStore;
     private User mockUser;
+    private ActivityStore mockActivityStore;
 
     @Before
     public void before() {
@@ -34,11 +36,13 @@ public class ActivityServletTest {
         mockSession = Mockito.mock(HttpSession.class);
         mockResponse = Mockito.mock(HttpServletResponse.class);
         mockUserStore = Mockito.mock(UserStore.class);
+        mockActivityStore = Mockito.mock(ActivityStore.class);
 
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/activity.jsp"))
         .thenReturn(mockRequestDispatcher);
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
         activityServlet.setUserStore(mockUserStore);
+        activityServlet.setActivityStore(mockActivityStore);
     }
 
     @Test

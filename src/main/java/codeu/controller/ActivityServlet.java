@@ -2,7 +2,11 @@ package codeu.controller;
 
 import codeu.model.store.basic.UserStore;
 import codeu.model.data.User;
+import codeu.model.store.basic.ActivityStore;
+import codeu.model.data.Activity;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +19,9 @@ public class ActivityServlet extends HttpServlet {
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
+  /** Store class that gives access to Activities. */  
+  private ActivityStore activityStore;
+
   /**
    * Set up state for handling activity feed-related requests. This method is only called when running in a
    * server, not when running in a test.
@@ -23,6 +30,7 @@ public class ActivityServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    setActivityStore(ActivityStore.getInstance());
   }
 
   /**
@@ -31,6 +39,14 @@ public class ActivityServlet extends HttpServlet {
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the ActivityStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setActivityStore(ActivityStore activityStore) {
+    this.activityStore = activityStore;
   }
 
   // Forwards the request to activityfeed.jsp.
@@ -51,7 +67,9 @@ public class ActivityServlet extends HttpServlet {
       response.sendRedirect("/login");
       return;
     }
-    
+
+    List<Activity> activities = activityStore.getAllActivities();
+    request.setAttribute("activities", activities);
     request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
   }
 

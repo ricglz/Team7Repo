@@ -18,6 +18,7 @@ import codeu.model.data.Conversation;
 import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ActivityStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -43,10 +44,11 @@ public class ConversationServletTest {
   private RequestDispatcher mockRequestDispatcher;
   private ConversationStore mockConversationStore;
   private UserStore mockUserStore;
+  private ActivityStore mockActivityStore;  
 
   @Before
   public void setup() {
-    conversationServlet = new ConversationServlet();
+    conversationServlet = new ConversationServlet();   
 
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockSession = Mockito.mock(HttpSession.class);
@@ -62,6 +64,9 @@ public class ConversationServletTest {
 
     mockUserStore = Mockito.mock(UserStore.class);
     conversationServlet.setUserStore(mockUserStore);
+
+    mockActivityStore = Mockito.mock(ActivityStore.class);
+    conversationServlet.setActivityStore(mockActivityStore);
   }
 
   @Test

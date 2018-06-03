@@ -71,6 +71,16 @@ public class MessageStore {
     persistentStorageAgent.writeThrough(message);
   }
 
+  /** Find and return the Message with the given UUID */
+  public Message getMessage(UUID id) {
+    for (Message message : messages) {
+      if (message.getId().equals(id)) {
+        return message;
+      }
+    }
+    return null;
+  }
+
   /** Access the current set of Messages within the given Conversation. */
   public List<Message> getMessagesInConversation(UUID conversationId) {
 

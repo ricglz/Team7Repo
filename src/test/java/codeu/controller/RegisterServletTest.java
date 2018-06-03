@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ActivityStore;
 
 public class RegisterServletTest {
 
@@ -23,15 +24,20 @@ public class RegisterServletTest {
   private HttpServletRequest mockRequest;
   private HttpServletResponse mockResponse;
   private RequestDispatcher mockRequestDispatcher;
+  private ActivityStore mockActivityStore;  
 
   @Before
   public void setup() {
     registerServlet = new RegisterServlet();
+    
     mockRequest = Mockito.mock(HttpServletRequest.class);
     mockResponse = Mockito.mock(HttpServletResponse.class);
     mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
     Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/register.jsp"))
         .thenReturn(mockRequestDispatcher);
+
+    mockActivityStore = Mockito.mock(ActivityStore.class);
+    registerServlet.setActivityStore(mockActivityStore);
   }
 
   @Test

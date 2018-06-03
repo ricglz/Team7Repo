@@ -14,9 +14,11 @@
 
 package codeu.model.store.persistence;
 
-import codeu.model.data.Conversation;
-import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.data.Message;
+import codeu.model.data.Conversation;
+import codeu.model.data.Activity;
+import codeu.model.data.ActivityType;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -150,7 +152,42 @@ public class PersistentDataStore {
     return messages;
   }
 
-  /** Write a User object to the Datastore service. */
+   /**
+   * Loads all Activity objects from the Datastore service and returns them in a List, sorted in
+   * ascending order by creation time.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Activity> loadActivities() throws PersistentDataStoreException {
+
+    List<Activity> activities = new ArrayList<>();
+
+    // Retrieve all messages from the datastore.
+    Query query = new Query("chat-activities").addSort("creation_time", SortDirection.ASCENDING);
+    PreparedQuery results = datastore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      try {
+        ActivityType activityType = ActivityType.values()[(int) entity.getProperty("activityType_ordinal")];
+        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        Activity activity = new Activity(activityType, uuid, creationTime);
+        activities.add(activity);
+      } catch (Exception e) {
+        // In a production environment, errors should be very rare. Errors which may
+        // occur include network errors, Datastore service errors, authorization errors,
+        // database entity definition mismatches, or service mismatches.
+        throw new PersistentDataStoreException(e);
+      }
+    }
+
+    return activities;
+  }
+
+  /** Write a User object to the Datastore service.
+   * Also add a corresponding Activity object to the datastore service. 
+   */
   public void writeThrough(User user) {
     Entity userEntity = new Entity("chat-users", user.getId().toString());
     userEntity.setProperty("uuid", user.getId().toString());
@@ -159,9 +196,17 @@ public class PersistentDataStore {
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     datastore.put(userEntity);
+
+    // Entity activityEntity = new Entity("chat-activities", user.getId().toString());
+    // activityEntity.setProperty("activityType_ordinal", Integer.toString(ActivityType.UserRegistered.ordinal()));
+    // activityEntity.setProperty("uuid", user.getId().toString());
+    // activityEntity.setProperty("creation_time", user.getCreationTime().toString());
+    // datastore.put(activityEntity);
   }
 
-  /** Write a Message object to the Datastore service. */
+  /** Write a Message object to the Datastore service. 
+   * Also add a corresponding Activity object to the datastore service. 
+   */
   public void writeThrough(Message message) {
     Entity messageEntity = new Entity("chat-messages", message.getId().toString());
     messageEntity.setProperty("uuid", message.getId().toString());
@@ -170,9 +215,17 @@ public class PersistentDataStore {
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
     datastore.put(messageEntity);
+
+    // Entity activityEntity = new Entity("chat-activities", message.getId().toString());
+    // activityEntity.setProperty("activityType_ordinal", Integer.toString(ActivityType.MessageSent.ordinal()));
+    // activityEntity.setProperty("uuid", message.getId().toString());
+    // activityEntity.setProperty("creation_time", message.getCreationTime().toString());
+    // datastore.put(activityEntity);    
   }
 
-  /** Write a Conversation object to the Datastore service. */
+  /** Write a Conversation object to the Datastore service. 
+   * Also add a corresponding Activity object to the datastore service. 
+   */
   public void writeThrough(Conversation conversation) {
     Entity conversationEntity = new Entity("chat-conversations", conversation.getId().toString());
     conversationEntity.setProperty("uuid", conversation.getId().toString());
@@ -180,6 +233,20 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+
+    // Entity activityEntity = new Entity("chat-activities", conversation.getId().toString());
+    // activityEntity.setProperty("activityType_ordinal", Integer.toString(ActivityType.ConversationCreated.ordinal()));
+    // activityEntity.setProperty("uuid", conversation.getId().toString());
+    // activityEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    // datastore.put(activityEntity);   
+  }
+
+  /** Write an Activity object to the Datastore service. */
+  public void writeThrough(Activity activity) {
+    Entity activityEntity = new Entity("chat-activities", activity.getId().toString());
+    activityEntity.setProperty("activityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
+    activityEntity.setProperty("uuid", activity.getId().toString());
+    activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
+    datastore.put(activityEntity);
   }
 }
-

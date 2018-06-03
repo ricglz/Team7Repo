@@ -2,32 +2,30 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Comparator;
+
 
 /**
- * Class representing an actvitiy
+ * Class representing an actvitiy.
  * 
  * Attributes:
  * - activityType (ActivityType)
  *  - UserRegistered
- *  - UserLoggedIn
  *  - ConversationCreated
  *  - MessageSent
  * - id (UUID)
- * - creation (Instant)
+ * - creationTime (Instant)
  */
-public class Activity {
-    private enum ActivityType {
-        UserRegistered, UserLoggedIn, ConversationCreated, MessageSent
-    }
+public class Activity implements Comparator<Activity> {
 
     private final ActivityType activityType;
     private final UUID id;
-    private final Instant creation;
+    private final Instant creationTime;
 
-    public Activity(ActivityType activityType, UUID id, Instant creation) {
+    public Activity(ActivityType activityType, UUID id, Instant creationTime) {
         this.activityType = activityType;
         this.id = id;
-        this.creation = creation;
+        this.creationTime = creationTime;
     }
 
     public ActivityType getActivityType() {
@@ -38,7 +36,15 @@ public class Activity {
         return id;
     }
 
-    public Instant getCreation() {
-        return creation;
+    public Instant getCreationTime() {
+        return creationTime;
+    }
+
+    /** 
+     * Compare two activites, based on creationTime time.
+     */
+    @Override
+    public int compare(Activity activity1, Activity activity2) {
+        return activity1.getCreationTime().compareTo(activity2.getCreationTime());
     }
 }
