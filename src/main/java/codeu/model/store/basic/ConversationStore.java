@@ -73,12 +73,10 @@ public class ConversationStore {
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {
     conversations.add(conversation);
-    conversations.sort(Conversation.conversationComparator);
     persistentStorageAgent.writeThrough(conversation);
   }
 
   public void updateConversation(Conversation conversation) {
-    conversations.sort(Conversation.conversationComparator);
     persistentStorageAgent.writeThrough(conversation);
   }
 
@@ -113,17 +111,22 @@ public class ConversationStore {
     return conversations.size();
   }
   /** Returns the title of the most active conversation */
-  public String getMostActiveConversation() {
-    return getLastConversation().getTitle();
+  public String getMostActiveConversationTitle() {
+    return getMostActiveConversation().getTitle();
   }
 
   /** Returns the amount of messages of the most active conversation */
   public long getMaxMessageCount() {
-    return getLastConversation().getMessageCount();
+    return getMostActiveConversation().getMessageCount();
   }
 
   /** Returns the last Conversation of the conversations list */
-  public Conversation getLastConversation() {
+  public Conversation getMostActiveConversation() {
     return conversations.get(conversations.size()-1);
+  }
+
+  /** Method to sort the conversations contained in the list */
+  public void sort() {
+    conversations.sort(Conversation.conversationComparator);
   }
 }

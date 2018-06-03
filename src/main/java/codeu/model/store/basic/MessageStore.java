@@ -68,7 +68,6 @@ public class MessageStore {
   /** Add a new message to the current set of messages known to the application. */
   public void addMessage(Message message) {
     messages.add(message);
-    messages.sort(Message.messageComparator);
     persistentStorageAgent.writeThrough(message);
   }
 
@@ -99,5 +98,10 @@ public class MessageStore {
   /** Returns the longest message */
   public Message getLongestMessage() {
     return messages.get(messages.size()-1);
+  }
+
+  /** Method to sort the messages contained in the list */
+  public void sort() {
+    messages.sort(Message.messageComparator);
   }
 }

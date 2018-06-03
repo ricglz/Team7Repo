@@ -58,7 +58,7 @@ public class PersistentDataStore {
     List<User> users = new ArrayList<>();
 
     // Retrieve all users from the datastore.
-    Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);;
+    Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {

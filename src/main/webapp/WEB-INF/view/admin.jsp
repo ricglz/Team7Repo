@@ -20,8 +20,11 @@
 
 <%
   UserStore userStore = UserStore.getInstance();
+  userStore.sort();
   ConversationStore conversationStore = ConversationStore.getInstance();
+  conversationStore.sort();
   MessageStore messageStore = MessageStore.getInstance();
+  messageStore.sort();
   Message longestMessage;
 %>
 
@@ -44,10 +47,12 @@
       <li>Users: <%=userStore.getUserCount()%></li>
       <li>Messages: <%=messageStore.getMessagesCount()%></li>
       <%if(userStore.getUserCount() != 0) {%>
-        <li>Most active user: <%=userStore.getMostActiveUser()%> with <%=userStore.getMaxMessageCount()%> messages</li>
+        <li>Most active user: <%=userStore.getMostActiveUserName()%> 
+            with <%=userStore.getMaxMessageCount()%> messages</li>
       <%}%>
       <%if(conversationStore.getConversationCount() != 0){%>
-        <li>Most active conversation: <%=conversationStore.getMostActiveConversation()%> with <%=conversationStore.getMaxMessageCount()%> messages
+        <li>Most active conversation: <%=conversationStore.getMostActiveConversationTitle()%> 
+            with <%=conversationStore.getMaxMessageCount()%> messages
       <%}%>
       <%if(messageStore.getMessagesCount() != 0) {
         longestMessage = messageStore.getLongestMessage();

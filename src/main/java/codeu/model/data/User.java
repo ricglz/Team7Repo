@@ -35,26 +35,32 @@ public class User {
    * @param name         the username of this User
    * @param passwordHash the password hash of this User
    * @param creation     the creation time of this User
-   * @param creation the creation time of this User
-   * @param description of the username from profile section
+   * @param mesageCount  the message count of this User
+   * @param isAdmin      if the user is an admin or not
+   * @param description  of the username from profile section
    */
-  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
-    this.id = id;
-    this.name = name;
-    this.passwordHash = passwordHash;
-    this.creation = creation;
-    this.messageCount = 0;
-    this.isAdmin = isAdmin;
-    this.description = "";
-  }
-
-  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, boolean isAdmin, String description) {
+  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, 
+              boolean isAdmin, String description) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = messageCount;
     this.isAdmin = isAdmin;
+    this.description = description;
+  }
+
+  /**
+   * Constructs a new User.
+   *
+   * @param id           the ID of this User
+   * @param name         the username of this User
+   * @param passwordHash the password hash of this User
+   * @param creation     the creation time of this User
+   * @param isAdmin      if the user is an admin or not
+   */
+  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
+    this(id, name, passwordHash, creation, 0, isAdmin, "");
   }
 
   /** Increases the message count amount by one */

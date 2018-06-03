@@ -74,7 +74,7 @@ public class AdminServletTest {
   }
 
   @Test
-  public void testdoPost_unexistantUser() throws IOException, ServletException {
+  public void testdoPost_nonexistenttUser() throws IOException, ServletException {
     Mockito.when(mockRequest.getParameter("username")).thenReturn("test_username");
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(null);
 

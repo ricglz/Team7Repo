@@ -100,7 +100,6 @@ public class UserStore {
    */
   public void addUser(User user) {
     users.add(user);
-    users.sort(User.userComparator);
     persistentStorageAgent.writeThrough(user);
   }
 
@@ -108,7 +107,6 @@ public class UserStore {
    * Update an existing User.
    */
   public void updateUser(User user) {
-    users.sort(User.userComparator);
     persistentStorageAgent.writeThrough(user);
   }
 
@@ -136,18 +134,23 @@ public class UserStore {
   }
 
   /** Returns the name of the most active User */
-  public String getMostActiveUser() {
-    return getLastUser().getName();
+  public String getMostActiveUserName() {
+    return getMostActiveUser().getName();
   }
 
   /** Returns the amount of messages of the most active user */
   public long getMaxMessageCount() {
-    return getLastUser().getMessageCount();
+    return getMostActiveUser().getMessageCount();
   }
 
   /** Returns the last User of the users list */
-  public User getLastUser() {
+  public User getMostActiveUser() {
     return users.get(users.size() - 1);
+  }
+
+  /** Method to sort the users contained in the list */
+  public void sort() {
+    users.sort(User.userComparator);
   }
 
 }
