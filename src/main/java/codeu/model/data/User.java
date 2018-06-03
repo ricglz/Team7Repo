@@ -38,13 +38,14 @@ public class User {
    * @param creation the creation time of this User
    * @param description of the username from profile section
    */
-  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin, String description) {
+  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = 0;
     this.isAdmin = isAdmin;
+    this.description = "";
   }
 
   public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, boolean isAdmin, String description) {
@@ -59,19 +60,6 @@ public class User {
   /** Increases the message count amount by one */
   public void increaseMessageCount(){
     messageCount++;
-    this.description = description;
-  }
-
-  /**
-   *
-   * @param id the ID of this User
-   * @param name the username of this User
-   * @param passwordHash the password hash of this User
-   * @param creation the creation time of this User
-   * @param "" for the user who is writing their description for first time
-   */
-  public User(UUID id, String name, String passwordHash, Instant creation) {
-    this(id, name, passwordHash, creation, "");
   }
 
   /** Returns the ID of this User. */
