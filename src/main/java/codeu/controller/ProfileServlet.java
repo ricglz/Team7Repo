@@ -8,7 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 
 public class ProfileServlet extends HttpServlet {
 
@@ -62,9 +64,11 @@ public class ProfileServlet extends HttpServlet {
             response.sendRedirect("/login");
             return;
         }
-        userToUpdate.setDescription(description);
+        // this removes any HTML from the description content
+        String cleanedMessageContent = Jsoup.clean(description, Whitelist.none());
+        userToUpdate.setDescription(cleanedMessageContent);
         userStore.updateUser(userToUpdate);
-        request.getSession().setAttribute("description", description);
+        request.getSession().setAttribute("description", cleanedMessageContent);
         response.sendRedirect("/profile");
     }
 }
