@@ -113,39 +113,44 @@ public class ActivityStore {
     }
 
     public void addActivity(User user) {
-        String[] displayStringParameters = {user.getCreationTime().toString(),
-                                            user.getName()}; 
+        List<String> displayStringParameters = new ArrayList<>();
+        displayStringParameters.add(user.getCreationTime().toString());
+        displayStringParameters.add(user.getName());        
         Activity activity = new Activity(Activity.ActivityType.UserRegistered, 
                                          user.getId(),
                                          user.getCreationTime(),
                                          displayStringParameters);
+
         activities.add(activity);
         persistentStorageAgent.writeThrough(activity);
     }
 
     public void addActivity(Message message) {
-        String[] displayStringParameters = {message.getCreationTime().toString(),
-                                            UserStore.getInstance()
-                                                .getUser(message.getAuthorId())
-                                                .getName(),
-                                            ConversationStore.getInstance()
-                                                .getConversationWithUUID(message
-                                                .getConversationId()).getTitle(),
-                                            message.getContent()}; 
+        List<String> displayStringParameters = new ArrayList<>();
+        displayStringParameters.add(message.getCreationTime().toString());
+        displayStringParameters.add(UserStore.getInstance()
+            .getUser(message.getAuthorId())
+            .getName());
+        displayStringParameters.add(ConversationStore.getInstance()
+            .getConversationWithUUID(message
+            .getConversationId()).getTitle());
+        displayStringParameters.add(message.getContent());
         Activity activity = new Activity(Activity.ActivityType.MessageSent, 
                                          message.getId(),
                                          message.getCreationTime(),
                                          displayStringParameters);
+
         activities.add(activity);
         persistentStorageAgent.writeThrough(activity);
     }
 
     public void addActivity(Conversation conversation) {
-        String[] displayStringParameters = {conversation.getCreationTime().toString(),
-                                            UserStore.getInstance()
-                                                .getUser(conversation.getOwnerId())
-                                                .getName(),
-                                            conversation.getTitle()};
+        List<String> displayStringParameters = new ArrayList<>();
+        displayStringParameters.add(conversation.getCreationTime().toString());
+        displayStringParameters.add(UserStore.getInstance()
+            .getUser(conversation.getOwnerId())
+            .getName());  
+        displayStringParameters.add(conversation.getTitle());
         Activity activity = new Activity(Activity.ActivityType.ConversationCreated, 
                                          conversation.getId(),
                                          conversation.getCreationTime(),

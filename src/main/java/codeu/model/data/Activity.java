@@ -3,6 +3,7 @@ package codeu.model.data;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -34,7 +35,7 @@ public class Activity implements Comparable<Activity> {
                 // Second %2$s = username
                 // Third %3$s = conversation title
                 // Fourth %4$s = message content
-                return "<strong>%1$s</strong>: %2$s sent a message in <a href=\"/chat/%3$s\">%3$s</a>: \"%$4s\"";
+                return "<strong>%1$s</strong>: %2$s sent a message in <a href=\"/chat/%3$s\">%3$s</a>: \"%4$s\"";
             }
         },
 
@@ -55,9 +56,9 @@ public class Activity implements Comparable<Activity> {
     private final ActivityType activityType;
     private final UUID id;
     private final Instant creationTime;
-    private final String[] displayStringParameters;
+    private final List<String> displayStringParameters;
 
-    public Activity(ActivityType activityType, UUID id, Instant creationTime, String[] displayStringParameters) {
+    public Activity(ActivityType activityType, UUID id, Instant creationTime, List<String> displayStringParameters) {
         this.activityType = activityType;
         this.id = id;
         this.creationTime = creationTime;
@@ -76,12 +77,12 @@ public class Activity implements Comparable<Activity> {
         return creationTime;
     }
 
-    public String[] getDisplayStringParameters() {
+    public List<String> getDisplayStringParameters() {
         return displayStringParameters;
     }
 
     public String getDisplayString() {
-        return String.format(activityType.getDisplayStringFormat(), displayStringParameters);
+        return String.format(activityType.getDisplayStringFormat(), displayStringParameters.toArray());
     }
 
     /** 

@@ -61,11 +61,6 @@ public class ActivityServletTest {
         Mockito.when(mockUserStore.getUser("test_username")).thenReturn(mockUser);
 
         List<Activity> fakeActivityList = new ArrayList<>();
-        fakeActivityList.add(
-            new Activity(Activity.ActivityType.UserRegistered,
-                         UUID.randomUUID(),
-                         Instant.now(),
-                         new String[]{Instant.now().toString(),"test_username"}));
         Mockito.when(mockActivityStore.getAllSortedActivities()).thenReturn(fakeActivityList);
 
         activityServlet.doGet(mockRequest, mockResponse);
