@@ -16,6 +16,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -76,6 +77,10 @@ public class ConversationStore {
     persistentStorageAgent.writeThrough(conversation);
   }
 
+  public void updateConversation(Conversation conversation) {
+    persistentStorageAgent.writeThrough(conversation);
+  }
+
   /** Check whether a Conversation title is already known to the application. */
   public boolean isTitleTaken(String title) {
     // This approach will be pretty slow if we have many Conversations.
@@ -113,7 +118,27 @@ public class ConversationStore {
   }
 
   /** Returns the count of total conversations stored */
-  public int getConversationCount(){
+  public int getConversationCount() {
     return conversations.size();
+  }
+  /** Returns the title of the most active conversation */
+  public String getMostActiveConversationTitle() {
+    sort();
+    return getMostActiveConversation().getTitle();
+  }
+
+  /** Returns the amount of messages of the most active conversation */
+  public long getMaxMessageCount() {
+    return getMostActiveConversation().getMessageCount();
+  }
+
+  /** Returns the last Conversation of the conversations list */
+  public Conversation getMostActiveConversation() {
+    return conversations.get(conversations.size()-1);
+  }
+
+  /** Method to sort the conversations contained in the list */
+  public void sort() {
+    conversations.sort(Conversation.conversationComparator);
   }
 }

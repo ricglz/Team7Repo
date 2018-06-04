@@ -15,10 +15,14 @@
 --%>
 <%@ page import="codeu.model.store.basic.ConversationStore" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
+<%@ page import="codeu.model.data.Message" %>
 
 <%
   UserStore userStore = UserStore.getInstance();
   ConversationStore conversationStore = ConversationStore.getInstance();
+  MessageStore messageStore = MessageStore.getInstance();
+  Message longestMessage;
 %>
 
 <!DOCTYPE html>
@@ -36,9 +40,39 @@
   <div class="stat-information" id="container">
     <h1>Statistics</h1>
     <ul>
-      <li>Total amount of conversations: <%=conversationStore.getConversationCount()%></li>
-      <li>Total amount of user: <%=userStore.getUserCount()%></li>
+      <li>Conversations: <%=conversationStore.getConversationCount()%></li>
+      <li>Users: <%=userStore.getUserCount()%></li>
+      <li>Messages: <%=messageStore.getMessagesCount()%></li>
+      <%if(userStore.getUserCount() != 0) {%>
+        <li>Most active user: <%=userStore.getMostActiveUserName()%> 
+            with <%=userStore.getMaxMessageCount()%> messages</li>
+      <%}%>
+      <%if(conversationStore.getConversationCount() != 0){%>
+        <li>Most active conversation: <%=conversationStore.getMostActiveConversationTitle()%> 
+            with <%=conversationStore.getMaxMessageCount()%> messages
+      <%}%>
+      <%if(messageStore.getMessagesCount() != 0) {
+        longestMessage = messageStore.getLongestMessage();
+      %>
+        <li>Longest message: <%=longestMessage.getContent().length()-1%> letters
+      <%}%>
     </ul>
+    <hr>
+    <% if(request.getAttribute("error") != null){ %>
+        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+    <% } %>
+
+    <% if(request.getAttribute("message") != null){ %>
+        <h2 style="color:blue"><%= request.getAttribute("message") %></h2>
+    <% } %>
+    <h1>Add admin</h1>
+    <form action="/admin" method="POST">
+      <label for="username">Username: </label>
+      <br/>
+      <input type="text" name="username" id="username">
+      <br/><br/>
+      <button type="submit">Login</button>
+    </form>
   </div>
 </body>
 </html>

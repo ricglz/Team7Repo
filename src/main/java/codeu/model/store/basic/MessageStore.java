@@ -99,4 +99,20 @@ public class MessageStore {
   public void setMessages(List<Message> messages) {
     this.messages = messages;
   }
+
+  /** Returns the count of total messages stored */
+  public int getMessagesCount() {
+    return messages.size();
+  }
+
+  /** Returns the longest message */
+  public Message getLongestMessage() {
+    sort();
+    return messages.get(messages.size()-1);
+  }
+
+  /** Method to sort the messages contained in the list */
+  public void sort() {
+    messages.sort(Message.messageComparator);
+  }
 }

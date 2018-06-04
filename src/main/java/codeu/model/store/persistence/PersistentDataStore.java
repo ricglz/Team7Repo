@@ -59,7 +59,7 @@ public class PersistentDataStore {
     List<User> users = new ArrayList<>();
 
     // Retrieve all users from the datastore.
-    Query query = new Query("chat-users");
+    Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
@@ -69,7 +69,9 @@ public class PersistentDataStore {
         String description = (String) entity.getProperty("description");
         String passwordHash = (String) entity.getProperty("password_hash");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        User user = new User(uuid, userName, passwordHash, creationTime, description);
+        long messageCount = (Long) entity.getProperty("message_count");
+        boolean isAdmin = (boolean) entity.getProperty("is_admin");
+        User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -94,7 +96,7 @@ public class PersistentDataStore {
     List<Conversation> conversations = new ArrayList<>();
 
     // Retrieve all conversations from the datastore.
-    Query query = new Query("chat-conversations").addSort("creation_time", SortDirection.ASCENDING);
+    Query query = new Query("chat-conversations").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
 
     for (Entity entity : results.asIterable()) {
@@ -103,7 +105,8 @@ public class PersistentDataStore {
         UUID ownerUuid = UUID.fromString((String) entity.getProperty("owner_uuid"));
         String title = (String) entity.getProperty("title");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime);
+        long messageCount = (Long) entity.getProperty("message_count");
+        Conversation conversation = new Conversation(uuid, ownerUuid, title, creationTime, messageCount);
         conversations.add(conversation);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -147,7 +150,6 @@ public class PersistentDataStore {
         throw new PersistentDataStoreException(e);
       }
     }
-
     return messages;
   }
 
@@ -171,7 +173,7 @@ public class PersistentDataStore {
         Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("ActivityType_ordinal")];
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");      
+        List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");
         Activity activity = new Activity(activityType, uuid, creationTime, displayStringParameters);
         activities.add(activity);
       } catch (Exception e) {
@@ -193,6 +195,8 @@ public class PersistentDataStore {
     userEntity.setProperty("description", user.getDescription());
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
+    userEntity.setProperty("message_count", user.getMessageCount());
+    userEntity.setProperty("is_admin", user.isAdmin());
     datastore.put(userEntity);
   }
 
@@ -204,7 +208,7 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
-    datastore.put(messageEntity); 
+    datastore.put(messageEntity);
   }
 
   /** Write a Conversation object to the Datastore service. */
@@ -214,16 +218,16 @@ public class PersistentDataStore {
     conversationEntity.setProperty("owner_uuid", conversation.getOwnerId().toString());
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
+    conversationEntity.setProperty("message_count", conversation.getMessageCount());
     datastore.put(conversationEntity);
   }
 
-  /** Write an Activity object to the Datastore service. */
   public void writeThrough(Activity activity) {
     Entity activityEntity = new Entity("chat-activities", activity.getId().toString());
     activityEntity.setProperty("ActivityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
     activityEntity.setProperty("uuid", activity.getId().toString());
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
-    activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());       
+    activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());
     datastore.put(activityEntity);
   }
 }
