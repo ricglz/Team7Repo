@@ -168,17 +168,11 @@ public class PersistentDataStore {
 
     for (Entity entity : results.asIterable()) {
       try {
-        // System.out.println("FIND ME"+entity.getProperty("Activity.ActivityType_ordinal"));
-        // int id = (entity.getProperty("Activity.ActivityType_ordinal") == null) ? 
-        // (int) entity.getProperty("Activity.ActivityType_ordinal") : 404;
-        Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("Activity.ActivityType_ordinal")];
-        // System.out.println("FIND ME2"+activityType);
+        Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("ActivityType_ordinal")];
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        // String[] displayStringParameters = ((String) entity.getProperty("display_string_parameters")).split("#delimiter#");
         String[] displayStringParameters = (String []) entity.getProperty("display_string_parameters");      
         Activity activity = new Activity(activityType, uuid, creationTime, displayStringParameters);
-        // Activity activity = new Activity(activityType, uuid, creationTime, new String[] {});
         activities.add(activity);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -229,7 +223,6 @@ public class PersistentDataStore {
     activityEntity.setProperty("ActivityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
     activityEntity.setProperty("uuid", activity.getId().toString());
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
-    activityEntity.setProperty("display_string_parameters", String.join("#",activity.getDisplayStringParameters())); 
     activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());       
     datastore.put(activityEntity);
   }
