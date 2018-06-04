@@ -4,12 +4,10 @@ import codeu.model.data.User;
 import codeu.model.data.Message;
 import codeu.model.data.Conversation;
 import codeu.model.data.Activity;
-import codeu.model.data.ActivityType;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.time.Instant;
 
 /**
@@ -60,7 +58,7 @@ public class ActivityStore {
      * Access all Activity objects.
      */
     public List<Activity> getAllActivities() {
-        return activities;
+        return new ArrayList<>(activities);
     }
 
     /**
@@ -80,14 +78,13 @@ public class ActivityStore {
      */
     public List<Activity> getActivitiesMadeOnOrAfter(Instant instant) {
         int index = -1; // Index to take a sublist up to, exclusive
-        List<Activity> sortedActivities = getAllActivities();
+        List<Activity> sortedActivities = getAllSortedActivities();
         for (int i=0; i < sortedActivities.size(); i++) {
             if (sortedActivities.get(i).getCreationTime().compareTo(instant) < 0) {
                 index = i;
                 break;
             }
         }
-
         if (index != -1) {
             return sortedActivities.subList(0,index);
         } else {
@@ -103,9 +100,9 @@ public class ActivityStore {
      */
     public List<Activity> getActivitiesBatch(int startIndex, int batchSize) {
         if (startIndex + batchSize > activities.size()) {
-            return getAllActivities().subList(startIndex, activities.size());
+            return getAllSortedActivities().subList(startIndex, activities.size());
         } else {
-            return getAllActivities().subList(startIndex, startIndex + batchSize);
+            return getAllSortedActivities().subList(startIndex, startIndex + batchSize);
         }
     }
 
@@ -116,19 +113,43 @@ public class ActivityStore {
     }
 
     public void addActivity(User user) {
-        Activity activity = new Activity(ActivityType.UserRegistered, user.getId(), user.getCreationTime());
+        String[] displayStringParameters = {user.getCreationTime().toString(),
+                                            user.getName()}; 
+        Activity activity = new Activity(Activity.ActivityType.UserRegistered, 
+                                         user.getId(),
+                                         user.getCreationTime(),
+                                         displayStringParameters);
         activities.add(activity);
         persistentStorageAgent.writeThrough(activity);
     }
 
     public void addActivity(Message message) {
-        Activity activity = new Activity(ActivityType.MessageSent, message.getId(), message.getCreationTime());
+        String[] displayStringParameters = {message.getCreationTime().toString(),
+                                            UserStore.getInstance()
+                                                .getUser(message.getAuthorId())
+                                                .getName(),
+                                            ConversationStore.getInstance()
+                                                .getConversationWithUUID(message
+                                                .getConversationId()).getTitle(),
+                                            message.getContent()}; 
+        Activity activity = new Activity(Activity.ActivityType.MessageSent, 
+                                         message.getId(),
+                                         message.getCreationTime(),
+                                         displayStringParameters);
         activities.add(activity);
         persistentStorageAgent.writeThrough(activity);
     }
 
     public void addActivity(Conversation conversation) {
-        Activity activity = new Activity(ActivityType.ConversationCreated, conversation.getId(), conversation.getCreationTime());                
+        String[] displayStringParameters = {conversation.getCreationTime().toString(),
+                                            UserStore.getInstance()
+                                                .getUser(conversation.getOwnerId())
+                                                .getName(),
+                                            conversation.getTitle()};
+        Activity activity = new Activity(Activity.ActivityType.ConversationCreated, 
+                                         conversation.getId(),
+                                         conversation.getCreationTime(),
+                                         displayStringParameters);             
         activities.add(activity);
         persistentStorageAgent.writeThrough(activity);
     }

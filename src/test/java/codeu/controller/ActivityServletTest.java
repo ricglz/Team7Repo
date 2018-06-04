@@ -2,10 +2,8 @@ package codeu.controller;
 
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.ActivityStore;
-import codeu.model.data.ActivityType;
 import codeu.model.data.User;
 import codeu.model.data.Activity;
-import codeu.model.data.ActivityType;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -63,7 +61,10 @@ public class ActivityServletTest {
 
         List<Activity> fakeActivityList = new ArrayList<>();
         fakeActivityList.add(
-            new Activity(ActivityType.UserRegistered, UUID.randomUUID(), Instant.now())
+            new Activity(Activity.ActivityType.UserRegistered,
+                         UUID.randomUUID(),
+                         Instant.now(),
+                         new String[]{Instant.now().toString(),"test_username"})
         );
         Mockito.when(mockActivityStore.getAllSortedActivities()).thenReturn(fakeActivityList);
 

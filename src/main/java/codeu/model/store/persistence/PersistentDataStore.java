@@ -168,10 +168,17 @@ public class PersistentDataStore {
 
     for (Entity entity : results.asIterable()) {
       try {
-        Activity.ActivityType Activity.ActivityType = Activity.ActivityType.values()[(int) entity.getProperty("Activity.ActivityType_ordinal")];
+        // System.out.println("FIND ME"+entity.getProperty("Activity.ActivityType_ordinal"));
+        // int id = (entity.getProperty("Activity.ActivityType_ordinal") == null) ? 
+        // (int) entity.getProperty("Activity.ActivityType_ordinal") : 404;
+        Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("Activity.ActivityType_ordinal")];
+        // System.out.println("FIND ME2"+activityType);
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        Activity activity = new Activity(Activity.ActivityType, uuid, creationTime);
+        // String[] displayStringParameters = ((String) entity.getProperty("display_string_parameters")).split("#delimiter#");
+        String[] displayStringParameters = (String []) entity.getProperty("display_string_parameters");      
+        Activity activity = new Activity(activityType, uuid, creationTime, displayStringParameters);
+        // Activity activity = new Activity(activityType, uuid, creationTime, new String[] {});
         activities.add(activity);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -219,9 +226,11 @@ public class PersistentDataStore {
   /** Write an Activity object to the Datastore service. */
   public void writeThrough(Activity activity) {
     Entity activityEntity = new Entity("chat-activities", activity.getId().toString());
-    activityEntity.setProperty("Activity.ActivityType_ordinal", Integer.toString(activity.getActivity.ActivityType().ordinal()));
+    activityEntity.setProperty("ActivityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
     activityEntity.setProperty("uuid", activity.getId().toString());
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
+    activityEntity.setProperty("display_string_parameters", String.join("#",activity.getDisplayStringParameters())); 
+    activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());       
     datastore.put(activityEntity);
   }
 }
