@@ -31,7 +31,7 @@ public class User {
   private boolean isAdmin;
   private  String description;
   private static final List<String> DEFAULT_ADMIN_LIST = Lists.newArrayList("Ricardo", "Manjil", 
-                                                                        "Kirielle", "Kirielle");
+                                                                        "Kirielle", "Tofe");
 
   /**
    * Constructs a new User.
