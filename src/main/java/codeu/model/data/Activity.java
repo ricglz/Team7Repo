@@ -9,23 +9,59 @@ import java.util.Comparator;
  * Class representing an actvitiy.
  * 
  * Attributes:
- * - activityType (ActivityType)
+ * - ActivityType (ActivityType)
  *  - UserRegistered
  *  - ConversationCreated
  *  - MessageSent
  * - id (UUID)
  * - creationTime (Instant)
  */
-public class Activity implements Comparator<Activity> {
+public class Activity implements Comparable<Activity> {
+    public enum ActivityType {
+        UserRegistered {
+            @Override
+            public String getDisplayStringFormat() {
+                // First %1$s = time
+                // Second %2$s = username
+                return "<strong>%1$s</strong>: %2$s joined!";
+            }
+        },
+
+        MessageSent {
+            @Override
+            public String getDisplayStringFormat() {
+                // First %1$s = time
+                // Second %2$s = username
+                // Third %3$s = conversation title
+                // Fourth %4$s = message content
+                return "<strong>%1$s</strong>: %2$s sent a message in <a href=\"/chat/%3$s\">%3$s</a>: \"%$4s\"";
+            }
+        },
+
+        ConversationCreated {
+            @Override
+            public String getDisplayStringFormat() {
+                // First %1$s = time
+                // Second %2$s = username
+                // Third %3$s = conversation title
+                return "<strong>%1$s</strong>: %2$s created a new conversation: <a href=\"/chat/%3$s\">%3$s</a>";
+            }
+        };
+
+        public abstract String getDisplayStringFormat();
+    }
+    
 
     private final ActivityType activityType;
     private final UUID id;
     private final Instant creationTime;
+    private final String[] displayStringParameters;
 
-    public Activity(ActivityType activityType, UUID id, Instant creationTime) {
+    public Activity(ActivityType activityType, UUID id, Instant creationTime, String[] displayStringParameters) {
         this.activityType = activityType;
         this.id = id;
         this.creationTime = creationTime;
+        this.displayStringParameters = displayStringParameters;
     }
 
     public ActivityType getActivityType() {
@@ -40,11 +76,19 @@ public class Activity implements Comparator<Activity> {
         return creationTime;
     }
 
+    public String[] getDisplayStringParameters() {
+        return displayStringParameters;
+    }
+
+    public String getDisplayString() {
+        return String.format(activityType.getDisplayStringFormat(), displayStringParameters);
+    }
+
     /** 
      * Compare two activites, based on creationTime time.
      */
     @Override
-    public int compare(Activity activity1, Activity activity2) {
-        return activity1.getCreationTime().compareTo(activity2.getCreationTime());
+    public int compareTo(Activity otherActivity) {
+        return getCreationTime().compareTo(otherActivity.getCreationTime());
     }
 }
