@@ -20,11 +20,8 @@
 
 <%
   UserStore userStore = UserStore.getInstance();
-  userStore.sort();
   ConversationStore conversationStore = ConversationStore.getInstance();
-  conversationStore.sort();
   MessageStore messageStore = MessageStore.getInstance();
-  messageStore.sort();
   Message longestMessage;
 %>
 

@@ -112,6 +112,7 @@ public class ConversationStore {
   }
   /** Returns the title of the most active conversation */
   public String getMostActiveConversationTitle() {
+    sort();
     return getMostActiveConversation().getTitle();
   }
 

@@ -135,6 +135,7 @@ public class UserStore {
 
   /** Returns the name of the most active User */
   public String getMostActiveUserName() {
+    sort();
     return getMostActiveUser().getName();
   }
 

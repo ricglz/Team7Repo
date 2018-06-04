@@ -97,6 +97,7 @@ public class MessageStore {
 
   /** Returns the longest message */
   public Message getLongestMessage() {
+    sort();
     return messages.get(messages.size()-1);
   }
 

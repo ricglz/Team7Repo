@@ -46,7 +46,7 @@ public class User {
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = messageCount;
-    this.isAdmin = isAdmin;
+    this.isAdmin = isAdmin || checkIfIsAdmin(name);
     this.description = description;
   }
 
@@ -59,8 +59,13 @@ public class User {
    * @param creation     the creation time of this User
    * @param isAdmin      if the user is an admin or not
    */
-  public User(UUID id, String name, String passwordHash, Instant creation, boolean isAdmin) {
-    this(id, name, passwordHash, creation, 0, isAdmin, "");
+  public User(UUID id, String name, String passwordHash, Instant creation) {
+    this(id, name, passwordHash, creation, 0, false, "");
+  }
+
+  private Boolean checkIfIsAdmin(String name) {
+    return name.equals("Ricardo") || name.equals("Manjil") 
+        || name.equals("Kirielle") || name.equals("Tofe");
   }
 
   /** Increases the message count amount by one */

@@ -2,8 +2,6 @@ package codeu.controller;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -66,15 +64,13 @@ public class RegisterServlet extends HttpServlet {
     String password = request.getParameter("password");
     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-    List <String> validAdmins = new ArrayList<>();
+    /*List <String> validAdmins = List.newArrayList("Ricardo", "Manjil");
     validAdmins.add("Ricardo");
     validAdmins.add("Manjil");
     validAdmins.add("Kirielle");
-    validAdmins.add("Tofe");
+    validAdmins.add("Tofe");*/
 
-    boolean isAdmin = validAdmins.contains(username);
-
-    User user = new User(UUID.randomUUID(), username, hashedPassword, Instant.now(), isAdmin);
+    User user = new User(UUID.randomUUID(), username, hashedPassword, Instant.now());
     userStore.addUser(user);
 
     response.sendRedirect("/login");

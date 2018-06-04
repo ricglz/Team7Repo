@@ -85,16 +85,16 @@ public class AdminServletTest {
 
   @Test
   public void testdoPost_alreadyAnAdmin() throws IOException, ServletException {
-    Mockito.when(mockRequest.getParameter("username")).thenReturn("test_username");
+    Mockito.when(mockRequest.getParameter("username")).thenReturn("Ricardo");
     User user =
       new User(
         UUID.randomUUID(),
-        "test_username",
+        "Ricardo",
         "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",
-        Instant.now(), true);
+        Instant.now());
     UserStore mockUserStore = Mockito.mock(UserStore.class);
-    Mockito.when(mockUserStore.isUserRegistered("test_username")).thenReturn(true);
-    Mockito.when(mockUserStore.getUser("test_username")).thenReturn(user);
+    Mockito.when(mockUserStore.isUserRegistered("Ricardo")).thenReturn(true);
+    Mockito.when(mockUserStore.getUser("Ricardo")).thenReturn(user);
     adminServlet.setUserStore(mockUserStore);
 
     adminServlet.doPost(mockRequest, mockResponse);
@@ -110,7 +110,7 @@ public class AdminServletTest {
         UUID.randomUUID(),
         "test_username",
         "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",
-        Instant.now(), false);
+        Instant.now());
     UserStore mockUserStore = Mockito.mock(UserStore.class);
     Mockito.when(mockUserStore.isUserRegistered("test_username")).thenReturn(true);
     Mockito.when(mockUserStore.getUser("test_username")).thenReturn(user);
