@@ -77,19 +77,14 @@ public class ActivityStore {
      * @param instant time that the Activity objects must be created on or after
      */
     public List<Activity> getActivitiesMadeOnOrAfter(Instant instant) {
-        int index = -1; // Index to take a sublist up to, exclusive
-        List<Activity> sortedActivities = getAllSortedActivities();
-        for (int i=0; i < sortedActivities.size(); i++) {
-            if (sortedActivities.get(i).getCreationTime().compareTo(instant) < 0) {
-                index = i;
-                break;
+        List<Activity> activitiesMadeOnOrAfter = new ArrayList<>();
+        for (int i=0; i < activities.size(); i++) {
+            if (activities.get(i).getCreationTime().compareTo(instant) >= 0) {
+                activitiesMadeOnOrAfter.add(activities.get(i));
             }
         }
-        if (index != -1) {
-            return sortedActivities.subList(0,index);
-        } else {
-            return sortedActivities;
-        }
+        activitiesMadeOnOrAfter.sort(Collections.reverseOrder());
+        return activitiesMadeOnOrAfter;
     }
 
     /**
@@ -149,7 +144,7 @@ public class ActivityStore {
         displayStringParameters.add(conversation.getCreationTime().toString());
         displayStringParameters.add(UserStore.getInstance()
             .getUser(conversation.getOwnerId())
-            .getName());  
+            .getName());
         displayStringParameters.add(conversation.getTitle());
         Activity activity = new Activity(Activity.ActivityType.ConversationCreated, 
                                          conversation.getId(),
