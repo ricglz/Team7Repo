@@ -30,13 +30,16 @@ public class ProfileServletTest {
 
         profileServlet = new ProfileServlet();
         mockRequest = Mockito.mock(HttpServletRequest.class);
+
         mockSession = Mockito.mock(HttpSession.class);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
 
         setupFakeUser();
 
         mockUserStore = Mockito.mock(UserStore.class);
         profileServlet.setUserStore(mockUserStore);
-        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+
+
         mockResponse = Mockito.mock(HttpServletResponse.class);
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
 
@@ -62,7 +65,6 @@ public class ProfileServletTest {
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
 
         Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
-        System.out.println("name" + mockUserStore.getUser(TEST_USERNAME));
 
         profileServlet.doGet(mockRequest, mockResponse);
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
