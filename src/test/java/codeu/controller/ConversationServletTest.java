@@ -168,6 +168,8 @@ public class ConversationServletTest {
     ArgumentCaptor<Conversation> conversationArgumentCaptor =
         ArgumentCaptor.forClass(Conversation.class);
     Mockito.verify(mockConversationStore).addConversation(conversationArgumentCaptor.capture());
+    Mockito.verify(mockActivityStore).addActivity(conversationArgumentCaptor.capture());
+
     Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_conversation");
 
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");

@@ -1,6 +1,8 @@
 package codeu.controller;
 
 import java.io.IOException;
+import java.util.UUID;
+import java.time.Instant;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import codeu.model.data.User;
+import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.ActivityStore;
 
@@ -37,7 +40,6 @@ public class RegisterServletTest {
         .thenReturn(mockRequestDispatcher);
 
     mockActivityStore = Mockito.mock(ActivityStore.class);
-    registerServlet.setActivityStore(mockActivityStore);
   }
 
   @Test
@@ -67,15 +69,20 @@ public class RegisterServletTest {
     Mockito.when(mockUserStore.isUserRegistered("test username")).thenReturn(false);
     registerServlet.setUserStore(mockUserStore);
 
+    registerServlet.setActivityStore(mockActivityStore);
+
     registerServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<User> userArgumentCaptor = ArgumentCaptor.forClass(User.class);
 
     Mockito.verify(mockUserStore).addUser(userArgumentCaptor.capture());
+    Mockito.verify(mockActivityStore).addActivity(userArgumentCaptor.capture());
+    
     Assert.assertEquals("test username", userArgumentCaptor.getValue().getName());
     Assert.assertThat(
         userArgumentCaptor.getValue().getPasswordHash(), CoreMatchers.containsString("$2a$10$"));
     Assert.assertEquals(60, userArgumentCaptor.getValue().getPasswordHash().length());
+
 
     Mockito.verify(mockResponse).sendRedirect("/login");
   }

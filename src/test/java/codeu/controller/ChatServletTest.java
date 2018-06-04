@@ -182,6 +182,8 @@ public class ChatServletTest {
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
     Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+    Mockito.verify(mockActivityStore).addActivity(messageArgumentCaptor.capture());    
+    
     Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
 
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
