@@ -173,7 +173,7 @@ public class PersistentDataStore {
         Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("ActivityType_ordinal")];
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");      
+        List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");
         Activity activity = new Activity(activityType, uuid, creationTime, displayStringParameters);
         activities.add(activity);
       } catch (Exception e) {
@@ -208,7 +208,7 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
-    datastore.put(messageEntity); 
+    datastore.put(messageEntity);
   }
 
   /** Write a Conversation object to the Datastore service. */
@@ -221,17 +221,13 @@ public class PersistentDataStore {
     conversationEntity.setProperty("message_count", conversation.getMessageCount());
     datastore.put(conversationEntity);
   }
-<<<<<<< HEAD
-=======
 
-  /** Write an Activity object to the Datastore service. */
   public void writeThrough(Activity activity) {
     Entity activityEntity = new Entity("chat-activities", activity.getId().toString());
     activityEntity.setProperty("ActivityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
     activityEntity.setProperty("uuid", activity.getId().toString());
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
-    activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());       
+    activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());
     datastore.put(activityEntity);
   }
->>>>>>> master
 }
