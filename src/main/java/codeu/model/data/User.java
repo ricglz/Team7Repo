@@ -19,6 +19,8 @@ import java.util.List;
 import java.time.Instant;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
+
 /** Class representing a registered user. */
 public class User {
   private final UUID id;
@@ -28,7 +30,8 @@ public class User {
   private long messageCount;
   private boolean isAdmin;
   private  String description;
-  private List<String> defaultAdminList;
+  private static final List<String> DEFAULT_ADMIN_LIST = Lists.newArrayList("Ricardo", "Manjil", 
+                                                                        "Kirielle", "Kirielle");
 
   /**
    * Constructs a new User.
@@ -50,10 +53,6 @@ public class User {
     this.messageCount = messageCount;
     this.isAdmin = isAdmin;
     this.description = description;
-    this.defaultAdminList.add("Ricardo");
-    this.defaultAdminList.add("Manjil");
-    this.defaultAdminList.add("Kirielle");
-    defaultAdminList.add("Tofe");
   }
 
   /**
@@ -71,7 +70,7 @@ public class User {
   }
 
   private Boolean isInDefaultAdminList(String name) {
-    return defaultAdminList.contains(name);
+    return DEFAULT_ADMIN_LIST.contains(name);
   }
 
   /** Increases the message count amount by one */
