@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.util.Comparator;
+import java.util.List;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class User {
   private long messageCount;
   private boolean isAdmin;
   private  String description;
+  private List<String> defaultAdminList;
 
   /**
    * Constructs a new User.
@@ -46,8 +48,12 @@ public class User {
     this.passwordHash = passwordHash;
     this.creation = creation;
     this.messageCount = messageCount;
-    this.isAdmin = isAdmin || checkIfIsAdmin(name);
+    this.isAdmin = isAdmin;
     this.description = description;
+    this.defaultAdminList.add("Ricardo");
+    this.defaultAdminList.add("Manjil");
+    this.defaultAdminList.add("Kirielle");
+    defaultAdminList.add("Tofe");
   }
 
   /**
@@ -61,11 +67,11 @@ public class User {
    */
   public User(UUID id, String name, String passwordHash, Instant creation) {
     this(id, name, passwordHash, creation, 0, false, "");
+    isAdmin = isInDefaultAdminList(name);
   }
 
-  private Boolean checkIfIsAdmin(String name) {
-    return name.equals("Ricardo") || name.equals("Manjil") 
-        || name.equals("Kirielle") || name.equals("Tofe");
+  private Boolean isInDefaultAdminList(String name) {
+    return defaultAdminList.contains(name);
   }
 
   /** Increases the message count amount by one */

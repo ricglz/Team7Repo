@@ -38,11 +38,7 @@ public class Conversation {
    * @param creation the creation time of this Conversation
    */
   public Conversation(UUID id, UUID owner, String title, Instant creation) {
-    this.id = id;
-    this.owner = owner;
-    this.creation = creation;
-    this.title = title;
-    this.messageCount = 0;
+    this(id, owner, title, creation, 0);
   }
 
   /**

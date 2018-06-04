@@ -149,7 +149,6 @@ public class PersistentDataStore {
         throw new PersistentDataStoreException(e);
       }
     }
-    messages.sort(Message.messageComparator);
     return messages;
   }
 
