@@ -35,7 +35,7 @@
     <br>
     <br>
     <br>
-    <h3> Edit Summery</h3>
+    <h3> Edit Summary</h3>
 
     <form action="/profile" method="POST">
         <label for="description">Summary</label>

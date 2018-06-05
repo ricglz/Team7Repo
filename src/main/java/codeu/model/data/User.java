@@ -45,7 +45,6 @@ public class User {
 
   /**
    * @param id the ID of this User
-   * @param name
    * @param name the username of this User
    * @param creation the creation time of this User
    *

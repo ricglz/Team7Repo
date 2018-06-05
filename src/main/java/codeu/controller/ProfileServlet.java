@@ -43,6 +43,7 @@ public class ProfileServlet extends HttpServlet {
         //Checks whether user is logged in or not
         String userName = (String) request.getSession().getAttribute("user");
         User loggedInUser = userStore.getUser(userName);
+        //Checks whether user is loggedin or not
         if (loggedInUser == null) {
             response.sendRedirect("/login");
             return;
@@ -51,11 +52,17 @@ public class ProfileServlet extends HttpServlet {
         request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
     }
 
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String description = request.getParameter("description");
         String userName = (String) request.getSession().getAttribute("user");
+        if (userName == null){
+            response.sendRedirect("/login");
+            return;
+        }
+        //Some Error checking in this code
         // read user from database using username
         // get all the information of that loggedin user from datastore
         User userToUpdate = this.userStore.getUser(userName);
@@ -64,7 +71,8 @@ public class ProfileServlet extends HttpServlet {
             response.sendRedirect("/login");
             return;
         }
-        // this removes any HTML from the description content
+        // t
+        // his removes any HTML from the description content
         String cleanedMessageContent = Jsoup.clean(description, Whitelist.none());
         userToUpdate.setDescription(cleanedMessageContent);
         userStore.updateUser(userToUpdate);

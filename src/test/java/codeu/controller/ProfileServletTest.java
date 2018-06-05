@@ -63,10 +63,10 @@ public class ProfileServletTest {
     public void testdoGet() throws IOException, ServletException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn(TEST_USERNAME);
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
-
         Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
 
         profileServlet.doGet(mockRequest, mockResponse);
+        Mockito.verify(mockSession).setAttribute("description", "test description");
         Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
     }
 
@@ -74,11 +74,22 @@ public class ProfileServletTest {
     public void testDoPost() throws IOException, ServletException {
         Mockito.when(mockRequest.getParameter("description")).thenReturn("updated test description");
         Mockito.when(mockSession.getAttribute("user")).thenReturn(TEST_USERNAME);
-        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
         Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
         profileServlet.doPost(mockRequest, mockResponse);
         assert (mockUserStore.getUser(TEST_USERNAME).getDescription().equals("updated test description"));
         Mockito.verify(mockSession).setAttribute("description", "updated test description");
+        Mockito.verify(mockResponse).sendRedirect("/profile");
+    }
+    @Test
+    public void testDoPost_Sanitation()throws IOException, ServletException{
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+        Mockito.when(mockRequest.getParameter("description")).thenReturn("Contains <b>html</b> and <script>JavaScript</script> content.");
+        Mockito.when(mockSession.getAttribute("user")).thenReturn(TEST_USERNAME);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
+        Mockito.when(mockUserStore.getUser(TEST_USERNAME)).thenReturn(fakeUser);
+        profileServlet.doPost(mockRequest, mockResponse);
+        assert (mockUserStore.getUser(TEST_USERNAME).getDescription().equals("Contains html and  content."));
+        Mockito.verify(mockSession).setAttribute("description", "Contains html and  content.");
         Mockito.verify(mockResponse).sendRedirect("/profile");
     }
 }
