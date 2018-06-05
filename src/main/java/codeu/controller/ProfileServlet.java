@@ -42,6 +42,10 @@ public class ProfileServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         //Checks whether user is logged in or not
         String userName = (String) request.getSession().getAttribute("user");
+        if (userName == null) {
+            response.sendRedirect("/login");
+            return;
+        }
         User loggedInUser = userStore.getUser(userName);
         //Checks whether user is loggedin or not
         if (loggedInUser == null) {
