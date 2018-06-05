@@ -15,6 +15,10 @@
 <head>
     <title>Profile</title>
     <link rel="stylesheet" href="/css/main.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
 </head>
 <body>
 
@@ -25,18 +29,22 @@
 <div id="container">
     <h1><%= request.getSession().getAttribute("user") %>'s Profile page </h1>
     <!--About Section -->
-    <h3>About You!</h3>
+    <h3>Summary</h3>
     <!-- info from descriptions -->
     <%=request.getSession().getAttribute("description")%>
     <br>
     <br>
     <br>
-    <h3> Edit your About Me (only you can see this)</h3>
+    <h3> Edit Summary</h3>
 
     <form action="/profile" method="POST">
-        <label for="description">Description</label>
-        <input type="text" name="description" id="description">
-        <button style="height:20px;width:20px" button type=submit>Submit</button>
+        <label for="description">Summary</label>
+        <br/>
+        <!-- Populating description field so that user can edit it, if they want it -->
+        <textarea class="form-control" rows="4" cols="100" name="description"
+                  id="description"><%=request.getSession().getAttribute("description")%></textarea>
+        <br/>
+        <button class="btn btn-primary" button type=submit>Submit</button>
     </form>
     <hr>
 

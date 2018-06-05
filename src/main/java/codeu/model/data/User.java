@@ -56,6 +56,7 @@ public class User {
   }
 
   /**
+   /**
    * Constructs a new User.
    *
    * @param id           the ID of this User
@@ -64,6 +65,7 @@ public class User {
    * @param creation     the creation time of this User
    * @param isAdmin      if the user is an admin or not
    */
+
   public User(UUID id, String name, String passwordHash, Instant creation) {
     this(id, name, passwordHash, creation, 0, false, "");
     isAdmin = isInDefaultAdminList(name);
@@ -114,32 +116,32 @@ public class User {
     return messageCount;
   }
 
-  /** Allows to know if the user is an admin */
-  public boolean isAdmin() {
-    return isAdmin;
-  }
+    public boolean isAdmin(){
+      return isAdmin;
+    }
 
-  /** Makes this User an admin */
-  public void makeAdmin() {
-    isAdmin = true;
-  }
+    /** Makes this User an admin */
+    public void makeAdmin(){
+      isAdmin = true;
 
-  /** Function to compare the diferent Users for sorting
-   * The sorting compares the message count of each user
-   * of an array. Leaving the user with less message count
-   * at the start and the one with more at the end.
-  */
-  public static Comparator<User> userComparator
-                          = new Comparator<User>() {
+    }
 
-	    public int compare(User User1, User User2) {
+    /** Function to compare the diferent Users for sorting
+     * The sorting compares the message count of each user
+     * of an array. Leaving the user with less message count
+     * at the start and the one with more at the end.
+     */
+    public static Comparator<User> userComparator
+            = new Comparator<User>() {
+
+      public int compare(User User1, User User2) {
 
         long messageCount1 = User1.getMessageCount();
         long messageCount2 = User2.getMessageCount();
 
-	      //ascending order
-	      return (int) (messageCount1-messageCount2);
-	    }
+        //ascending order
+        return (int) (messageCount1 - messageCount2);
+      }
 
-	};
-}
+    };
+  }

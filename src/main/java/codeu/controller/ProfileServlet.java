@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+
 
 public class ProfileServlet extends HttpServlet {
 
@@ -37,14 +40,47 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request,response);
+        //Checks whether user is logged in or not
+        String userName = (String) request.getSession().getAttribute("user");
+        if (userName == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        User loggedInUser = userStore.getUser(userName);
+        //Checks whether user is loggedin or not
+        if (loggedInUser == null) {
+            response.sendRedirect("/login");
+            return;
+        }
+        request.getSession().setAttribute("description", loggedInUser.getDescription());
+        request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
     }
+
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         String description = request.getParameter("description");
-        request.getSession().setAttribute("description", description);
+        String userName = (String) request.getSession().getAttribute("user");
+        if (userName == null){
+            response.sendRedirect("/login");
+            return;
+        }
+        //Some Error checking in this code
+        // read user from database using username
+        // get all the information of that loggedin user from datastore
+        User userToUpdate = this.userStore.getUser(userName);
+        //Setting Description of that Particular User in datastore
+        if (userToUpdate == null){
+            response.sendRedirect("/login");
+            return;
+        }
+        // t
+        // his removes any HTML from the description content
+        String cleanedMessageContent = Jsoup.clean(description, Whitelist.none());
+        userToUpdate.setDescription(cleanedMessageContent);
+        userStore.updateUser(userToUpdate);
+        request.getSession().setAttribute("description", cleanedMessageContent);
         response.sendRedirect("/profile");
     }
 }
