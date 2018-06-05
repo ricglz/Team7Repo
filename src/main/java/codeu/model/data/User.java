@@ -14,8 +14,12 @@
 
 package codeu.model.data;
 
+import java.util.Comparator;
+import java.util.List;
 import java.time.Instant;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 /** Class representing a registered user. */
 public class User {
@@ -23,34 +27,57 @@ public class User {
   private final String name;
   private final String passwordHash;
   private final Instant creation;
+  private long messageCount;
+  private boolean isAdmin;
   private  String description;
-
+  private static final List<String> DEFAULT_ADMIN_LIST = Lists.newArrayList("Ricardo", "Manjil", 
+                                                                        "Kirielle", "Tofe");
 
   /**
    * Constructs a new User.
    *
-   * @param id the ID of this User
-   * @param name the username of this User
+   * @param id           the ID of this User
+   * @param name         the username of this User
    * @param passwordHash the password hash of this User
-   * @param creation the creation time of this User
-   * @param description of the username from profile section
+   * @param creation     the creation time of this User
+   * @param mesageCount  the message count of this User
+   * @param isAdmin      if the user is an admin or not
+   * @param description  of the username from profile section
    */
-  public User(UUID id, String name, String passwordHash, Instant creation, String description) {
+  public User(UUID id, String name, String passwordHash, Instant creation, long messageCount, 
+              boolean isAdmin, String description) {
     this.id = id;
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    this.messageCount = messageCount;
+    this.isAdmin = isAdmin;
     this.description = description;
   }
 
   /**
-   * @param id the ID of this User
-   * @param name the username of this User
-   * @param creation the creation time of this User
+   /**
+   * Constructs a new User.
    *
+   * @param id           the ID of this User
+   * @param name         the username of this User
+   * @param passwordHash the password hash of this User
+   * @param creation     the creation time of this User
+   * @param isAdmin      if the user is an admin or not
    */
+
   public User(UUID id, String name, String passwordHash, Instant creation) {
-    this(id, name, passwordHash, creation, "");
+    this(id, name, passwordHash, creation, 0, false, "");
+    isAdmin = isInDefaultAdminList(name);
+  }
+
+  private Boolean isInDefaultAdminList(String name) {
+    return DEFAULT_ADMIN_LIST.contains(name);
+  }
+
+  /** Increases the message count amount by one */
+  public void increaseMessageCount(){
+    messageCount++;
   }
 
   /** Returns the ID of this User. */
@@ -62,7 +89,7 @@ public class User {
   public String getName() {
     return name;
   }
-  
+
   /** Returns the password hash of this User. */
   public String getPasswordHash() {
     return passwordHash;
@@ -81,10 +108,40 @@ public class User {
 
   /** Updates the description */
   public void setDescription(String Description){
-    description = Description;}
-
-  /** Allows to know if the user is an admin */
-  public Boolean isAdmin() {
-    return (name.equals("Ricardo")||name.equals("Manjil")|| name.equals("Kirielle"));
+    description = Description;
   }
-}
+
+  /** Returns the message count of this User. */
+  public long getMessageCount() {
+    return messageCount;
+  }
+
+    public boolean isAdmin(){
+      return isAdmin;
+    }
+
+    /** Makes this User an admin */
+    public void makeAdmin(){
+      isAdmin = true;
+
+    }
+
+    /** Function to compare the diferent Users for sorting
+     * The sorting compares the message count of each user
+     * of an array. Leaving the user with less message count
+     * at the start and the one with more at the end.
+     */
+    public static Comparator<User> userComparator
+            = new Comparator<User>() {
+
+      public int compare(User User1, User User2) {
+
+        long messageCount1 = User1.getMessageCount();
+        long messageCount2 = User2.getMessageCount();
+
+        //ascending order
+        return (int) (messageCount1 - messageCount2);
+      }
+
+    };
+  }

@@ -16,6 +16,7 @@ package codeu.model.store.basic;
 
 import codeu.model.data.User;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -128,9 +129,29 @@ public class UserStore {
   }
 
   /** Returns total amount of users */
-  public int getUserCount(){
+  public int getUserCount() {
     return users.size();
   }
-  
-}
 
+  /** Returns the name of the most active User */
+  public String getMostActiveUserName() {
+    sort();
+    return getMostActiveUser().getName();
+  }
+
+  /** Returns the amount of messages of the most active user */
+  public long getMaxMessageCount() {
+    return getMostActiveUser().getMessageCount();
+  }
+
+  /** Returns the last User of the users list */
+  public User getMostActiveUser() {
+    return users.get(users.size() - 1);
+  }
+
+  /** Method to sort the users contained in the list */
+  public void sort() {
+    users.sort(User.userComparator);
+  }
+
+}

@@ -55,8 +55,8 @@ public class ProfileServletTest {
                 new User(
                         UUID.randomUUID(),
                         "test username",
-                        "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",
-                        Instant.now(), "test description");
+                        "$2a$10$eDhncK/4cNH2KE.Y51AWpeL8/5znNBQLuAFlyJpSYNODR/SJQ/Fg6",Instant.now(),0,false,
+                       "test description");
     }
 
     @Test

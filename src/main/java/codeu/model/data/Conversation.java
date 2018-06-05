@@ -15,6 +15,7 @@
 package codeu.model.data;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,7 @@ public class Conversation {
   public final UUID owner;
   public final Instant creation;
   public final String title;
+  private long messageCount;
 
   /**
    * Constructs a new Conversation.
@@ -36,10 +38,29 @@ public class Conversation {
    * @param creation the creation time of this Conversation
    */
   public Conversation(UUID id, UUID owner, String title, Instant creation) {
+    this(id, owner, title, creation, 0);
+  }
+
+  /**
+   * Constructs a new Conversation.
+   *
+   * @param id the ID of this Conversation
+   * @param owner the ID of the User who created this Conversation
+   * @param title the title of this Conversation
+   * @param creation the creation time of this Conversation
+   * @param messageCount the message count of this Conversation
+   */
+  public Conversation(UUID id, UUID owner, String title, Instant creation, long messageCount) {
     this.id = id;
     this.owner = owner;
     this.creation = creation;
     this.title = title;
+    this.messageCount = messageCount;
+  }
+
+  /** Increases the count of messages fo this conversation by one*/
+  public void increaseMessageCount() {
+    messageCount++;
   }
 
   /** Returns the ID of this Conversation. */
@@ -61,4 +82,28 @@ public class Conversation {
   public Instant getCreationTime() {
     return creation;
   }
+
+  /** Returns the count of messages of this Conversation */
+  public long getMessageCount() {
+    return messageCount;
+  }
+
+  /** Function to compare the diferent Conversartions for sorting. 
+   * The sorting compares the message count of each conversation
+   * of an array. Leaving the conversation with less message count
+   * at the start and the one with more at the end.
+  */
+  public static Comparator<Conversation> conversationComparator
+                          = new Comparator<Conversation>() {
+
+	    public int compare(Conversation conversation1, Conversation conversation2) {
+
+        long messageCount1 = conversation1.getMessageCount();
+        long messageCount2 = conversation2.getMessageCount();
+
+	      //ascending order
+	      return (int) (messageCount1-messageCount2);
+	    }
+
+	};
 }

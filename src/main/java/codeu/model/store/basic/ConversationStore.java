@@ -16,8 +16,10 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -64,7 +66,7 @@ public class ConversationStore {
     conversations = new ArrayList<>();
   }
 
-/** Access the current set of conversations known to the application. */
+  /** Access the current set of conversations known to the application. */
   public List<Conversation> getAllConversations() {
     return conversations;
   }
@@ -72,6 +74,10 @@ public class ConversationStore {
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {
     conversations.add(conversation);
+    persistentStorageAgent.writeThrough(conversation);
+  }
+
+  public void updateConversation(Conversation conversation) {
     persistentStorageAgent.writeThrough(conversation);
   }
 
@@ -84,6 +90,16 @@ public class ConversationStore {
       }
     }
     return false;
+  }
+
+  /** Find and return the Conversation with the given UUID. */
+  public Conversation getConversationWithUUID(UUID id) {
+    for (Conversation conversation : conversations) {
+      if (conversation.getId().equals(id)) {
+        return conversation;
+      }
+    }
+    return null;
   }
 
   /** Find and return the Conversation with the given title. */
@@ -102,7 +118,27 @@ public class ConversationStore {
   }
 
   /** Returns the count of total conversations stored */
-  public int getConversationCount(){
+  public int getConversationCount() {
     return conversations.size();
+  }
+  /** Returns the title of the most active conversation */
+  public String getMostActiveConversationTitle() {
+    sort();
+    return getMostActiveConversation().getTitle();
+  }
+
+  /** Returns the amount of messages of the most active conversation */
+  public long getMaxMessageCount() {
+    return getMostActiveConversation().getMessageCount();
+  }
+
+  /** Returns the last Conversation of the conversations list */
+  public Conversation getMostActiveConversation() {
+    return conversations.get(conversations.size()-1);
+  }
+
+  /** Method to sort the conversations contained in the list */
+  public void sort() {
+    conversations.sort(Conversation.conversationComparator);
   }
 }
