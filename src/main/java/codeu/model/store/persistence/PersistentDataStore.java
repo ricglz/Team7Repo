@@ -224,7 +224,7 @@ public class PersistentDataStore {
 
   public void writeThrough(Activity activity) {
     Entity activityEntity = new Entity("chat-activities", activity.getId().toString());
-    activityEntity.setProperty("ActivityType_ordinal", Integer.toString(activity.getActivityType().ordinal()));
+    activityEntity.setProperty("ActivityType_ordinal", activity.getActivityType().ordinal());
     activityEntity.setProperty("uuid", activity.getId().toString());
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
     activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());
