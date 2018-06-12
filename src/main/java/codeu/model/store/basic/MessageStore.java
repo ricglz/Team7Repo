@@ -16,6 +16,9 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -93,6 +96,37 @@ public class MessageStore {
     }
 
     return messagesInConversation;
+  }
+
+  /** Compares the date of 2 Instant times, by truncating the Intants to days. */
+  private boolean sameDate(Instant time1, Instant time2) {
+    time1 = time1.truncatedTo(ChronoUnit.DAYS);
+    time2 = time2.truncatedTo(ChronoUnit.DAYS);
+    return time1.equals(time2);
+  }
+
+  public List<Message> getMessagesInTime(Instant time) {
+    List<Message> messagesInTime = new ArrayList<>();
+
+    for (Message message : messages) {
+      if (sameDate(time, message.getCreationTime())) {
+        messagesInTime.add(message);
+      }
+    }
+
+    return messagesInTime;
+  }
+
+  public List<Message> getMessagesByAuthor(UUID author) {
+    List<Message> messagesByAuthor = new ArrayList<>();
+
+    for (Message message : messages) {
+      if (message.getAuthorId().equals(author)) {
+        messagesByAuthor.add(message);
+      }
+    }
+
+    return messagesByAuthor;
   }
 
   /** Sets the List of Messages stored by this MessageStore. */
