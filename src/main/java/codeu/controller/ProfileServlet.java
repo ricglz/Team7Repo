@@ -19,7 +19,7 @@ public class ProfileServlet extends HttpServlet  {
      */
     private UserStore userStore;
 
-
+    @Override
     public void init() throws ServletException {
         super.init();
         setUserStore(UserStore.getInstance());

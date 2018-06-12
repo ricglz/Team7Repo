@@ -124,10 +124,10 @@ public class BotServlet extends HttpServlet {
 
         //Call the action matcher class from here
 
-        //if (userInput.equals("hey")){
-          //  message = new Message(UUID.randomUUID(), botConversation.getId(), user.getId(), null, Instant.now(), "Hi There!");
-            //messageStore.addMessage(message);
-        //}
+        if (userInput.equals("hey")){
+          message = new Message(UUID.randomUUID(), botConversation.getId(), user.getId(), null, Instant.now(), "Hi There!");
+            messageStore.addMessage(message);
+        }
         List<Message> messages = messageStore.getMessagesInbotConversation(botConversation.getId());
         response.sendRedirect("/bot");
     }
