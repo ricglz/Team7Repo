@@ -29,7 +29,7 @@ public class MessageTest {
     String content = "test content";
     Instant creation = Instant.now();
 
-    Message message = new Message(id, conversation, author, content, creation);
+    Message message = new Message(id, conversation, author, content, creation, "");
 
     Assert.assertEquals(id, message.getId());
     Assert.assertEquals(conversation, message.getConversationId());

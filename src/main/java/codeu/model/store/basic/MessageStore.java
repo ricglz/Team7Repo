@@ -16,6 +16,8 @@ package codeu.model.store.basic;
 
 import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
+import com.google.appengine.api.datastore.Query;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -93,6 +95,18 @@ public class MessageStore {
     }
 
     return messagesInConversation;
+  }
+  /** Access the current set of bot Messages of the username's id. */
+  public List<Message> getMessagesInbotConversation(UUID conversationId) {
+
+    List<Message> messagesInbotConversation = new ArrayList<>();
+    for (Message message : messages) {
+      if (message.getConversationId().equals(conversationId) && message.getBotcontent() != null) {
+        messagesInbotConversation.add(message);
+      }
+    }
+
+    return messagesInbotConversation;
   }
 
   /** Sets the List of Messages stored by this MessageStore. */
