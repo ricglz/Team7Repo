@@ -27,6 +27,7 @@
             <a href="/admin">Admin Page</a>
         <% } %>  
         <a href="/profile">Profile</a>
+        <a href="/bot">Bot Conversation</a>
         <a href="/conversations">Conversations</a>  
         <a href="/about.jsp">About</a>
     <% } %>
