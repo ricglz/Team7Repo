@@ -22,17 +22,19 @@ public class BotActions {
 
     private ActivityStore activityStore;
     private User user;
+    private Conversation conversation;
     private ConversationStore conversationStore;
     private HttpServletResponse response;
     private MessageStore messageStore;
     private UserStore userStore;
 
     public BotActions(String username) {
-        setActivityStore(activityStore);
-        setConversationStore(conversationStore);
-        setMessageStore(messageStore);
-        setUserStore(userStore);
+        setActivityStore(ActivityStore.getInstance());
+        setConversationStore(ConversationStore.getInstance());
+        setMessageStore(MessageStore.getInstance());
+        setUserStore(UserStore.getInstance());
         user = userStore.getUser(username);
+        conversation = conversationStore.getBotConversation(user.getId());
     }
 
 	/**
@@ -63,6 +65,12 @@ public class BotActions {
         this.userStore = userStore;
     }
 
+    public void addAnswerMessageToStorage(String content) {
+        Message message = new Message(UUID.randomUUID(), conversation.getId(), 
+                                        user.getId(), content, Instant.now());
+        messageStore.addMessage(message);
+    }
+
     public void setDescription(String description) {
         user.setDescription(description);
         userStore.updateUser(user);
@@ -81,13 +89,16 @@ public class BotActions {
         if (validLocation(location)) {
             response.sendRedirect(location);   
         }
+        String content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
+        addAnswerMessageToStorage(content);
     }
 
     public void createConversation(String title) throws IOException {
         UUID owner = user.getId();
         Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
         conversationStore.addConversation(conversation);
-        response.sendRedirect("/conversations/" + title);
+        String content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> has been created !";
+        addAnswerMessageToStorage(content);
     }
 
     public void sendMessage(String content, String title) throws IOException {
@@ -96,11 +107,14 @@ public class BotActions {
         UUID author = user.getId();
         Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
         messageStore.addMessage(message);
-        response.sendRedirect("/conversations/" + title);
+        String  answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
+        addAnswerMessageToStorage(answerContent);
     }
 
     public List<Message> getMessages(Instant time) {
         List<Message> messages = messageStore.getMessagesInTime(time);
+        String  content= "Messages within the time of " + time.toString() + " have been retrieved";
+        addAnswerMessageToStorage(content);
         return messages;
     }
 
@@ -108,11 +122,15 @@ public class BotActions {
         Conversation conversation = conversationStore.getConversationWithTitle(title);
         UUID id = conversation.getId();
         List<Message> messages = messageStore.getMessagesInConversation(id);
+        String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
+        addAnswerMessageToStorage(content);
         return messages;
     }
 
     public List<Conversation> getConversations(Instant time) {
         List<Conversation> conversations = conversationStore.getConversationsByTime(time);
+        String  content= "Conversations within the time of " + time.toString() + " have been retrieved";
+        addAnswerMessageToStorage(content);
         return conversations;
     }
 
@@ -120,10 +138,14 @@ public class BotActions {
         User user = userStore.getUser(username);
         UUID ownerId = user.getId();
         List<Conversation> conversations = conversationStore.getConversationsByAuthor(ownerId);
+        String  content= "Conversations done by " + username + " have been retrieved";
+        addAnswerMessageToStorage(content);
         return conversations;
     }
 
     public List<Conversation> getConversations() {
+        String  content= "All conversations have been retrieved";
+        addAnswerMessageToStorage(content);
         return conversationStore.getAllConversations();
     }
 
