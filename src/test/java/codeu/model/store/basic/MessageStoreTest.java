@@ -24,21 +24,21 @@ public class MessageStoreTest {
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
           "message one",
-          Instant.ofEpochMilli(1000),"");
+          Instant.ofEpochMilli(1000));
   private final Message MESSAGE_TWO =
       new Message(
           UUID.randomUUID(),
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
           "message two",
-          Instant.ofEpochMilli(2000),"");
+          Instant.ofEpochMilli(2000));
   private final Message MESSAGE_THREE =
       new Message(
           UUID.randomUUID(),
           UUID.randomUUID(),
           UUID.randomUUID(),
           "message three",
-          Instant.ofEpochMilli(3000),"");
+          Instant.ofEpochMilli(3000));
 
   @Before
   public void setup() {
@@ -70,7 +70,7 @@ public class MessageStoreTest {
             inputConversationId,
             UUID.randomUUID(),
             "test message",
-            Instant.now(),"");
+            Instant.now());
 
     messageStore.addMessage(inputMessage);
     Message resultMessage = messageStore.getMessagesInConversation(inputConversationId).get(0);

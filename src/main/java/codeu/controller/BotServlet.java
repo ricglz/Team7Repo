@@ -21,7 +21,8 @@ import org.jsoup.safety.Whitelist;
 /** Servlet class responsible for the BotChat page. */
 public class BotServlet extends HttpServlet {
 
-    private String DEFULT_BOT_CONVERSATION_TITLE="bot-conversation";
+
+    public static final String DEFULT_BOT_CONVERSATION_TITLE="Bot-Conversation ";
 
     /**
      * Store class that gives access to Messages.
@@ -78,12 +79,12 @@ public class BotServlet extends HttpServlet {
             return;
         }
 
-        Conversation botConversation = conversationStore.getConversationWithTitle(DEFULT_BOT_CONVERSATION_TITLE);
+        Conversation botConversation = conversationStore.getBotConversation(user.getId());
         if (botConversation == null){
-             botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE, Instant.now());
+             botConversation = new Conversation(user.getId(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
-        List<Message> messages = messageStore.getMessagesInbotConversation(botConversation.getId());
+        List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         request.setAttribute("botmessage", messages);
         request.getRequestDispatcher("/WEB-INF/view/bot.jsp").forward(request, response);
     }
@@ -111,24 +112,20 @@ public class BotServlet extends HttpServlet {
 
         String userInput = request.getParameter("botmessage");
 
-        Conversation botConversation = conversationStore.getConversationWithTitle(DEFULT_BOT_CONVERSATION_TITLE);
+        Conversation botConversation = conversationStore.getConversationWithTitle(DEFULT_BOT_CONVERSATION_TITLE+username);
         if (botConversation == null){
-            botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE, Instant.now());
+            botConversation = new Conversation(user.getId(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE +username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
         // sanitizes
         // This removes any HTML from the description content
         String cleanedMessageContent = Jsoup.clean(userInput, Whitelist.none());
-        Message message = new Message(UUID.randomUUID(), botConversation.getId(), user.getId(), null, Instant.now(), cleanedMessageContent);
+        Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        //Call the action matcher class from here
-
-        if (userInput.equals("hey")){
-          message = new Message(UUID.randomUUID(), botConversation.getId(), user.getId(), null, Instant.now(), "Hi There!");
-            messageStore.addMessage(message);
-        }
-        List<Message> messages = messageStore.getMessagesInbotConversation(botConversation.getId());
+        //Call the action matcher class from here to send the message to Action matcher class for every messages
+        //ActionmatcherClass(cleanedMessageContent);
+        List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         response.sendRedirect("/bot");
     }
 }

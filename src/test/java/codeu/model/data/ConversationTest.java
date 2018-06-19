@@ -28,6 +28,7 @@ public class ConversationTest {
     String title = "Test_Title";
     Instant creation = Instant.now();
 
+
     Conversation conversation = new Conversation(id, owner, title, creation);
 
     Assert.assertEquals(id, conversation.getId());

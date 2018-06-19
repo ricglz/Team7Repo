@@ -53,7 +53,7 @@
                     String author = UserStore.getInstance()
                             .getUser(message.getAuthorId()).getName();
             %>
-            <li><strong><%= author %>:</strong> <%= message.getBotcontent() %></li>
+            <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
             <%
                 }
             %>

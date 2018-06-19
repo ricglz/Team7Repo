@@ -14,6 +14,7 @@
 
 package codeu.model.store.basic;
 
+import codeu.controller.BotServlet;
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
 
@@ -106,6 +107,16 @@ public class ConversationStore {
   public Conversation getConversationWithTitle(String title) {
     for (Conversation conversation : conversations) {
       if (conversation.getTitle().equals(title)) {
+        return conversation;
+      }
+    }
+    return null;
+  }
+  /** Find and return the Conversation with the given title. */
+  public Conversation getBotConversation(UUID userId) {
+
+    for (Conversation conversation : conversations) {
+      if (conversation.getId().equals(conversation.getOwnerId()) && conversation.getOwnerId().equals(userId)) {
         return conversation;
       }
     }
