@@ -20,13 +20,87 @@ import com.google.common.collect.Lists;
 /** Helper class responsible of the bot's actions */
 public class BotActions {
 
-    private ActivityStore activityStore;
-    private User user;
-    private Conversation conversation;
-    private ConversationStore conversationStore;
-    private HttpServletResponse response;
-    private MessageStore messageStore;
-    private UserStore userStore;
+    public enum action {
+        SET_DESCRIPTION{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                String description = argsObjects[0].toString();
+                setDescription(description);
+            }
+        }/*,
+        CREATE_CONVERSATION{
+
+        },
+        SEND_MESSAGE{
+
+        },
+        GET_MESSAGES_FROM_CONVERSATION{
+
+        },
+        SET_SETTING{
+
+        },
+        NAVIGATE{
+
+        },
+        GET_STAT{
+
+        },
+        GET_SETTING{
+
+        },
+        GET_MESSAGES_AT_TIME{
+
+        },
+        GET_TUTORIAL{
+
+        },
+        GET_MY_MESSAGES{
+
+        },
+        GET_CONVERSATION_BY_CREATION_TIME{
+
+        },
+        GET_CONVERSATION_BY_CREATOR{
+
+        },
+        GET_CONVERSATIONS{
+
+        },
+        GET_STATS{
+
+        },
+        GET_SETTINGS{
+
+        },
+        NAVIGATE_TO_CONVERSATION{
+
+        },
+        GET_CONVERSATION_SUMMARY{
+
+        },
+        GET_MESSAGES_LIKE_KEYWORD{
+
+        },
+        GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
+
+        },
+        GET_CONVERSATION_LIKE_KEYWORD{
+
+        },
+        GET_CONVERSATION_WITH_UNREAD_MESSAGES{
+
+        }*/;
+        public abstract void doAction(Object ... argsObjects);
+    }
+
+    private static ActivityStore activityStore;
+    private static User user;
+    private static Conversation conversation;
+    private static ConversationStore conversationStore;
+    private static HttpServletResponse response;
+    private static MessageStore messageStore;
+    private static UserStore userStore;
 
     public BotActions(String username) {
         setActivityStore(ActivityStore.getInstance());
@@ -71,7 +145,7 @@ public class BotActions {
         messageStore.addMessage(message);
     }
 
-    public void setDescription(String description) {
+    public static void setDescription(String description) {
         user.setDescription(description);
         userStore.updateUser(user);
     }
