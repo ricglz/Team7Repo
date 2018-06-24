@@ -1,4 +1,4 @@
-package codeu.helper;
+package codeu.bot;
 
 import java.io.IOException;
 import java.time.Instant;
