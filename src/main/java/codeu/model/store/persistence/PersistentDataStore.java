@@ -170,7 +170,8 @@ public class PersistentDataStore {
 
     for (Entity entity : results.asIterable()) {
       try {
-        Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("ActivityType_ordinal")];
+        int activityTypeOrdinal = (new Long(Long.parseLong(entity.getProperty("ActivityType_ordinal").toString()))).intValue();
+        Activity.ActivityType activityType = Activity.ActivityType.values()[activityTypeOrdinal];
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");
