@@ -67,21 +67,19 @@ public class BotServlet extends HttpServlet {
         String username = (String) request.getSession().getAttribute("user");
         if (username == null) {
             //redirect to login
-            System.out.println("User Not logged in: " + username);
             response.sendRedirect("/login");
             return;
         }
         User user = userStore.getUser(username);
         if (user == null) {
             // couldn't find author, redirect to loging Page
-            System.out.println("User Not logged in: " + username);
             response.sendRedirect("/login");
             return;
         }
 
         Conversation botConversation = conversationStore.getBotConversation(user.getId());
         if (botConversation == null){
-             botConversation = new Conversation(user.getId(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
+             botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
@@ -127,5 +125,25 @@ public class BotServlet extends HttpServlet {
         //ActionmatcherClass(cleanedMessageContent);
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         response.sendRedirect("/bot");
+    }
+
+    public UserStore getUserStore() {
+        return userStore;
+    }
+
+    public void setUserStore(UserStore userStore) {
+        this.userStore = userStore;
+    }
+
+    public MessageStore getMessageStore() {
+        return messageStore;
+    }
+
+    public ConversationStore getConversationStore() {
+        return conversationStore;
+    }
+
+    public void setConversationStore(ConversationStore conversationStore) {
+        this.conversationStore = conversationStore;
     }
 }
