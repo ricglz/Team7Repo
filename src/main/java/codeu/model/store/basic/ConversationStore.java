@@ -23,6 +23,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -71,7 +73,14 @@ public class ConversationStore {
 
   /** Access the current set of conversations known to the application. */
   public List<Conversation> getAllConversations() {
-    return conversations;
+    return new ArrayList<Conversation>(conversations);
+  }
+
+  public HashSet<String> getAllConversationTitles() {
+    HashSet<String> titles = getAllConversations().stream().map(
+      x -> x.getTitle()).collect(Collectors.toCollection(HashSet::new));
+
+    return titles;
   }
 
   /** Compares the date of 2 Instant times, by truncating the Intants to days. */

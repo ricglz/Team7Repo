@@ -104,13 +104,12 @@ public class ActionMatcher {
         // 2. Access the enum type and call the doAction method
         // with Object parameter? Q: Is this an array?
 
-        // String input = args[0];
         ActionMatcher ac = new ActionMatcher(input);
 
         HashSet<String> conversationTitles = new HashSet<String>();
+        HashSet<String> userNames = new HashSet<String>();
 
         conversationTitles.add("Untitled");
-        // LevenshteinDistance distance = new LevenshteinDistance();
 
         Properties properties = new Properties();
         properties.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,depparse");
@@ -155,7 +154,7 @@ public class ActionMatcher {
 
         ////////////////////////////////////////////////////////////////////////
         // SETTING/UPDATING/CHANGING DESCRIPTION/SETTINGS]
-        int setOrUpdateOrChangeIndex = getKeywordIndex(new String[] {"set","update","change"}, commandTokensLemmas);
+        int setOrUpdateOrChangeIndex = ac.getKeywordIndex(new String[] {"set","update","change"}, commandTokensLemmas);
         if (setOrUpdateOrChangeIndex != -1 && 
             commandPOS.get(setOrUpdateOrChangeIndex).contains("VB")) {
             // Going to be setting/updating/changing description or setting
@@ -171,7 +170,7 @@ public class ActionMatcher {
                     description = matcher.group(1);
                 }
                 System.out.printf("Setting description to %s.",description);
-                BotActions.action.SET_DESCRIPTION.doAction(description);
+                // BotActions.action.SET_DESCRIPTION.doAction(description);
                 return;
             }
 
@@ -181,7 +180,7 @@ public class ActionMatcher {
 
         ////////////////////////////////////////////////////////////////////////
         // CREATE_CONVERSATION, params: String conversationTitle
-        int createOrMakeIndex = getKeywordIndex(new String[] {"create","make"}, commandTokensLemmas);
+        int createOrMakeIndex = ac.getKeywordIndex(new String[] {"create","make"}, commandTokensLemmas);
         if (createOrMakeIndex != -1 && 
             commandPOS.get(createOrMakeIndex).contains("VB")) {
             // Going to be creating something
@@ -196,7 +195,7 @@ public class ActionMatcher {
                 System.out.println("got here");
             }
             System.out.printf("Creating conversation %s.",conversationTitle);
-            BotActions.action.CREATE_CONVERSATION.doAction(conversationTitle);
+            // BotActions.action.CREATE_CONVERSATION.doAction(conversationTitle);
             return;
         }
 
@@ -223,16 +222,14 @@ public class ActionMatcher {
             //     conversationTitle = conversationTitleMatcher.group(1);
             // }
 
-            String conversationTitle = findFuzzyMatch(conversationTitles, 5);
+            String conversationTitle = ac.findFuzzyMatch(conversationTitles, 5);
             System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
-            BotActions.action.SEND_MESSAGE.doAction(message,conversationTitle);
+            // BotActions.action.SEND_MESSAGE.doAction(message,conversationTitle);
             return;
         }
 
         ////////////////////////////////////////////////////////////////////////
         // GETTING THINGS
-
-        // GET...
         int getOrFindOrDisplayorShoworGiveIndex = ac.getKeywordIndex(new String[] {"get","find","display","show","give"}, commandTokensLemmas);
         if (getOrFindOrDisplayorShoworGiveIndex != -1 && 
             commandPOS.get(getOrFindOrDisplayorShoworGiveIndex).contains("VB")) {
@@ -279,8 +276,8 @@ public class ActionMatcher {
                     }
 
                     // GET_MESSAGES_LIKE_KEYWORD
-                    int containOrAboutIndex = ac.getKeywordIndex(new String[] {"contain","about"}, commandTokensLemmas);
-                    if (containOrAboutIndex != -1) {
+                    int containOrAboutOrMentionIndex = ac.getKeywordIndex(new String[] {"contain","about","mention"}, commandTokensLemmas);
+                    if (containOrAboutOrMentionIndex != -1) {
                         String keyword = "";
                         Pattern keywordPattern = Pattern.compile("<([^\"]*)>");
                         Matcher keywordMatcher = keywordPattern.matcher(input);
@@ -295,6 +292,9 @@ public class ActionMatcher {
                             // BotActions.action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
                             System.out.printf("Getting messages like keyword \"%s\".",keyword);
                             return;
+                        } else {
+                            // RAISE SORRY IDK
+                            return;
                         }
                     }
 
@@ -306,15 +306,99 @@ public class ActionMatcher {
                             // BotActions.action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
                             System.out.printf("Getting messsages from %s.",conversationTitle);
                             return;
+                        } else {
+                            // RAISE SORRY IDK
+                            return;
                         }
                     }
                     
                 }
                 case "conversation": {
                     // Getting conversations
+
+                    // GET_CONVERSATIONS_BY_CREATION_TIME
+                    if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
+                        CoreMap timexAnnotation = timexAnnotationsAll.get(0);
+                        Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
+                        // BotActions.action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
+                        System.out.printf("Getting conversation based on time criteria: %s.",temporal.toString());
+                        return;
+                    }
+
+                    // GET_CONVERSATIONS_BY_AUTHOR
+                    int madeOrCreateOrOwnIndex = ac.getKeywordIndex(new String[] {"made","create","own"}, commandTokensLemmas);
+                    if (madeOrCreateOrOwnIndex != -1) {
+                        String author = ac.findFuzzyMatch(userNames, 3);
+
+                        if (!author.equals("")) {
+                            // BotActions.action.GET_MESSAGES_BY_AUTHOR.doAction(author);
+                            System.out.printf("Getting conversations made by %s.",author);
+                            return;
+                        } else {
+                            // RAISE SORRY IDK
+                            return;
+                        }
+                    }
+
+                    // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES
+                    int unreadOrRespondIndex = ac.getKeywordIndex(new String[] {"unread","respond"}, commandTokensLemmas);
+                    if (unreadOrRespondIndex != -1) {
+                        // BotActions.action.GET_CONVERSATION_WITH_UNREAD_MESSAGES.doAction();
+                        System.out.printf("Getting conversations with unread messages.");
+                        return;
+                    }
+
+
+                    // GET_CONVESATIONS_ABOUT_KEYWORD (encompass the like and content methods)
+                    int containOrAboutOrMentionIndex = ac.getKeywordIndex(new String[] {"contain","about","mention"}, commandTokensLemmas);
+                    if (containOrAboutOrMentionIndex != -1) {
+                        String keyword = "";
+                        Pattern keywordPattern = Pattern.compile("<([^\"]*)>");
+                        Matcher keywordMatcher = keywordPattern.matcher(input);
+                        if (keywordMatcher.find()) {
+                            keyword = keywordMatcher.group(1);
+                        } else {
+                            // RAISE SORRY IDK
+                            return;
+                        }
+                        
+                        if (!keyword.equals("")) {
+                            // BotActions.action.GET_CONVERSATIONS_KEYWORD.doAction(keyword);
+                            System.out.printf("Getting conversations about keyword \"%s\".",keyword);
+                            return;
+                        } else {
+                            // RAISE SORRY IDK
+                            return;
+                        }
+                    }
+
+                    // GET_ALL_CONVERSATIONS
+                    int allIndex = ac.getKeywordIndex(new String[] {"all"}, commandTokensLemmas);
+                    if (allIndex != -1) {
+                        // BotActions.action.GET_ALL_CONVERSATIONS.doAction();
+                        System.out.printf("Getting all conversations.");
+                        return;
+                    }
                 }
             }
         }
+
+        // GET_CONVERSATION_SUMMARY
+        int summarizeOrSummariseOrOverviewOrTLDRIndex = ac.getKeywordIndex(
+            new String[] {"summarize","summarise","overview","TLDR"},
+            commandTokensLemmas);
+        if (summarizeOrSummariseOrOverviewOrTLDRIndex != -1) {
+            System.out.println("here");
+            String conversationTitle = ac.findFuzzyMatch(conversationTitles,3);
+            if (!conversationTitle.equals("")) {
+                // BotActions.action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
+                System.out.printf("Getting a summary of %s.",conversationTitle);
+            } else {
+                // RAISE SORRY IDK
+                return;
+            }
+        }
+
         return;
     }
 

@@ -20,6 +20,8 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -63,6 +65,17 @@ public class UserStore {
   private UserStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     users = new ArrayList<>();
+  }
+
+  public List<User> getAllUsers() {
+    return new ArrayList<User>(users);
+  }
+
+  public HashSet<String> getAllUserNames() {
+    HashSet<String> names = getAllUsers().stream().map(
+      x -> x.getName()).collect(Collectors.toCollection(HashSet::new));
+
+    return names;
   }
 
   /**
