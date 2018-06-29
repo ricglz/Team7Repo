@@ -101,7 +101,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_MESSAGES_AT_TIME{
+        GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -122,7 +122,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_CONVERSATION_BY_CREATION_TIME{
+        GET_CONVERSATIONS_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -131,7 +131,7 @@ public class BotActions {
                 addAnswerMessageToStorage(content);
             }
         },
-        GET_CONVERSATION_BY_CREATOR{
+        GET_CONVERSATION_BY_AUTHOR{
             @Override
             public void doAction(Object ... argsObjects) {
                 String username = (String) argsObjects[0];
@@ -142,7 +142,7 @@ public class BotActions {
                 addAnswerMessageToStorage(content);
             }
         },
-        GET_CONVERSATIONS{
+        GET_ALL_CONVERSATIONS{
             @Override
             public void doAction(Object ... argsObjects) {        
                 String  content= "All conversations have been retrieved";
