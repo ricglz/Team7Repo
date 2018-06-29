@@ -14,9 +14,12 @@
 
 package codeu.model.store.basic;
 
+import codeu.controller.BotServlet;
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -71,6 +74,33 @@ public class ConversationStore {
     return conversations;
   }
 
+  /** Compares the date of 2 Instant times, by truncating the Intants to days. */
+  private boolean sameDate(Instant time1, Instant time2) {
+    time1 = time1.truncatedTo(ChronoUnit.DAYS);
+    time2 = time2.truncatedTo(ChronoUnit.DAYS);
+    return time1.equals(time2);
+  }
+
+  public List<Conversation> getConversationsByTime(Instant time) {
+    List<Conversation> conversationsInTime = new ArrayList<>();
+    for (Conversation conversation : conversations) {
+      if (sameDate(time, conversation.getCreationTime())) {
+        conversationsInTime.add(conversation);
+      }
+    }
+    return conversationsInTime;
+  }
+
+  public List<Conversation> getConversationsByAuthor(UUID ownerId) {
+    List<Conversation> conversationsInTime = new ArrayList<>();
+    for (Conversation conversation : conversations) {
+      if (conversation.getOwnerId().equals(ownerId)) {
+        conversationsInTime.add(conversation);
+      }
+    }
+    return conversationsInTime;
+  }
+
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {
     conversations.add(conversation);
@@ -106,6 +136,16 @@ public class ConversationStore {
   public Conversation getConversationWithTitle(String title) {
     for (Conversation conversation : conversations) {
       if (conversation.getTitle().equals(title)) {
+        return conversation;
+      }
+    }
+    return null;
+  }
+  /** Find and return the Conversation with the given title. */
+  public Conversation getBotConversation(UUID userId) {
+
+    for (Conversation conversation : conversations) {
+      if (conversation.getId().equals(conversation.getOwnerId()) && conversation.getOwnerId().equals(userId)) {
         return conversation;
       }
     }

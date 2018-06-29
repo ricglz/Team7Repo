@@ -96,4 +96,14 @@
         <servlet-name>ProfileServlet</servlet-name>
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>BotServlet</servlet-name>
+        <servlet-class>codeu.controller.BotServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    <servlet-name>BotServlet</servlet-name>
+    <url-pattern>/bot</url-pattern>
+</servlet-mapping>
 </web-app>
