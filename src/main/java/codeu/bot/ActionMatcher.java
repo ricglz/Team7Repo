@@ -16,8 +16,8 @@ import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
-// import codeu.bot.BotActions;
-// import codeu.model.store.basic.ConversationStore;
+import codeu.bot.BotActions;
+import codeu.model.store.basic.ConversationStore;
 
 import java.io.IOException;
 import java.util.*;
@@ -97,7 +97,7 @@ public class ActionMatcher {
         return index;
     }
 
-    public void matchAction(String input) {
+    public void matchAction() {
         // Options for how this interacts with the action executor:
         // 1. Return an ActivityType implementing object
         // which has been instantiated with the appropriate parameters

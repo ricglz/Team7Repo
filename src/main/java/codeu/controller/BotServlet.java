@@ -7,6 +7,7 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.data.Conversation;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.bot.ActionMatcher;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -121,8 +122,8 @@ public class BotServlet extends HttpServlet {
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        //Call the action matcher class from here to send the message to Action matcher class for every messages
-        //ActionmatcherClass(cleanedMessageContent);
+        ActionMatcher ac = new ActionMatcher(cleanedMessageContent);
+        ac.matchAction();
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         response.sendRedirect("/bot");
     }
