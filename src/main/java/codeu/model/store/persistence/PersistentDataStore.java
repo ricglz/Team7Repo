@@ -18,7 +18,10 @@ import codeu.model.data.User;
 import codeu.model.data.Message;
 import codeu.model.data.Conversation;
 import codeu.model.data.Activity;
+import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
+import edu.stanford.nlp.trees.international.negra.NegraLabel;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -62,26 +65,35 @@ public class PersistentDataStore {
     Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
 
-    for (Entity entity : results.asIterable()) {
-      try {
-        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-        String userName = (String) entity.getProperty("username");
-        String description = (String) entity.getProperty("description");
-        String passwordHash = (String) entity.getProperty("password_hash");
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        long messageCount = (Long) entity.getProperty("message_count");
-        boolean isAdmin = (boolean) entity.getProperty("is_admin");
-        User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
-        users.add(user);
-      } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
+    if (!results.asIterator().hasNext()) {
+      System.out.println("Creating bot user");
+      User botUser = new User(UUID.randomUUID(), UserStore.BOT_USER_NAME, UserStore.BOT_PASSWORD, Instant.now());
+      writeThrough(botUser);
+      users.add(botUser);
+    } else {
+      System.out.println("Not creating bot user");
+      for (Entity entity : results.asIterable()) {
+        try {
+          UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+          String userName = (String) entity.getProperty("username");
+          System.out.println(userName);
+          String description = (String) entity.getProperty("description");
+          String passwordHash = (String) entity.getProperty("password_hash");
+          Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+          long messageCount = (Long) entity.getProperty("message_count");
+          boolean isAdmin = (boolean) entity.getProperty("is_admin");
+          User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
+          users.add(user);
+        } catch (Exception e) {
+          // In a production environment, errors should be very rare. Errors which may
+          // occur include network errors, Datastore service errors, authorization errors,
+          // database entity definition mismatches, or service mismatches.
+          throw new PersistentDataStoreException(e);
+        }
       }
     }
 
-    return users;
+    return users;    
   }
 
   /**
@@ -170,7 +182,8 @@ public class PersistentDataStore {
 
     for (Entity entity : results.asIterable()) {
       try {
-        Activity.ActivityType activityType = Activity.ActivityType.values()[(int) entity.getProperty("ActivityType_ordinal")];
+        int activityTypeOrdinal = (new Long(Long.parseLong(entity.getProperty("ActivityType_ordinal").toString()))).intValue();
+        Activity.ActivityType activityType = Activity.ActivityType.values()[activityTypeOrdinal];
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         List<String> displayStringParameters = (List<String>) entity.getProperty("display_string_parameters");

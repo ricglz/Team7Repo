@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 /** Helper class responsible of the bot's actions */
 public class BotActions {
 
-    public enum action {
+    public enum Action {
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -246,8 +246,12 @@ public class BotActions {
     }
 
     private static void addAnswerMessageToStorage(String content) {
+        User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
+        UUID botId = botUser.getId();
         Message message = new Message(UUID.randomUUID(), conversation.getId(), 
-                                        user.getId(), content, Instant.now());
+                                        botId,
+                                        content,
+                                        Instant.now());
         messageStore.addMessage(message);
     }
 

@@ -31,10 +31,12 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 public class ActionMatcher {
     public static String input;
     public static LevenshteinDistance distance;
+    public BotActions botActions;
 
-    public ActionMatcher(String input) {
-        this.input = input;
+    public ActionMatcher() {
         distance = new LevenshteinDistance();
+        // CHANGE THIS
+        botActions = new BotActions("test");
     }
 
     public String findFuzzyMatch(HashSet<String> set, int distanceThreshold) {
@@ -69,6 +71,7 @@ public class ActionMatcher {
         int keywordsIndex = 0;
 
         while (index < 0 && keywordsIndex < keywords.length) {
+            System.out.println("loop");
             index = lemmas.indexOf(keywords[keywordsIndex]);
             keywordsIndex++;
         }
@@ -76,15 +79,10 @@ public class ActionMatcher {
         return index;
     }
 
-    public void matchAction() {
-        // Options for how this interacts with the action executor:
-        // 1. Return an ActivityType implementing object
-        // which has been instantiated with the appropriate parameters
-        // 2. Access the enum type and call the doAction method
-        // with Object parameter? Q: Is this an array?
-
+    public void matchAction(String input) throws IOException {
         // ActionMatcher ac = new ActionMatcher(input);
 
+        this.input = input;
         HashSet<String> conversationTitles = ConversationStore.getInstance().getAllConversationTitles();
         HashSet<String> userNames = UserStore.getInstance().getAllUserNames();
 
@@ -148,7 +146,7 @@ public class ActionMatcher {
                     description = matcher.group(1);
                 }
                 System.out.printf("Setting description to %s.",description);
-                // BotActions.action.SET_DESCRIPTION.doAction(description);
+                BotActions.Action.SET_DESCRIPTION.doAction(description);
                 return;
             }
 
@@ -166,14 +164,14 @@ public class ActionMatcher {
             // look for conversation keyword
 
             String conversationTitle = "";
-            Pattern pattern = Pattern.compile("<([^\"]*)>");
+            Pattern pattern = Pattern.compile("\"([^\"]*)\"");
             Matcher matcher = pattern.matcher(input);
             if (matcher.find()) {
                 conversationTitle = matcher.group(1);
                 System.out.println("got here");
             }
             System.out.printf("Creating conversation %s.",conversationTitle);
-            // BotActions.action.CREATE_CONVERSATION.doAction(conversationTitle);
+            BotActions.Action.CREATE_CONVERSATION.doAction(conversationTitle);
             return;
         }
 
@@ -202,7 +200,7 @@ public class ActionMatcher {
 
             String conversationTitle = findFuzzyMatch(conversationTitles, 5);
             System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
-            // BotActions.action.SEND_MESSAGE.doAction(message,conversationTitle);
+            BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
             return;
         }
 

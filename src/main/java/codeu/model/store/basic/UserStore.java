@@ -23,6 +23,8 @@ import java.util.UUID;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
  * saves to PersistentStorageAgent. It's a singleton so all servlet classes can access the same
@@ -32,6 +34,8 @@ public class UserStore {
 
   /** Singleton instance of UserStore. */
   private static UserStore instance;
+  public static final String BOT_USER_NAME = "bot";
+  public static final String BOT_PASSWORD = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt());
 
   /**
    * Returns the singleton instance of UserStore that should be shared between all servlet classes.
@@ -139,6 +143,7 @@ public class UserStore {
    */
   public void setUsers(List<User> users) {
     this.users = users;
+    // getUser(DEFAULT_BOT_USERNAME)
   }
 
   /** Returns total amount of users */
