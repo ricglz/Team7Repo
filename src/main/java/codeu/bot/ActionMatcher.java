@@ -184,10 +184,10 @@ public class ActionMatcher {
             Set<IndexedWord> directObjects = dependencyParse.getChildrenWithReln(verbOfInterest,UniversalEnglishGrammaticalRelations.DIRECT_OBJECT);
             String directObject = "";
             if (!directObjects.isEmpty() && directObjects.size() == 1) {
-
                 directObject = (new ArrayList<>(directObjects)).get(0).lemma();
             } else {
-                // RAISE ERROR, SORRY I'M NOT SURE WHAT YOU'RE LOOKING FOR.
+                // Make a dummy call to SET_DESCRIPTION
+                BotActions.Action.SET_DESCRIPTION.doAction();
                 return;
             }
 
@@ -206,7 +206,7 @@ public class ActionMatcher {
         // GET_MY_MESSAGES
         if (commandTokensLemmas.contains("my") || commandTokensLemmas.contains("I")) {
             System.out.printf("Showing your messages.");
-            // BotActions.action.GET_MY_MESSAGES.doAction();
+            // BotActions.Action.GET_MY_MESSAGES.doAction();
             return;
         }
 
@@ -214,7 +214,7 @@ public class ActionMatcher {
         if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
             CoreMap timexAnnotation = timexAnnotationsAll.get(0);
             Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-            // BotActions.action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
+            // BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
             // Need to decide restrictions on time
             System.out.printf("Getting messages based on time criteria: %s.",temporal.toString());
             return;
@@ -227,33 +227,34 @@ public class ActionMatcher {
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
-            } else {
-                // RAISE SORRY IDK
-                return;
             }
+            // else {
+            //     // RAISE SORRY IDK
+            //     return;
+            // }
             
-            if (!keyword.equals("")) {
-                // BotActions.action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
-                System.out.printf("Getting messages like keyword \"%s\".",keyword);
-                return;
-            } else {
-                // RAISE SORRY IDK
-                return;
-            }
+            // if (!keyword.equals("")) {
+            // BotActions.Action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
+            System.out.printf("Getting messages like keyword \"%s\".",keyword);
+            return;
+            // }else {
+            //     // RAISE SORRY IDK
+            //     return;
+            // }
         }
 
         // GET_MESSAGES_FROM_CONVERSATION
         int fromOrInIndex = getKeywordIndex(new String[] {"in","from"}, commandTokensLemmas);
         if (fromOrInIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles, 3);
-            if (!conversationTitle.equals("")) {
-                // BotActions.action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
-                System.out.printf("Getting messsages from %s.",conversationTitle);
-                return;
-            } else {
-                // RAISE SORRY IDK
-                return;
-            }
+            // if (!conversationTitle.equals("")) {
+            // BotActions.Action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
+            System.out.printf("Getting messsages from %s.",conversationTitle);
+            return;
+            // } else {
+            //     // RAISE SORRY IDK
+            //     return;
+            // }
         }
     }
 
@@ -263,8 +264,8 @@ public class ActionMatcher {
         if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
             CoreMap timexAnnotation = timexAnnotationsAll.get(0);
             Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-            // BotActions.action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
-            // System.out.printf("Getting conversation based on time criteria: %s.",temporal.toString());
+            BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
+            System.out.printf("Getting conversation based on time criteria: %s.",temporal.toString());
             return;
         }
 
@@ -273,20 +274,20 @@ public class ActionMatcher {
         if (madeOrCreateOrOwnIndex != -1) {
             String author = findFuzzyMatch(userNames, 3);
 
-            if (!author.equals("")) {
-                // BotActions.action.GET_MESSAGES_BY_AUTHOR.doAction(author);
-                System.out.printf("Getting conversations made by %s.",author);
-                return;
-            } else {
-                // RAISE SORRY IDK
-                return;
-            }
+            // if (!author.equals("")) {
+                // BotActions.Action.GET_MESSAGES_BY_AUTHOR.doAction(author);
+            System.out.printf("Getting conversations made by %s.",author);
+            return;
+            // } else {
+            //     // RAISE SORRY IDK
+            //     return;
+            // }
         }
 
         // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES
         int unreadOrRespondIndex = getKeywordIndex(UNREAD_KEYWORDS, commandTokensLemmas);
         if (unreadOrRespondIndex != -1) {
-            // BotActions.action.GET_CONVERSATION_WITH_UNREAD_MESSAGES.doAction();
+            // BotActions.Action.GET_CONVERSATION_WITH_UNREAD_MESSAGES.doAction();
             System.out.printf("Getting conversations with unread messages.");
             return;
         }
@@ -299,25 +300,16 @@ public class ActionMatcher {
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
-            } else {
-                // RAISE SORRY IDK
-                return;
             }
-            
-            if (!keyword.equals("")) {
-                // BotActions.action.GET_CONVERSATIONS_KEYWORD.doAction(keyword);
-                System.out.printf("Getting conversations about keyword \"%s\".",keyword);
-                return;
-            } else {
-                // RAISE SORRY IDK
-                return;
-            }
+            // BotActions.Action.GET_CONVERSATIONS_KEYWORD.doAction(keyword);
+            System.out.printf("Getting conversations about keyword \"%s\".",keyword);
+            return;
         }
 
         // GET_ALL_CONVERSATIONS
         int allIndex = getKeywordIndex(new String[] {"all"}, commandTokensLemmas);
         if (allIndex != -1) {
-            // BotActions.action.GET_ALL_CONVERSATIONS.doAction();
+            // BotActions.Action.GET_ALL_CONVERSATIONS.doAction();
             System.out.printf("Getting all conversations.");
             return;
         }
@@ -329,13 +321,8 @@ public class ActionMatcher {
             commandTokensLemmas);
         if (summarizeOrSummariseOrOverviewOrTLDRIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles,3);
-            if (!conversationTitle.equals("")) {
-                // BotActions.action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
-                System.out.printf("Getting a summary of %s.",conversationTitle);
-            } else {
-                // RAISE SORRY IDK
-                return;
-            }
+            System.out.printf("Getting a summary of %s.",conversationTitle);
+            // BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
         }
     }
 
@@ -375,6 +362,7 @@ public class ActionMatcher {
         System.out.println(timexAnnotationsAll);
 
         matchSet();
+        matchSendMessage();
         matchCreateConversation();
         matchGet();
         matchSummarize();
