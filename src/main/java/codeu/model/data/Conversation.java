@@ -56,6 +56,7 @@ public class Conversation {
     this.creation = creation;
     this.title = title;
     this.messageCount = messageCount;
+
   }
 
   /** Increases the count of messages fo this conversation by one*/

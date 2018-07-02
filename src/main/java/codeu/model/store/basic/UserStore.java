@@ -20,6 +20,10 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashSet;
+import java.util.stream.Collectors;
+
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -30,6 +34,8 @@ public class UserStore {
 
   /** Singleton instance of UserStore. */
   private static UserStore instance;
+  public static final String BOT_USER_NAME = "bot";
+  public static final String BOT_PASSWORD = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt());
 
   /**
    * Returns the singleton instance of UserStore that should be shared between all servlet classes.
@@ -63,6 +69,17 @@ public class UserStore {
   private UserStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     users = new ArrayList<>();
+  }
+
+  public List<User> getAllUsers() {
+    return new ArrayList<User>(users);
+  }
+
+  public HashSet<String> getAllUserNames() {
+    HashSet<String> names = getAllUsers().stream().map(
+      x -> x.getName()).collect(Collectors.toCollection(HashSet::new));
+
+    return names;
   }
 
   /**
@@ -126,6 +143,7 @@ public class UserStore {
    */
   public void setUsers(List<User> users) {
     this.users = users;
+    // getUser(DEFAULT_BOT_USERNAME)
   }
 
   /** Returns total amount of users */

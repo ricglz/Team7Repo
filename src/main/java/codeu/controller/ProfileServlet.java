@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 
-public class ProfileServlet extends HttpServlet {
+public class ProfileServlet extends HttpServlet  {
 
     /**
      * Store class that gives access to Users.
@@ -57,6 +57,7 @@ public class ProfileServlet extends HttpServlet {
     }
 
 
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -75,8 +76,8 @@ public class ProfileServlet extends HttpServlet {
             response.sendRedirect("/login");
             return;
         }
-        // t
-        // his removes any HTML from the description content
+
+        // this removes any HTML from the description content
         String cleanedMessageContent = Jsoup.clean(description, Whitelist.none());
         userToUpdate.setDescription(cleanedMessageContent);
         userStore.updateUser(userToUpdate);
