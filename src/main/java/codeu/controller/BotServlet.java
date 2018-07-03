@@ -7,6 +7,7 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.data.Conversation;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.bot.ActionMatcher;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -37,6 +38,8 @@ public class BotServlet extends HttpServlet {
     /** Store class that gives access to Conversations. */
     private ConversationStore conversationStore;
 
+    private ActionMatcher actionMatcher;
+
     /**
      * Set up state for handling chat requests.
      */
@@ -47,6 +50,7 @@ public class BotServlet extends HttpServlet {
         setMessageStore(MessageStore.getInstance());
         userStore = UserStore.getInstance();
         conversationStore = ConversationStore.getInstance();
+        actionMatcher = new ActionMatcher();
     }
 
     /**
@@ -67,21 +71,19 @@ public class BotServlet extends HttpServlet {
         String username = (String) request.getSession().getAttribute("user");
         if (username == null) {
             //redirect to login
-            System.out.println("User Not logged in: " + username);
             response.sendRedirect("/login");
             return;
         }
         User user = userStore.getUser(username);
         if (user == null) {
             // couldn't find author, redirect to loging Page
-            System.out.println("User Not logged in: " + username);
             response.sendRedirect("/login");
             return;
         }
 
         Conversation botConversation = conversationStore.getBotConversation(user.getId());
         if (botConversation == null){
-             botConversation = new Conversation(user.getId(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
+             botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
@@ -123,9 +125,29 @@ public class BotServlet extends HttpServlet {
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        //Call the action matcher class from here to send the message to Action matcher class for every messages
-        //ActionmatcherClass(cleanedMessageContent);
+        actionMatcher.matchAction(cleanedMessageContent);
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
+        System.out.println("130");
         response.sendRedirect("/bot");
+    }
+
+    public UserStore getUserStore() {
+        return userStore;
+    }
+
+    public void setUserStore(UserStore userStore) {
+        this.userStore = userStore;
+    }
+
+    public MessageStore getMessageStore() {
+        return messageStore;
+    }
+
+    public ConversationStore getConversationStore() {
+        return conversationStore;
+    }
+
+    public void setConversationStore(ConversationStore conversationStore) {
+        this.conversationStore = conversationStore;
     }
 }

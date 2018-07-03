@@ -1,4 +1,4 @@
-package codeu.helper;
+package codeu.bot;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 /** Helper class responsible of the bot's actions */
 public class BotActions {
 
-    public enum action {
+    public enum Action {
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -102,7 +102,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_MESSAGES_AT_TIME{
+        GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -124,7 +124,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_CONVERSATION_BY_CREATION_TIME{
+        GET_CONVERSATIONS_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -134,7 +134,7 @@ public class BotActions {
                 addAnswerMessageToStorage(titleConversations + content);
             }
         },
-        GET_CONVERSATION_BY_CREATOR{
+        GET_CONVERSATION_BY_AUTHOR{
             @Override
             public void doAction(Object ... argsObjects) {
                 String username = (String) argsObjects[0];
@@ -146,7 +146,7 @@ public class BotActions {
                 addAnswerMessageToStorage(titleConversations + content);
             }
         },
-        GET_CONVERSATIONS{
+        GET_ALL_CONVERSATIONS{
             @Override
             public void doAction(Object ... argsObjects) {        
                 String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());                
@@ -258,8 +258,12 @@ public class BotActions {
     }
 
     private static void addAnswerMessageToStorage(String content) {
+        User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
+        UUID botId = botUser.getId();
         Message message = new Message(UUID.randomUUID(), conversation.getId(), 
-                                        user.getId(), content, Instant.now());
+                                        botId,
+                                        content,
+                                        Instant.now());
         messageStore.addMessage(message);
     }
 
