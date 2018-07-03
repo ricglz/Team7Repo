@@ -61,8 +61,9 @@ public class BotActions {
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
                 UUID id = conversation.getId();
                 List<Message> messages = messageStore.getMessagesInConversation(id);
+                String contentMessages = getContentFromMessages(messages);
                 String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
-                addAnswerMessageToStorage(content);
+                addAnswerMessageToStorage(contentMessages + content);
             }
         },/*
         SET_SETTING{
@@ -106,8 +107,9 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
                 List<Message> messages = messageStore.getMessagesInTime(time);
+                String contentMessages = getContentFromMessages(messages);
                 String  content= "Messages within the time of " + time.toString() + " have been retrieved";
-                addAnswerMessageToStorage(content);
+                addAnswerMessageToStorage(contentMessages + content);
             }
         },/*
         GET_TUTORIAL{
@@ -127,8 +129,9 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
                 List<Conversation> conversations = conversationStore.getConversationsByTime(time);
+                String titleConversations = getTitleFromConversations(conversations);
                 String  content= "Conversations within the time of " + time.toString() + " have been retrieved";
-                addAnswerMessageToStorage(content);
+                addAnswerMessageToStorage(titleConversations + content);
             }
         },
         GET_CONVERSATION_BY_AUTHOR{
@@ -138,15 +141,17 @@ public class BotActions {
                 User user = userStore.getUser(username);
                 UUID ownerId = user.getId();
                 List<Conversation> conversations = conversationStore.getConversationsByAuthor(ownerId);
+                String titleConversations = getTitleFromConversations(conversations);
                 String  content= "Conversations done by " + username + " have been retrieved";
-                addAnswerMessageToStorage(content);
+                addAnswerMessageToStorage(titleConversations + content);
             }
         },
         GET_ALL_CONVERSATIONS{
             @Override
             public void doAction(Object ... argsObjects) {        
-                String  content= "All conversations have been retrieved";
-                addAnswerMessageToStorage(content);
+                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());                
+                String content= "All conversations have been retrieved";
+                addAnswerMessageToStorage(titleConversations + content);
             }
         },/*
         GET_STATS{
@@ -160,13 +165,20 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 
             }
-        },
+        },*/
         NAVIGATE_TO_CONVERSATION{
             @Override
-            public void doAction(Object ... argsObjects) {
-                
+            public void doAction(Object ... argsObjects) throws IOException {
+                String title = (String) argsObjects[0];
+                HttpServletResponse response = (HttpServletResponse) argsObjects[1];
+                Conversation conversation = conversationStore.getConversationWithTitle(title);
+                if (conversation != null) {
+                    response.sendRedirect("/chat/" + title);
+                }
+                String content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
+                addAnswerMessageToStorage(content);
             }
-        },
+        },/*
         GET_CONVERSATION_SUMMARY{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -220,29 +232,29 @@ public class BotActions {
 	/**
 	 * @param activityStore the activityStore to set
 	 */
-	public void setActivityStore(ActivityStore activityStore) {
-		this.activityStore = activityStore;
+	public static void setActivityStore(ActivityStore aStore) {
+		activityStore = aStore;
     }
     
     /**
      * @param conversationStore the conversationStore to set
      */
-    public void setConversationStore(ConversationStore conversationStore) {
-        this.conversationStore = conversationStore;
+    public static void setConversationStore(ConversationStore cStore) {
+        conversationStore = cStore;
     }
 
     /**
      * @param messageStore the messageStore to set
      */
-    public void setMessageStore(MessageStore messageStore) {
-        this.messageStore = messageStore;
+    public static void setMessageStore(MessageStore mStore) {
+        messageStore = mStore;
     }
 
     /**
      * @param userStore the userStore to set
      */
-    public void setUserStore(UserStore userStore) {
-        this.userStore = userStore;
+    public void setUserStore(UserStore uStore) {
+        userStore = uStore;
     }
 
     private static void addAnswerMessageToStorage(String content) {
@@ -263,6 +275,22 @@ public class BotActions {
 
     private static void goTo(String location) throws IOException {
         response.sendRedirect(location);
+    }
+
+    private static String getContentFromMessages(List<Message> messages) {
+        String content = "";
+        for (Message message : messages) {
+            content += message.getContent() + "\n";
+        }
+        return content;
+    }
+
+    private static String getTitleFromConversations(List<Conversation> conversations) {
+        String title = "";
+        for (Conversation conversation : conversations) {
+            title += conversation.getTitle() + "\n";
+        }
+        return title;
     }
 
 }
