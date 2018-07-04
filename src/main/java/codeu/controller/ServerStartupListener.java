@@ -1,5 +1,6 @@
 package codeu.controller;
 
+import codeu.bot.ActionMatcher;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
@@ -24,6 +25,8 @@ public class ServerStartupListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent sce) {
     try {
+      ActionMatcher.getInstance();
+
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);
 

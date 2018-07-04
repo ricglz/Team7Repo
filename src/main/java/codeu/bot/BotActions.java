@@ -226,7 +226,7 @@ public class BotActions {
         setMessageStore(MessageStore.getInstance());
         setUserStore(UserStore.getInstance());
         user = userStore.getUser(username);
-        conversation = conversationStore.getBotConversation(user.getId());
+        conversation = conversationStore.getBotConversation(user);
     }
 
 	/**
