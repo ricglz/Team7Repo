@@ -19,6 +19,7 @@ import edu.stanford.nlp.util.CoreMap;
 import codeu.bot.BotActions;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
 
 import java.io.IOException;
 import java.util.*;
@@ -127,7 +128,7 @@ public class ActionMatcher {
         return index;
     }
 
-    private void matchSet() throws IOException {
+    private void matchSet() throws IOException, PersistentDataStoreException {
         int setOrUpdateOrChangeIndex = getKeywordIndex(SET_KEYWORDS, commandTokensLemmas);
         if (setOrUpdateOrChangeIndex != -1 && 
             commandPOS.get(setOrUpdateOrChangeIndex).contains("VB")) {
@@ -149,7 +150,7 @@ public class ActionMatcher {
         }
     }
 
-    private void matchCreateConversation() throws IOException {
+    private void matchCreateConversation() throws IOException, PersistentDataStoreException {
         int createOrMakeIndex = getKeywordIndex(CREATE_KEYWORDS, commandTokensLemmas);
         if (createOrMakeIndex != -1 && 
             commandPOS.get(createOrMakeIndex).contains("VB")) {
@@ -169,7 +170,7 @@ public class ActionMatcher {
         }
     }
 
-    private void matchSendMessage() throws IOException {
+    private void matchSendMessage() throws IOException, PersistentDataStoreException {
         int sendIndex = commandTokensLemmas.indexOf("send");
         if (sendIndex != -1 && 
             commandPOS.get(sendIndex).contains("VB")) {
@@ -190,7 +191,7 @@ public class ActionMatcher {
         }
     }
 
-    public void matchGet() throws IOException {
+    public void matchGet() throws IOException, PersistentDataStoreException {
         int getOrFindOrDisplayorShoworGiveIndex = getKeywordIndex(GET_KEYWORDS, commandTokensLemmas);
         if (getOrFindOrDisplayorShoworGiveIndex != -1 && 
             commandPOS.get(getOrFindOrDisplayorShoworGiveIndex).contains("VB")) {
@@ -276,7 +277,7 @@ public class ActionMatcher {
         }
     }
 
-    public void matchGetConversations() throws IOException {
+    public void matchGetConversations() throws IOException, PersistentDataStoreException {
 
         // GET_CONVERSATIONS_BY_CREATION_TIME
         if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
@@ -344,7 +345,7 @@ public class ActionMatcher {
         }
     }
 
-    public void matchAction(String input, String username) throws IOException {
+    public void matchAction(String input, String username) throws IOException, PersistentDataStoreException {
         BotActions botActions = new BotActions(username);
 
         ConversationStore.getInstance().getAllConversationTitles();

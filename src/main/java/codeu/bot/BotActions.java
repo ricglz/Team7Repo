@@ -14,7 +14,17 @@ import codeu.model.store.basic.ActivityStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.persistence.PersistentDataStoreException;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.common.collect.Lists;
 
 /** Helper class responsible of the bot's actions */
@@ -36,6 +46,7 @@ public class BotActions {
                 UUID owner = user.getId();
                 Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
                 conversationStore.addConversation(conversation);
+                activityStore.addActivity(conversation);
                 String content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> has been created !";
                 addAnswerMessageToStorage(content);
             }
@@ -50,6 +61,7 @@ public class BotActions {
                 UUID author = user.getId();
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
                 messageStore.addMessage(message);
+                activityStore.addActivity(message);
                 String  answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(answerContent);
             }
@@ -111,19 +123,24 @@ public class BotActions {
                 String  content= "Messages within the time of " + time.toString() + " have been retrieved";
                 addAnswerMessageToStorage(contentMessages + content);
             }
-        },/*
+        },
         GET_TUTORIAL{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                String content = "This are the actions you can do\n";
+                addAnswerMessageToStorage(content);
             }
         },
         GET_MY_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                UUID author = user.getId();
+                List<Message> messages = messageStore.getMessagesByAuthor(author);
+                String contentMessages = getContentFromMessages(messages);
+                String content = "Your messages have been retrieved";
+                addAnswerMessageToStorage(contentMessages + content);
             }
-        },*/
+        },
         GET_CONVERSATIONS_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -184,13 +201,52 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 
             }
-        },
+        },*/
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
-            public void doAction(Object ... argsObjects) {
-                
+            public void doAction(Object ... argsObjects) throws PersistentDataStoreException {
+                String keyword = (String) argsObjects[0];
+                List<Message> filteredMessages = filterMessages(keyword);
             }
-        },
+
+			private List<Message> filterMessages(String keyword) throws PersistentDataStoreException {
+                List<Message> messages = Lists.newArrayList();
+                Filter contentKindaLikeFilter = createKeywordFilter(keyword);
+                Query query = new Query("chat-messages").setFilter(contentKindaLikeFilter);
+                DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+                PreparedQuery results = datastore.prepare(query);
+                for (Entity entity : results.asIterable()) {
+                    try {
+                        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+                        UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
+                        UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+                        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+                        String content = (String) entity.getProperty("content");
+                        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+                        messages.add(message);
+                    } catch (Exception e) {
+                        // In a production environment, errors should be very rare. Errors which may
+                        // occur include network errors, Datastore service errors, authorization errors,
+                        // database entity definition mismatches, or service mismatches.
+                        throw new PersistentDataStoreException(e);
+                    }
+                }
+                return messages;
+			}
+
+			private Filter createKeywordFilter(String keyword) {
+				List<Filter> filters =  Lists.newArrayList();
+                filters.add(new FilterPredicate("content",
+                            FilterOperator.GREATER_THAN_OR_EQUAL,
+                            keyword));
+                filters.add(new FilterPredicate("content",
+                            FilterOperator.LESS_THAN,
+                            keyword + "\ufffd"));
+                Filter contentKindaLikeFilter =
+                    CompositeFilterOperator.and(filters);
+				return contentKindaLikeFilter;
+			}
+        },/*
         GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -208,8 +264,16 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 
             }
-        }*/;
-        public abstract void doAction(Object ... argsObjects) throws IOException;
+        },*/
+        NOT_FOUND{
+            @Override
+            public void doAction(Object ... argsObjects) throws IOException, PersistentDataStoreException {
+                String content = "The action that you're trying to do can't be executed.";
+                addAnswerMessageToStorage(content);
+                Action.GET_TUTORIAL.doAction();
+            }
+        };
+        public abstract void doAction(Object ... argsObjects) throws IOException, PersistentDataStoreException;
     }
 
     private static ActivityStore activityStore;
