@@ -3,6 +3,8 @@ package codeu.bot;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,17 +16,7 @@ import codeu.model.store.basic.ActivityStore;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.persistence.PersistentDataStoreException;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.common.collect.Lists;
 
 /** Helper class responsible of the bot's actions */
@@ -101,13 +93,39 @@ public class BotActions {
                 }
                 addAnswerMessageToStorage(content);
             }
-        },/*
+        },
         GET_STAT{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                boolean getMessageCount = (Boolean) argsObjects[0];
+                boolean getConversationCount = (Boolean) argsObjects[1];
+                boolean getLongestMessage = (Boolean) argsObjects[2];
+                List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
+                String content = "";
+                if (getMessageCount) {
+                    content += "Amount of messages: " + userMessages.size() + "\n";
+                }
+                if (getConversationCount) {
+                    int conversationCount = getConversationCount(userMessages);
+                    content += "Conversations you have participated: " + conversationCount + "\n";
+                }
+                if (getLongestMessage) {
+                    userMessages.sort(Message.messageComparator);
+                    Message longestMessage = userMessages.get(userMessages.size()-1);
+                    long maxCharactersLength = longestMessage.getContent().length()-1;
+                    content += "Longest message with " + maxCharactersLength + " characerts\n";
+                }
+                addAnswerMessageToStorage(content);
             }
-        },
+
+            private int getConversationCount(List<Message> userMessages) {
+                HashSet<UUID>conversationIds = new HashSet<UUID>();
+                for (Message message : userMessages) {
+                    conversationIds.add(message.getConversationId());
+                }
+				return conversationIds.size();
+			}
+        },/*
         GET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -128,6 +146,9 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) {
                 String content = "This are the actions you can do\n";
+                content += "Send message to a conversation, create a conversation, get messages you have send\n";
+                content += "Go to a specific page, set your description, get all the conversations\n";
+                content += "get conversations done by someone and in a specific time\n";
                 addAnswerMessageToStorage(content);
             }
         },
@@ -170,13 +191,30 @@ public class BotActions {
                 String content= "All conversations have been retrieved";
                 addAnswerMessageToStorage(titleConversations + content);
             }
-        },/*
+        },
         GET_STATS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
+                int conversationCount = getConversationCount(userMessages);
+                userMessages.sort(Message.messageComparator);
+                Message longestMessage = userMessages.get(userMessages.size()-1);
+                long maxCharactersLength = longestMessage.getContent().length()-1;
+                String content = "This are your stats\n";
+                content += "Amount of messages: " + userMessages.size() + "\n";
+                content += "Conversations you have participated: " + conversationCount + "\n";
+                content += "Longest message with " + maxCharactersLength + " characerts\n";
+                addAnswerMessageToStorage(content);
             }
-        },
+
+			private int getConversationCount(List<Message> userMessages) {
+                HashSet<UUID>conversationIds = new HashSet<UUID>();
+                for (Message message : userMessages) {
+                    conversationIds.add(message.getConversationId());
+                }
+				return conversationIds.size();
+			}
+        },/*
         GET_SETTINGS{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -204,59 +242,63 @@ public class BotActions {
         },*/
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
-            public void doAction(Object ... argsObjects) throws PersistentDataStoreException {
+            public void doAction(Object ... argsObjects) {
                 String keyword = (String) argsObjects[0];
-                List<Message> filteredMessages = filterMessages(keyword);
+                List<Message> messages = getMessagesByKeyword(keyword);
+                String contentMessages = getContentFromMessages(messages);
+                String content = "These are the messages that contains the keyword";
+                addAnswerMessageToStorage(contentMessages + content);
             }
-
-			private List<Message> filterMessages(String keyword) throws PersistentDataStoreException {
-                List<Message> messages = Lists.newArrayList();
-                Filter contentKindaLikeFilter = createKeywordFilter(keyword);
-                Query query = new Query("chat-messages").setFilter(contentKindaLikeFilter);
-                DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-                PreparedQuery results = datastore.prepare(query);
-                for (Entity entity : results.asIterable()) {
-                    try {
-                        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-                        UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
-                        UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
-                        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-                        String content = (String) entity.getProperty("content");
-                        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
-                        messages.add(message);
-                    } catch (Exception e) {
-                        // In a production environment, errors should be very rare. Errors which may
-                        // occur include network errors, Datastore service errors, authorization errors,
-                        // database entity definition mismatches, or service mismatches.
-                        throw new PersistentDataStoreException(e);
-                    }
-                }
-                return messages;
-			}
-
-			private Filter createKeywordFilter(String keyword) {
-				List<Filter> filters =  Lists.newArrayList();
-                filters.add(new FilterPredicate("content",
-                            FilterOperator.GREATER_THAN_OR_EQUAL,
-                            keyword));
-                filters.add(new FilterPredicate("content",
-                            FilterOperator.LESS_THAN,
-                            keyword + "\ufffd"));
-                Filter contentKindaLikeFilter =
-                    CompositeFilterOperator.and(filters);
-				return contentKindaLikeFilter;
-			}
-        },/*
+        },
         GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                String keyword = (String) argsObjects[0];
+                List<Message> messages = getMessagesByKeyword(keyword);
+                HashSet<UUID> ids = conversationsIdsFromMessages(messages);
+                List<Conversation> conversations = getConversationsById(ids);
+                String conversationsTitles = getTitleFromConversations(conversations);
+                String content = "These are the the conversations that the content contains the keyword";
+                addAnswerMessageToStorage(conversationsTitles + content);
+            }
+
+            private List<Conversation> getConversationsById(HashSet<UUID> ids) {
+                List<Conversation> conversations = new ArrayList<>();
+                for (UUID id : ids) {
+                    Conversation conversation = conversationStore.getConversationWithUUID(id);
+                    conversations.add(conversation);
+                }
+				return conversations;
+			}
+
+			private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
+                HashSet<UUID> conversationsIds = new HashSet<>();
+                for (Message message : messages) {
+                    conversationsIds.add(message.getConversationId());
+                }
+                return conversationsIds;
             }
         },
         GET_CONVERSATION_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                String keyword = (String) argsObjects[0];
+                List<Conversation> conversations = conversationsByKeyword(keyword);
+                String conversationsTitles = getTitleFromConversations(conversations);
+                String content = "These are the the conversations that its title contains the keyword";
+                addAnswerMessageToStorage(conversationsTitles + content);
+            }
+
+            private List<Conversation> conversationsByKeyword(String keyword) {
+                List<Conversation> conversations = conversationStore.getAllConversations();
+                List<Conversation> conversationsFiltered = new ArrayList<>();
+                for (Conversation conversation : conversations) {
+                    boolean titleHasKeyword = conversation.getTitle().contains(keyword);
+                    if (titleHasKeyword) {
+                        conversationsFiltered.add(conversation);
+                    }
+                }
+                return conversationsFiltered;                
             }
         },
         GET_CONVERSATION_WITH_UNREAD_MESSAGES{
@@ -264,16 +306,16 @@ public class BotActions {
             public void doAction(Object ... argsObjects) {
                 
             }
-        },*/
+        },
         NOT_FOUND{
             @Override
-            public void doAction(Object ... argsObjects) throws IOException, PersistentDataStoreException {
+            public void doAction(Object ... argsObjects) throws IOException {
                 String content = "The action that you're trying to do can't be executed.";
                 addAnswerMessageToStorage(content);
                 Action.GET_TUTORIAL.doAction();
             }
         };
-        public abstract void doAction(Object ... argsObjects) throws IOException, PersistentDataStoreException;
+        public abstract void doAction(Object ... argsObjects) throws IOException;
     }
 
     private static ActivityStore activityStore;
@@ -319,6 +361,20 @@ public class BotActions {
      */
     public void setUserStore(UserStore uStore) {
         userStore = uStore;
+    }
+
+    private static List<Message> getMessagesByKeyword(String keyword) {
+        List <Message> messages = messageStore.getMessages();
+        List <Message> messagesByKeyWord = new ArrayList<>();
+        UUID userId = user.getId();
+        for (Message message : messages) {
+            boolean hasKeyword = message.getContent().contains(keyword);
+            boolean fromUser = message.getAuthorId().equals(userId);
+            if (hasKeyword && fromUser) {
+                messagesByKeyWord.add(message);
+            }
+        }
+        return messagesByKeyWord; 
     }
 
     private static void addAnswerMessageToStorage(String content) {
