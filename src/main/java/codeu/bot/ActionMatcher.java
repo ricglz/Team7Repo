@@ -57,6 +57,7 @@ public class ActionMatcher {
     public static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
     public static final String[] UNREAD_KEYWORDS = new String[] {"unread","respond"};
     public static final String[] NAVIGATE_KEYWORDS = new String[] {"navigate","take"};
+    public static final String[] HELP_KEYWORDS = new String[] {"help","tutorial","guide"};
 
     public static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
     public static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","user count","message count","most active user", "most active conversation"}));
@@ -456,6 +457,15 @@ public class ActionMatcher {
         return;
     }
 
+    public void matchHelp() throws IOException {
+        if (getKeywordIndex(HELP_KEYWORDS,commandTokensLemmas != -1) {
+            BotActions.Actions.GET_HELP.doAction();
+            actionMatched = true;
+            return;
+        }
+        return;
+    }
+
     public void matchAction(String input) throws IOException {
         conversationTitles = ConversationStore.getInstance().getAllConversationTitles();
         userNames = UserStore.getInstance().getAllUserNames();
@@ -502,6 +512,9 @@ public class ActionMatcher {
                         matchSummarize();
                         if (!actionMatched) {
                             matchNavigate();
+                            if (!actionMatched) {
+                                matchHelp();
+                            }
                         }
                     }
                 }

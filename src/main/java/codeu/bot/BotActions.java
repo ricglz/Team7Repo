@@ -111,6 +111,12 @@ public class BotActions {
                 System.out.printf("navigate");
             }
         },
+        GET_HELP{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get help");
+            }
+        }
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
