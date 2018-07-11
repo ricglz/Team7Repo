@@ -50,7 +50,7 @@ public class BotServlet extends HttpServlet {
         setMessageStore(MessageStore.getInstance());
         userStore = UserStore.getInstance();
         conversationStore = ConversationStore.getInstance();
-        actionMatcher = new ActionMatcher();
+        actionMatcher = ActionMatcher.getInstance();
     }
 
     /**
@@ -81,11 +81,12 @@ public class BotServlet extends HttpServlet {
             return;
         }
 
-        Conversation botConversation = conversationStore.getBotConversation(user.getId());
+        Conversation botConversation = conversationStore.getBotConversation(user);
         if (botConversation == null){
-             botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
+            botConversation = new Conversation(UUID.randomUUID(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE+username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
+        System.out.println("get"+botConversation);
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         request.setAttribute("botmessage", messages);
         request.getRequestDispatcher("/WEB-INF/view/bot.jsp").forward(request, response);
@@ -114,18 +115,19 @@ public class BotServlet extends HttpServlet {
 
         String userInput = request.getParameter("botmessage");
 
-        Conversation botConversation = conversationStore.getConversationWithTitle(DEFULT_BOT_CONVERSATION_TITLE+username);
+        Conversation botConversation = conversationStore.getBotConversation(user);
         if (botConversation == null){
             botConversation = new Conversation(user.getId(), user.getId(), DEFULT_BOT_CONVERSATION_TITLE +username, Instant.now());
             conversationStore.addConversation(botConversation);
         }
+        System.out.println("post"+botConversation);
         // sanitizes
         // This removes any HTML from the description content
         String cleanedMessageContent = Jsoup.clean(userInput, Whitelist.none());
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        actionMatcher.matchAction(cleanedMessageContent);
+        actionMatcher.matchAction(cleanedMessageContent, username);
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         System.out.println("130");
         response.sendRedirect("/bot");

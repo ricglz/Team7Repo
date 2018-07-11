@@ -17,6 +17,7 @@ package codeu.model.store.basic;
 import codeu.controller.BotServlet;
 import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
+import codeu.model.data.User;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -150,11 +151,12 @@ public class ConversationStore {
     }
     return null;
   }
-  /** Find and return the Conversation with the given title. */
-  public Conversation getBotConversation(UUID userId) {
-
+  public Conversation getBotConversation(User user) {
     for (Conversation conversation : conversations) {
-      if (conversation.getId().equals(conversation.getOwnerId()) && conversation.getOwnerId().equals(userId)) {
+      String expectedConversationTitle = String.format("%s%s", BotServlet.DEFULT_BOT_CONVERSATION_TITLE, user.getName());
+      boolean titleIsEqual = expectedConversationTitle.equals(conversation.getTitle());
+      boolean equalUserId = conversation.getOwnerId().equals(user.getId());
+      if (titleIsEqual && equalUserId) {
         return conversation;
       }
     }

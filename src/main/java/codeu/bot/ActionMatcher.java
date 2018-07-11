@@ -69,15 +69,33 @@ public class ActionMatcher {
     public boolean actionMatched;
 
 
-    public ActionMatcher() {
-        distance = new LevenshteinDistance();
+    private static ActionMatcher actionMatcherInstance;
+    public static ActionMatcher getInstance() {
+        System.out.println("#getInstance 1");
+        if (actionMatcherInstance == null) {
+            System.out.println("#getInstance 2");
+            actionMatcherInstance = new ActionMatcher();
+        }
+        System.out.println("#getInstance 3");
+        return actionMatcherInstance;
+    }
 
+    private ActionMatcher() {
+        System.out.println("#ActionMatcher 1");
+        distance = new LevenshteinDistance();
+        System.out.println("#ActionMatcher 2");
         properties = new Properties();
+        System.out.println("#ActionMatcher 3");
         properties.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,depparse");
+        System.out.println("#ActionMatcher 4");
         properties.setProperty("sutime.markTimeRanges", "true");
+        System.out.println("#ActionMatcher 5");
+        //properties.setProperty("ner.useSUTime", "false");
 
         pipeline = new StanfordCoreNLP(properties);
+        System.out.println("#ActionMatcher 6");
         pipeline.addAnnotator(new TimeAnnotator("sutime", properties));
+        System.out.println("#ActionMatcher 7");
     }
 
     public String findFuzzyMatch(HashSet<String> set, int distanceThreshold) {
@@ -466,9 +484,17 @@ public class ActionMatcher {
         return;
     }
 
+<<<<<<< HEAD
     public void matchAction(String input) throws IOException {
         conversationTitles = ConversationStore.getInstance().getAllConversationTitles();
         userNames = UserStore.getInstance().getAllUserNames();
+=======
+    public void matchAction(String input, String username) throws IOException {
+        BotActions botActions = new BotActions(username);
+
+        ConversationStore.getInstance().getAllConversationTitles();
+        UserStore.getInstance().getAllUserNames();
+>>>>>>> 34d573aa4a11454e70f897ff323f8bf019bdf038
 
         this.input = input;
 
