@@ -53,6 +53,7 @@ public class ActionMatcher {
     public static final String[] GET_KEYWORDS = new String[] {"get","find","display","show","give"}; 
     public static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
     public static final String[] UNREAD_KEYWORDS = new String[] {"unread","respond"};
+    public static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
 
     public static final Pattern doubleQuotesPattern = Pattern.compile("\"([^\"]*)\"");
     public Matcher doubleQuotesMatcher;
@@ -101,7 +102,6 @@ public class ActionMatcher {
         int keywordsIndex = 0;
 
         while (index < 0 && keywordsIndex < keywords.length) {
-            System.out.println("loop");
             index = lemmas.indexOf(keywords[keywordsIndex]);
             keywordsIndex++;
         }
@@ -128,6 +128,21 @@ public class ActionMatcher {
             }
 
             // TODO: Settings implementation
+            // Set background_color to color
+            // From a set of colors
+            int backgroundOrColorOrColourIndex = getKeywordIndex(new String[] {"background","color","colour"}, commandTokensLemmas);
+            if (backgroundOrColorOrColourIndex != -1) {
+                String color = "";
+                int colorIndex = getKeywordIndex(BACKGROUND_COLORS, commandTokensLemmas);
+                if (colorIndex != -1) {
+                    color = commandTokensLemmas.get(colorIndex);
+                    System.out.printf("Setting background color to %s.",color);
+                    BotActions.Action.SET_SETTING.doAction(color);
+                }
+            }
+
+            
+
         }
     }
 
