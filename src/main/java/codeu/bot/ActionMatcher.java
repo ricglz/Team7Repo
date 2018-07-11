@@ -47,18 +47,25 @@ public class ActionMatcher {
 
     public HashSet<String> conversationTitles;
     public HashSet<String> userNames;
-    public HashSet<String> settingNames;
+    // Hard coded for now? Not sure if a store is going to be implemented for this
+    public HashSet<String> settingNames = new HashSet<>(Arrays.asList(new String[] {"background color"}));
+
 
     public static final String[] SET_KEYWORDS = new String[] {"set","update","change"};
     public static final String[] CREATE_KEYWORDS = new String[] {"create","make"};
     public static final String[] GET_KEYWORDS = new String[] {"get","find","display","show","give"}; 
     public static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
     public static final String[] UNREAD_KEYWORDS = new String[] {"unread","respond"};
+    public static final String[] NAVIGATE_KEYWORDS = new String[] {"navigate","take"};
+
     public static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
     public static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","user count","message count","most active user", "most active conversation"}));
+    public static final String[] PAGES = new String[] {"activity","profile","conversation","setting"};
 
     public static final Pattern doubleQuotesPattern = Pattern.compile("\"([^\"]*)\"");
     public Matcher doubleQuotesMatcher;
+
+    public boolean actionMatched;
 
 
     public ActionMatcher() {
@@ -123,10 +130,15 @@ public class ActionMatcher {
                 Matcher matcher = doubleQuotesPattern.matcher(input);
                 if (matcher.find()) {
                     description = matcher.group(1);
+                    System.out.printf("Setting description to %s.",description);
+                    BotActions.Action.SET_DESCRIPTION.doAction(description);
+                    actionMatched = true;
+                    return;
+                } else {
+                    BotActions.Action.MISSING_PARAMETER.doAction();
+                    actionMatched = true;
+                    return;
                 }
-                System.out.printf("Setting description to %s.",description);
-                BotActions.Action.SET_DESCRIPTION.doAction(description);
-                return;
             }
 
             // // TODO: Settings implementation
@@ -154,16 +166,20 @@ public class ActionMatcher {
                         color = commandTokensLemmas.get(colorIndex);
                         System.out.printf("Setting background color to %s.",color);
                         BotActions.Action.SET_SETTING.doAction(setting, color);
+                        actionMatched = true;
+                        return;
+                    } else {
+                        BotActions.Action.MISSING_PARAMETER.doAction();
+                        actionMatched = true;
                         return;
                     }
                 }
             } else {
 
             }
-
-
             return;
         }
+        return;
     }
 
     private void matchCreateConversation() throws IOException {
@@ -178,12 +194,17 @@ public class ActionMatcher {
             Matcher matcher = doubleQuotesPattern.matcher(input);
             if (matcher.find()) {
                 conversationTitle = matcher.group(1);
-                System.out.println("got here");
+                System.out.printf("Creating conversation %s.",conversationTitle);
+                BotActions.Action.CREATE_CONVERSATION.doAction(conversationTitle);
+                actionMatched = true;
+                return;
+            } else {
+                BotActions.Action.MISSING_PARAMETER.doAction();
+                actionMatched = true;
+                return;
             }
-            System.out.printf("Creating conversation %s.",conversationTitle);
-            BotActions.Action.CREATE_CONVERSATION.doAction(conversationTitle);
-            return;
         }
+        return;
     }
 
     private void matchSendMessage() throws IOException {
@@ -198,22 +219,27 @@ public class ActionMatcher {
             Matcher messageMatcher = messagePattern.matcher(input);
             if (messageMatcher.find()) {
                 message = messageMatcher.group(1);
+                String conversationTitle = findFuzzyMatch(conversationTitles, 5);
+                System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
+                BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
+                actionMatched = true;
+                return;
+            } else {
+                BotActions.Action.MISSING_PARAMETER.doAction();
+                actionMatched = true;
+                return;
             }
-
-            String conversationTitle = findFuzzyMatch(conversationTitles, 5);
-            System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
-            BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
-            return;
         }
+        return;
     }
 
     public void matchGet() throws IOException {
-        int getOrFindOrDisplayorShoworGiveIndex = getKeywordIndex(GET_KEYWORDS, commandTokensLemmas);
-        if (getOrFindOrDisplayorShoworGiveIndex != -1 && 
-            commandPOS.get(getOrFindOrDisplayorShoworGiveIndex).contains("VB")) {
+        int getOrFindOrDisplayOrShoworGiveIndex = getKeywordIndex(GET_KEYWORDS, commandTokensLemmas);
+        if (getOrFindOrDisplayOrShoworGiveIndex != -1 && 
+            commandPOS.get(getOrFindOrDisplayOrShoworGiveIndex).contains("VB")) {
 
             // Getting the lemma so we can ignore pluralizations
-            IndexedWord verbOfInterest = new IndexedWord(commandTokens.get(getOrFindOrDisplayorShoworGiveIndex));
+            IndexedWord verbOfInterest = new IndexedWord(commandTokens.get(getOrFindOrDisplayOrShoworGiveIndex));
         
             // Find object we're getting
             Set<IndexedWord> directObjects = dependencyParse.getChildrenWithReln(verbOfInterest,UniversalEnglishGrammaticalRelations.DIRECT_OBJECT);
@@ -221,8 +247,6 @@ public class ActionMatcher {
             if (!directObjects.isEmpty() && directObjects.size() == 1) {
                 directObject = (new ArrayList<>(directObjects)).get(0).lemma();
             } else {
-                // Make a dummy call to SET_DESCRIPTION
-                BotActions.Action.SET_DESCRIPTION.doAction();
                 return;
             }
 
@@ -238,7 +262,6 @@ public class ActionMatcher {
             if (actionMatched) {
                 return;
             } else {
-                // SETTINGS
                 String setting = findFuzzyMatch(settingNames, 3);
                 if (!setting.isEmpty()) {
                     System.out.printf("Getting %s.",setting);
@@ -266,20 +289,22 @@ public class ActionMatcher {
                 if (commandTokensLemmas.contains("all") && 
                 (commandTokensLemmas.contains("statistic") || commandTokensLemmas.contains("stat"))) {
                     System.out.println("Getting all settings.");
-                    BotActions.Action.GET_SETTINGS.doAction();
+                    BotActions.Action.GET_STATS.doAction();
                     actionMatched = true;
                     return;
                 }
 
             }
         }
+        return;
     }
 
     public void matchGetMessages() throws IOException {
         // GET_MY_MESSAGES
         if (commandTokensLemmas.contains("my") || commandTokensLemmas.contains("I")) {
             System.out.printf("Showing your messages.");
-            // BotActions.Action.GET_MY_MESSAGES.doAction();
+            BotActions.Action.GET_MY_MESSAGES.doAction();
+            actionMatched = true;
             return;
         }
 
@@ -287,9 +312,9 @@ public class ActionMatcher {
         if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
             CoreMap timexAnnotation = timexAnnotationsAll.get(0);
             Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-            // BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
-            // Need to decide restrictions on time
             System.out.printf("Getting messages based on time criteria: %s.",temporal.toString());
+            BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
+            actionMatched = true;
             return;
         }
 
@@ -300,35 +325,29 @@ public class ActionMatcher {
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
+                System.out.printf("Getting messages like keyword \"%s\".",keyword);
+                BotActions.Action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
+                actionMatched = true;
+                return;
+            } else {
+                BotActions.Action.MISSING_PARAMETER.doAction();
+                actionMatched = true;
+                return;
             }
-            // else {
-            //     // RAISE SORRY IDK
-            //     return;
-            // }
-            
-            // if (!keyword.equals("")) {
-            // BotActions.Action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
-            System.out.printf("Getting messages like keyword \"%s\".",keyword);
-            return;
-            // }else {
-            //     // RAISE SORRY IDK
-            //     return;
-            // }
         }
 
         // GET_MESSAGES_FROM_CONVERSATION
         int fromOrInIndex = getKeywordIndex(new String[] {"in","from"}, commandTokensLemmas);
         if (fromOrInIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles, 3);
-            // if (!conversationTitle.equals("")) {
-            // BotActions.Action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
-            System.out.printf("Getting messsages from %s.",conversationTitle);
-            return;
-            // } else {
-            //     // RAISE SORRY IDK
-            //     return;
-            // }
+            if (!conversationTitle.isEmpty()) {
+                System.out.printf("Getting messsages from %s.",conversationTitle);
+                BotActions.Action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
+                actionMatched = true;
+                return;
+            }
         }
+        return;
     }
 
     public void matchGetConversations() throws IOException {
@@ -337,8 +356,9 @@ public class ActionMatcher {
         if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
             CoreMap timexAnnotation = timexAnnotationsAll.get(0);
             Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-            BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
             System.out.printf("Getting conversation based on time criteria: %s.",temporal.toString());
+            BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(temporal);
+            actionMatched = true;
             return;
         }
 
@@ -346,44 +366,48 @@ public class ActionMatcher {
         int madeOrCreateOrOwnIndex = getKeywordIndex(CREATE_KEYWORDS, commandTokensLemmas);
         if (madeOrCreateOrOwnIndex != -1) {
             String author = findFuzzyMatch(userNames, 3);
-
-            // if (!author.equals("")) {
-                // BotActions.Action.GET_MESSAGES_BY_AUTHOR.doAction(author);
-            System.out.printf("Getting conversations made by %s.",author);
-            return;
-            // } else {
-            //     // RAISE SORRY IDK
-            //     return;
-            // }
+            if (!author.isEmpty()) {
+                System.out.printf("Getting conversations made by %s.",author);
+                BotActions.Action.GET_MESSAGES_BY_AUTHOR.doAction(author);
+                actionMatched = true;
+                return;
+            }
         }
 
         // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES
         int unreadOrRespondIndex = getKeywordIndex(UNREAD_KEYWORDS, commandTokensLemmas);
         if (unreadOrRespondIndex != -1) {
-            // BotActions.Action.GET_CONVERSATION_WITH_UNREAD_MESSAGES.doAction();
             System.out.printf("Getting conversations with unread messages.");
+            BotActions.Action.GET_CONVERSATIONS_WITH_UNREAD_MESSAGES.doAction();
+            actionMatched = true;
             return;
         }
 
 
-        // GET_CONVESATIONS_ABOUT_KEYWORD (encompass the like and content methods)
+        // GET_CONVERSATIONS_ABOUT_KEYWORD (encompass the like and content methods)
         int containOrAboutOrMentionIndex = getKeywordIndex(new String[] {"contain","about","mention"}, commandTokensLemmas);
         if (containOrAboutOrMentionIndex != -1) {
             String keyword = "";
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
+                System.out.printf("Getting conversations about keyword \"%s\".",keyword);
+                BotActions.Action.GET_CONVERSATIONS_ABOUT_KEYWORD.doAction(keyword);
+                actionMatched = true;
+                return;
+            } else {
+                BotActions.Action.MISSING_PARAMETER.doAction();
+                actionMatched = true;
+                return;
             }
-            // BotActions.Action.GET_CONVERSATIONS_KEYWORD.doAction(keyword);
-            System.out.printf("Getting conversations about keyword \"%s\".",keyword);
-            return;
         }
 
         // GET_ALL_CONVERSATIONS
         int allIndex = getKeywordIndex(new String[] {"all"}, commandTokensLemmas);
         if (allIndex != -1) {
-            // BotActions.Action.GET_ALL_CONVERSATIONS.doAction();
             System.out.printf("Getting all conversations.");
+            BotActions.Action.GET_ALL_CONVERSATIONS.doAction();
+            actionMatched = true;
             return;
         }
     }
@@ -394,14 +418,47 @@ public class ActionMatcher {
             commandTokensLemmas);
         if (summarizeOrSummariseOrOverviewOrTLDRIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles,3);
-            System.out.printf("Getting a summary of %s.",conversationTitle);
-            // BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
+            if (!conversationTitle.isEmpty()) {
+                System.out.printf("Getting a summary of %s.",conversationTitle);
+                BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
+                actionMatched = true;
+                return;
+            } else {
+                BotActions.Action.MISSING_PARAMETER.doAction();
+                actionMatched = true;
+                return;
+            }
         }
+        return;
+    }
+
+    public void matchNavigate() throws IOException {
+        int navigateOrTakeIndex = getKeywordIndex(NAVIGATE_KEYWORDS, commandTokensLemmas);
+        if (navigateOrTakeIndex != -1) {
+            
+            String conversation = findFuzzyMatch(conversationTitles, 3);
+            if (!conversation.isEmpty()) {
+                System.out.printf("Taking you to %s.",conversation);
+                BotActions.Action.NAVIGATE_TO_CONVERSATION.doAction(conversation);
+                actionMatched = true;
+                return;
+            }
+
+            int pageIndex = getKeywordIndex(PAGES, commandTokensLemmas);
+            if (pageIndex != -1) {
+                String page = commandTokensLemmas.get(pageIndex);
+                System.out.printf("Taking you to %s page.",page);
+                BotActions.Action.NAVIGATE.doAction(page);
+                actionMatched = true;
+                return;
+            }
+        }
+        return;
     }
 
     public void matchAction(String input) throws IOException {
-        ConversationStore.getInstance().getAllConversationTitles();
-        UserStore.getInstance().getAllUserNames();
+        conversationTitles = ConversationStore.getInstance().getAllConversationTitles();
+        userNames = UserStore.getInstance().getAllUserNames();
 
         this.input = input;
 
@@ -435,11 +492,27 @@ public class ActionMatcher {
         System.out.println(timexAnnotationsAll);
 
         matchSet();
-        matchSendMessage();
-        matchCreateConversation();
-        matchGet();
-        matchSummarize();
-        return;
+        if (!actionMatched) {
+            matchSendMessage();
+            if (!actionMatched) {
+                matchCreateConversation();
+                if (!actionMatched) {
+                    matchGet();
+                    if (!actionMatched) {
+                        matchSummarize();
+                        if (!actionMatched) {
+                            matchNavigate();
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!actionMatched) {
+            BotActions.Action.NO_IDEA_PLACEHOLDER.doAction();
+        } else {
+            return;
+        }
     }
 
 }

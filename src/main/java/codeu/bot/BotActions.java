@@ -21,6 +21,96 @@ import com.google.common.collect.Lists;
 public class BotActions {
 
     public enum Action {
+        MISSING_PARAMETER{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("missing parameters");
+            }
+        },
+        NO_IDEA_PLACEHOLDER{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("sorry idk");
+            }
+        },
+        SET_SETTING{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("set %s",(String) argsObjects[0]);
+            }
+        },
+        GET_SETTING{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get %s",(String) argsObjects[0]);
+            }
+        },
+        GET_SETTINGS{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get settings");
+            }
+        },
+        GET_STAT{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get %s",(String) argsObjects[0]);
+            }
+        },
+        GET_STATS{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get stats");
+            }
+        },
+        GET_MY_MESSAGES{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get my messages");
+            }
+        },
+        GET_MESSAGES_LIKE_KEYWORD{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get messages like keyword");
+            }
+        },
+        GET_MESSAGES_BY_AUTHOR{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get messages by author");
+            }
+        },
+        GET_CONVERSATIONS_WITH_UNREAD_MESSAGES{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get conversations with unread messages");
+            }
+        },
+        GET_CONVERSATIONS_ABOUT_KEYWORD{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get conversations about keyword");
+            }
+        },
+        GET_CONVERSATION_SUMMARY{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get conversation summary");
+            }
+        },
+        NAVIGATE_TO_CONVERSATION{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("navigate to conversation");
+            }
+        },
+        NAVIGATE{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("navigate");
+            }
+        },
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
