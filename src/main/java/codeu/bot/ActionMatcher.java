@@ -47,6 +47,7 @@ public class ActionMatcher {
 
     public HashSet<String> conversationTitles;
     public HashSet<String> userNames;
+    public HashSet<String> settingNames;
 
     public static final String[] SET_KEYWORDS = new String[] {"set","update","change"};
     public static final String[] CREATE_KEYWORDS = new String[] {"create","make"};
@@ -54,6 +55,7 @@ public class ActionMatcher {
     public static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
     public static final String[] UNREAD_KEYWORDS = new String[] {"unread","respond"};
     public static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
+    public static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","user count","message count","most active user", "most active conversation"}));
 
     public static final Pattern doubleQuotesPattern = Pattern.compile("\"([^\"]*)\"");
     public Matcher doubleQuotesMatcher;
@@ -127,22 +129,40 @@ public class ActionMatcher {
                 return;
             }
 
-            // TODO: Settings implementation
-            // Set background_color to color
-            // From a set of colors
-            int backgroundOrColorOrColourIndex = getKeywordIndex(new String[] {"background","color","colour"}, commandTokensLemmas);
-            if (backgroundOrColorOrColourIndex != -1) {
-                String color = "";
-                int colorIndex = getKeywordIndex(BACKGROUND_COLORS, commandTokensLemmas);
-                if (colorIndex != -1) {
-                    color = commandTokensLemmas.get(colorIndex);
-                    System.out.printf("Setting background color to %s.",color);
-                    BotActions.Action.SET_SETTING.doAction(color);
+            // // TODO: Settings implementation
+            // // Set background_color to color
+            // // From a set of colors
+            // int backgroundOrColorOrColourIndex = getKeywordIndex(new String[] {"background","color","colour"}, commandTokensLemmas);
+            // if (backgroundOrColorOrColourIndex != -1) {
+            //     String color = "";
+            //     int colorIndex = getKeywordIndex(BACKGROUND_COLORS, commandTokensLemmas);
+            //     if (colorIndex != -1) {
+            //         color = commandTokensLemmas.get(colorIndex);
+            //         System.out.printf("Setting background color to %s.",color);
+            //         BotActions.Action.SET_SETTING.doAction(color);
+            //     }
+            // }
+
+            String setting = findFuzzyMatch(settingNames, 3);
+            if (!setting.isEmpty()) {
+                if (setting.contains("color") || setting.contains("colour")) {
+                    // Going to be setting a color
+
+                    String color = "";
+                    int colorIndex = getKeywordIndex(BACKGROUND_COLORS, commandTokensLemmas);
+                    if (colorIndex != -1) {
+                        color = commandTokensLemmas.get(colorIndex);
+                        System.out.printf("Setting background color to %s.",color);
+                        BotActions.Action.SET_SETTING.doAction(setting, color);
+                        return;
+                    }
                 }
+            } else {
+
             }
 
-            
 
+            return;
         }
     }
 
@@ -213,6 +233,44 @@ public class ActionMatcher {
                 case "conversation": {
                     matchGetConversations();
                 }
+            }
+
+            if (actionMatched) {
+                return;
+            } else {
+                // SETTINGS
+                String setting = findFuzzyMatch(settingNames, 3);
+                if (!setting.isEmpty()) {
+                    System.out.printf("Getting %s.",setting);
+                    BotActions.Action.GET_SETTING.doAction(setting);
+                    actionMatched = true;
+                    return;
+                }
+
+                if (commandTokensLemmas.contains("all") && commandTokensLemmas.contains("setting")) {
+                    System.out.println("Getting all settings.");
+                    BotActions.Action.GET_SETTINGS.doAction();
+                    actionMatched = true;
+                    return;
+                }
+
+                // STATISTICS
+                String statistic = findFuzzyMatch(STATS, 10);
+                if (!statistic.isEmpty()) {
+                    System.out.printf("Getting %s.",statistic);
+                    BotActions.Action.GET_STAT.doAction(statistic);
+                    actionMatched = true;
+                    return;
+                }
+
+                if (commandTokensLemmas.contains("all") && 
+                (commandTokensLemmas.contains("statistic") || commandTokensLemmas.contains("stat"))) {
+                    System.out.println("Getting all settings.");
+                    BotActions.Action.GET_SETTINGS.doAction();
+                    actionMatched = true;
+                    return;
+                }
+
             }
         }
     }
