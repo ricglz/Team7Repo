@@ -23,6 +23,18 @@ import com.google.common.collect.Lists;
 public class BotActions {
 
     public enum Action {
+        MISSING_PARAMETER{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("missing parameters");
+            }
+        },
+        GET_CONVERSATIONS_WITH_UNREAD_MESSAGES{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get conversations with unread messages");
+            }
+        },
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -46,15 +58,16 @@ public class BotActions {
         SEND_MESSAGE{
             @Override
             public void doAction(Object ... argsObjects) {
-                String title = (String) argsObjects[0];
-                String content = (String) argsObjects[1];
+                String content = (String) argsObjects[0];
+                String title = (String) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
+                System.out.println(conversation);
                 UUID id = conversation.getId();
                 UUID author = user.getId();
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
                 messageStore.addMessage(message);
                 activityStore.addActivity(message);
-                String  answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
+                String answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(answerContent);
             }
         },
@@ -69,13 +82,13 @@ public class BotActions {
                 String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(contentMessages + content);
             }
-        },/*
+        },
         SET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                return;   
             }
-        },*/
+        },
         NAVIGATE{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
@@ -125,13 +138,13 @@ public class BotActions {
                 }
 				return conversationIds.size();
 			}
-        },/*
+        },
         GET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("get setting");
             }
-        },*/
+        },
         GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -142,7 +155,7 @@ public class BotActions {
                 addAnswerMessageToStorage(contentMessages + content);
             }
         },
-        GET_TUTORIAL{
+        GET_HELP{
             @Override
             public void doAction(Object ... argsObjects) {
                 String content = "This are the actions you can do\n";
@@ -172,7 +185,7 @@ public class BotActions {
                 addAnswerMessageToStorage(titleConversations + content);
             }
         },
-        GET_CONVERSATION_BY_AUTHOR{
+        GET_CONVERSATIONS_BY_AUTHOR{
             @Override
             public void doAction(Object ... argsObjects) {
                 String username = (String) argsObjects[0];
@@ -214,13 +227,13 @@ public class BotActions {
                 }
 				return conversationIds.size();
 			}
-        },/*
+        },
         GET_SETTINGS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("get settings");
             }
-        },*/
+        },
         NAVIGATE_TO_CONVERSATION{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
@@ -233,13 +246,13 @@ public class BotActions {
                 String content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
                 addAnswerMessageToStorage(content);
             }
-        },/*
+        },
         GET_CONVERSATION_SUMMARY{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("getting conversation summary");
             }
-        },*/
+        },
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -291,10 +304,16 @@ public class BotActions {
                 return ids;
             }
         },
+        GET_CONVERSATIONS_ABOUT_KEYWORD{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("get conversation about keyword");
+            }
+        },
         GET_CONVERSATION_WITH_UNREAD_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                return;
             }
         },
         NOT_FOUND{
@@ -302,7 +321,7 @@ public class BotActions {
             public void doAction(Object ... argsObjects) throws IOException {
                 String content = "The action that you're trying to do can't be executed.";
                 addAnswerMessageToStorage(content);
-                Action.GET_TUTORIAL.doAction();
+                Action.GET_HELP.doAction();
             }
         };
         public abstract void doAction(Object ... argsObjects) throws IOException;

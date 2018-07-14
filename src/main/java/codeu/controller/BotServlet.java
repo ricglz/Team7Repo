@@ -129,7 +129,7 @@ public class BotServlet extends HttpServlet {
         messageStore.addMessage(message);
 
         try {
-			actionMatcher.matchAction(cleanedMessageContent, username);
+			actionMatcher.matchAction(cleanedMessageContent, username, response);
 		} catch (PersistentDataStoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
