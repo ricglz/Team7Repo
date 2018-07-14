@@ -250,15 +250,16 @@ public class BotActions {
                 addAnswerMessageToStorage(contentMessages + content);
             }
         },
-        GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
+        GET_CONVERSATION_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
                 String keyword = (String) argsObjects[0];
                 List<Message> messages = getMessagesByKeyword(keyword);
                 HashSet<UUID> ids = conversationsIdsFromMessages(messages);
+                ids = conversationsByKeyword(keyword, ids);
                 List<Conversation> conversations = getConversationsById(ids);
                 String conversationsTitles = getTitleFromConversations(conversations);
-                String content = "These are the the conversations that the content contains the keyword";
+                String content = "These are the the conversations that its title contains the keyword";
                 addAnswerMessageToStorage(conversationsTitles + content);
             }
 
@@ -269,36 +270,25 @@ public class BotActions {
                     conversations.add(conversation);
                 }
 				return conversations;
-			}
-
-			private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
+            }
+            
+            private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
                 HashSet<UUID> conversationsIds = new HashSet<>();
                 for (Message message : messages) {
                     conversationsIds.add(message.getConversationId());
                 }
                 return conversationsIds;
             }
-        },
-        GET_CONVERSATION_LIKE_KEYWORD{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                String keyword = (String) argsObjects[0];
-                List<Conversation> conversations = conversationsByKeyword(keyword);
-                String conversationsTitles = getTitleFromConversations(conversations);
-                String content = "These are the the conversations that its title contains the keyword";
-                addAnswerMessageToStorage(conversationsTitles + content);
-            }
 
-            private List<Conversation> conversationsByKeyword(String keyword) {
+            private HashSet<UUID> conversationsByKeyword(String keyword, HashSet<UUID> ids) {
                 List<Conversation> conversations = conversationStore.getAllConversations();
-                List<Conversation> conversationsFiltered = new ArrayList<>();
                 for (Conversation conversation : conversations) {
                     boolean titleHasKeyword = conversation.getTitle().contains(keyword);
                     if (titleHasKeyword) {
-                        conversationsFiltered.add(conversation);
+                        ids.add(conversation.getId());
                     }
                 }
-                return conversationsFiltered;                
+                return ids;
             }
         },
         GET_CONVERSATION_WITH_UNREAD_MESSAGES{
