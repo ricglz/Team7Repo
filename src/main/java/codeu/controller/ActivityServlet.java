@@ -53,10 +53,6 @@ public class ActivityServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-    System.out.println("Test"+ request.getAttribute("color"));
-    request.setAttribute("color","red");
-    System.out.println("Test 2"+ request.getAttribute("color"));
-
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them access the activity feed
