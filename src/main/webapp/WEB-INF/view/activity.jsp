@@ -15,13 +15,61 @@
 
 <head>
     <title>Activity</title>
-    <link rel="stylesheet" href="/css/main.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            line-height: 1.6;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #444;
+            background-color:#eeeeee;
+        }
+        nav {
+            background-color:blue;
+        }
+        nav a {
+            color: white;
+            display: inline-block;
+            font-size: 24px;
+            margin: 15px;
+            text-decoration: none;
+        }
+        #navTitle {
+            font-size: 36px;
+        }
+        #container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 800px;
+        }
+        h1 {
+            color: #757575;
+        }
+        input {
+            font-size: 18px;
+        }
+        button {
+            font-size: 18px;
+        }
+        .stat-information {
+            width:75%;
+            margin-left:auto;
+            margin-right:auto;
+            margin-top: 50px;
+        }
+    </style>
 
     <style>
         #activity {
           background-color: white;
           height: 500px;
           overflow-y: scroll
+        }
+
+        #color{
+            display:hidden;
         }
     </style>
 </head>
@@ -31,11 +79,11 @@
     <h1>Activity</h1>   
 
     <div id="container">
-
         <div id="activity">
             <ul>
                 <% for (Activity activity : activities) { %>
                     <li> <%= activity.getDisplayString() %> </li>
+
                 <% } %>
             </ul>
         </div>

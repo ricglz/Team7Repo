@@ -19,6 +19,7 @@ import codeu.model.data.Message;
 import codeu.model.data.Conversation;
 import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
+import codeu.model.data.Setting;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import edu.stanford.nlp.trees.international.negra.NegraLabel;
 
@@ -199,6 +200,22 @@ public class PersistentDataStore {
 
     return activities;
   }
+  public List<Setting> loadSetting()throws PersistentDataStoreException{
+    List<Setting> setting = new ArrayList<>();
+    Query query = new Query("background-color");
+    PreparedQuery results = datastore.prepare(query);
+
+    for(Entity entity : results.asIterable()){
+      try {
+        String color = (String) entity.getProperty("color");
+        Setting colorsetting = new Setting(color);
+        setting.add(colorsetting);
+      } catch (Exception e){
+         throw new PersistentDataStoreException(e);
+      }
+    }
+    return setting;
+  }
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -242,5 +259,10 @@ public class PersistentDataStore {
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
     activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());
     datastore.put(activityEntity);
+  }
+  public void writeThrough(Setting setting){
+    Entity settingEntity = new Entity("background-color");
+    settingEntity.setProperty("color", setting.getColor());
+    datastore.put(settingEntity);
   }
 }

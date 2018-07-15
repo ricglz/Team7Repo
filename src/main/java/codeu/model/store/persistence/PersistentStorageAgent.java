@@ -18,8 +18,10 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.data.Activity;
+import codeu.model.data.Setting;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
@@ -68,6 +70,15 @@ public class PersistentStorageAgent {
    */
   public List<User> loadUsers() throws PersistentDataStoreException {
     return persistentDataStore.loadUsers();
+  }
+  /**
+   * Retrieve all Setting objects from the Datastore service. The returned list may be empty.
+   *
+   * @throws PersistentDataStoreException if an error was detected during the load from the
+   *     Datastore service
+   */
+  public List<Setting> loadSetting()throws PersistentDataStoreException{
+    return persistentDataStore.loadSetting();
   }
 
   /**
@@ -118,5 +129,9 @@ public class PersistentStorageAgent {
   /** Write an Activity object to the Datastore service. */
   public void writeThrough(Activity activity) {
     persistentDataStore.writeThrough(activity);
+  }
+  /**Write an Setting object to the datastore service. */
+  public void writeThrough(Setting setting){
+    persistentDataStore.writeThrough(setting);
   }
 }

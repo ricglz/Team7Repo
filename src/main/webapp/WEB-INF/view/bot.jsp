@@ -18,6 +18,7 @@
     <title>Bot Conversation Page</title>
     <link rel="stylesheet" href="/css/main.css" type="text/css">
 
+
     <style>
         #chat {
             background-color: white;

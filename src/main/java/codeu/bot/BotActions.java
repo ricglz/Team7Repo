@@ -1,4 +1,5 @@
-package codeu.bot;
+/* package codeu.bot;
+
 
 import java.io.IOException;
 import java.time.Instant;
@@ -18,6 +19,7 @@ import codeu.model.store.basic.UserStore;
 import com.google.common.collect.Lists;
 
 /** Helper class responsible of the bot's actions */
+/*
 public class BotActions {
 
     public enum Action {
@@ -72,7 +74,7 @@ public class BotActions {
                 
             }
         },*/
-        NAVIGATE{
+      /*  NAVIGATE{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
@@ -102,7 +104,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_MESSAGES_BY_CREATION_TIME{
+      /*  GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -124,7 +126,7 @@ public class BotActions {
                 
             }
         },*/
-        GET_CONVERSATIONS_BY_CREATION_TIME{
+   /*     GET_CONVERSATIONS_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
@@ -166,7 +168,7 @@ public class BotActions {
                 
             }
         },*/
-        NAVIGATE_TO_CONVERSATION{
+   /*     NAVIGATE_TO_CONVERSATION{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String title = (String) argsObjects[0];
@@ -209,7 +211,7 @@ public class BotActions {
                 
             }
         }*/;
-        public abstract void doAction(Object ... argsObjects) throws IOException;
+     /*   public abstract void doAction(Object ... argsObjects) throws IOException;
     }
 
     private static ActivityStore activityStore;
@@ -232,28 +234,28 @@ public class BotActions {
 	/**
 	 * @param activityStore the activityStore to set
 	 */
-	public static void setActivityStore(ActivityStore aStore) {
+/*	public static void setActivityStore(ActivityStore aStore) {
 		activityStore = aStore;
     }
     
     /**
      * @param conversationStore the conversationStore to set
      */
-    public static void setConversationStore(ConversationStore cStore) {
+  /*  public static void setConversationStore(ConversationStore cStore) {
         conversationStore = cStore;
     }
 
     /**
      * @param messageStore the messageStore to set
      */
-    public static void setMessageStore(MessageStore mStore) {
+ /*   public static void setMessageStore(MessageStore mStore) {
         messageStore = mStore;
     }
 
     /**
      * @param userStore the userStore to set
      */
-    public void setUserStore(UserStore uStore) {
+/*  public void setUserStore(UserStore uStore) {
         userStore = uStore;
     }
 
@@ -294,3 +296,5 @@ public class BotActions {
     }
 
 }
+
+*/
