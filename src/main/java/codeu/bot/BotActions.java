@@ -21,6 +21,12 @@ import com.google.common.collect.Lists;
 public class BotActions {
 
     public enum Action {
+        NOT_FOUND{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                return;
+            }
+        },
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -69,7 +75,7 @@ public class BotActions {
         SET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },*/
         NAVIGATE{
@@ -93,13 +99,13 @@ public class BotActions {
         GET_STAT{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },*/
         GET_MESSAGES_BY_CREATION_TIME{
@@ -115,13 +121,13 @@ public class BotActions {
         GET_TUTORIAL{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_MY_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },*/
         GET_CONVERSATIONS_BY_CREATION_TIME{
@@ -148,8 +154,8 @@ public class BotActions {
         },
         GET_ALL_CONVERSATIONS{
             @Override
-            public void doAction(Object ... argsObjects) {        
-                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());                
+            public void doAction(Object ... argsObjects) {
+                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());
                 String content= "All conversations have been retrieved";
                 addAnswerMessageToStorage(titleConversations + content);
             }
@@ -157,13 +163,13 @@ public class BotActions {
         GET_STATS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_SETTINGS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },*/
         NAVIGATE_TO_CONVERSATION{
@@ -182,31 +188,31 @@ public class BotActions {
         GET_CONVERSATION_SUMMARY{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_CONVERSATION_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         },
         GET_CONVERSATION_WITH_UNREAD_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+
             }
         }*/;
         public abstract void doAction(Object ... argsObjects) throws IOException;
@@ -235,7 +241,7 @@ public class BotActions {
 	public static void setActivityStore(ActivityStore aStore) {
 		activityStore = aStore;
     }
-    
+
     /**
      * @param conversationStore the conversationStore to set
      */
@@ -260,7 +266,7 @@ public class BotActions {
     private static void addAnswerMessageToStorage(String content) {
         User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
         UUID botId = botUser.getId();
-        Message message = new Message(UUID.randomUUID(), conversation.getId(), 
+        Message message = new Message(UUID.randomUUID(), conversation.getId(),
                                         botId,
                                         content,
                                         Instant.now());

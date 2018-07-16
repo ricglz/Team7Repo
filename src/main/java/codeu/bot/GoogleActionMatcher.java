@@ -5,31 +5,83 @@ import com.google.cloud.language.v1.Document.Type;
 import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Sentiment;
 import java.io.IOException;
+import codeu.bot.BotActions;
 
 public class GoogleActionMatcher {
-
-    private static GoogleActionMatcher actionMatcherInstance;
-    public static GoogleActionMatcher getInstance() {
-        System.out.println("#getInstance 1");
-        if (actionMatcherInstance == null) {
-            System.out.println("#getInstance 2");
-            actionMatcherInstance = new GoogleActionMatcher();
-        }
-        System.out.println("#getInstance 3");
-        return actionMatcherInstance;
+    private static boolean matchSet(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchSet");
+      return false;
     }
 
-    private GoogleActionMatcher() {
-
+    private static boolean matchCreate(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchCreate");
+      return false;
     }
 
-    public String matchAction(String input, String username) {
+    private static boolean matchGet(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchGet");
+      return false;
+    }
+
+    private static boolean matchSummarize(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchSummarize");
+      return false;
+    }
+
+    private static boolean matchNavigate(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchNavigate");
+      return false;
+    }
+
+    private static boolean matchHelp(
+        LanguageServiceClient language,
+        Document doc,
+        String input) {
+      System.out.println("#matchHelp");
+      return false;
+    }
+
+    // THE RETURN VALUE HERE IS JUST FOR DEBUGGING. THIS SHOULD BE A VOID METHOD.
+    public static String matchAction(String input, String username) {
+      new BotActions(username);
+      boolean foundMatch = false;
+
       // Instantiates a client
       try (LanguageServiceClient language = LanguageServiceClient.create()) {
-        // The text to analyze
-        //String text = "Hello, world!";
         Document doc = Document.newBuilder()
             .setContent(input).setType(Type.PLAIN_TEXT).build();
+
+        if (matchSet(language, doc, username)) {
+          return "Matched on SET";
+        } else if (matchCreate(language, doc, username)) {
+          return "Matched on CREATE";
+        } else if (matchGet(language, doc, username)) {
+          return "Matched on GET";
+        } else if (matchSummarize(language, doc, username)) {
+          return "Matched on SUMMARIZE";
+        } else if (matchNavigate(language, doc, username)) {
+          return "Matched on NAVIGATE";
+        } else if (matchHelp(language, doc, username)) {
+          return "Matched on HELP";
+        }
+
+        BotActions.Action.NOT_FOUND.doAction();
+        //return "NOT MATCHED";
 
         // Detects the sentiment of the text
         Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();

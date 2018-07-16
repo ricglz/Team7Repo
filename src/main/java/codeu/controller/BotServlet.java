@@ -38,8 +38,6 @@ public class BotServlet extends HttpServlet {
     /** Store class that gives access to Conversations. */
     private ConversationStore conversationStore;
 
-    private GoogleActionMatcher actionMatcher;
-
     /**
      * Set up state for handling chat requests.
      */
@@ -50,7 +48,6 @@ public class BotServlet extends HttpServlet {
         setMessageStore(MessageStore.getInstance());
         userStore = UserStore.getInstance();
         conversationStore = ConversationStore.getInstance();
-        actionMatcher = GoogleActionMatcher.getInstance();
     }
 
     /**
@@ -127,7 +124,7 @@ public class BotServlet extends HttpServlet {
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        String testComment = actionMatcher.matchAction(cleanedMessageContent, username);
+        String testComment = GoogleActionMatcher.matchAction(cleanedMessageContent, username);
 
         User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
         UUID botId = botUser.getId();
