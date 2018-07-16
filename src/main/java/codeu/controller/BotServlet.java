@@ -7,7 +7,7 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.data.Conversation;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import codeu.bot.ActionMatcher;
+import codeu.bot.GoogleActionMatcher;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -38,7 +38,7 @@ public class BotServlet extends HttpServlet {
     /** Store class that gives access to Conversations. */
     private ConversationStore conversationStore;
 
-    private ActionMatcher actionMatcher;
+    private GoogleActionMatcher actionMatcher;
 
     /**
      * Set up state for handling chat requests.
@@ -50,7 +50,7 @@ public class BotServlet extends HttpServlet {
         setMessageStore(MessageStore.getInstance());
         userStore = UserStore.getInstance();
         conversationStore = ConversationStore.getInstance();
-        actionMatcher = ActionMatcher.getInstance();
+        actionMatcher = GoogleActionMatcher.getInstance();
     }
 
     /**
@@ -127,7 +127,16 @@ public class BotServlet extends HttpServlet {
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
-        actionMatcher.matchAction(cleanedMessageContent, username);
+        String testComment = actionMatcher.matchAction(cleanedMessageContent, username);
+
+        User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
+        UUID botId = botUser.getId();
+        message = new Message(UUID.randomUUID(), botConversation.getId(),
+                                        botId,
+                                        testComment,
+                                        Instant.now());
+        messageStore.addMessage(message);
+
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         System.out.println("130");
         response.sendRedirect("/bot");
