@@ -100,7 +100,7 @@ public class BotActions {
                 String content;
                 if (validLocation(location)) {
                     content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location, response);
+                    goTo(location);
                 }
                 else {
                     content = "Location is invalid";
@@ -401,10 +401,6 @@ public class BotActions {
      * Redirects to a location
      */
     private static void goTo(String location) throws IOException {
-        goTo(location, response);
-    }
-
-    private static void goTo(String location, HttpServletResponse response) throws IOException {
         response.sendRedirect(location);
     }
 
