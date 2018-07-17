@@ -93,13 +93,14 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
+                response = (HttpServletResponse) argsObject[1];
                 if(!location.contains("/")){
                     location = "/" + location;
                 }
                 String content;
                 if (validLocation(location)) {
                     content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location);
+                    goTo(location, response);
                 }
                 else {
                     content = "Location is invalid";
@@ -111,14 +112,14 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) {
                 boolean getMessageCount = (Boolean) argsObjects[0];
-                boolean getConversationCount = (Boolean) argsObjects[1];
+                boolean canGetConversationCount = (Boolean) argsObjects[1];
                 boolean getLongestMessage = (Boolean) argsObjects[2];
                 List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
                 String content = "";
                 if (getMessageCount) {
                     content += "Amount of messages: " + userMessages.size() + "\n";
                 }
-                if (getConversationCount) {
+                if (canGetConversationCount) {
                     int conversationCount = getConversationCount(userMessages);
                     content += "Conversations you have participated: " + conversationCount + "\n";
                 }
@@ -130,14 +131,6 @@ public class BotActions {
                 }
                 addAnswerMessageToStorage(content);
             }
-
-            private int getConversationCount(List<Message> userMessages) {
-                HashSet<UUID>conversationIds = new HashSet<UUID>();
-                for (Message message : userMessages) {
-                    conversationIds.add(message.getConversationId());
-                }
-				return conversationIds.size();
-			}
         },
         GET_SETTING{
             @Override
@@ -219,14 +212,6 @@ public class BotActions {
                 content += "Longest message with " + maxCharactersLength + " characerts\n";
                 addAnswerMessageToStorage(content);
             }
-
-			private int getConversationCount(List<Message> userMessages) {
-                HashSet<UUID>conversationIds = new HashSet<UUID>();
-                for (Message message : userMessages) {
-                    conversationIds.add(message.getConversationId());
-                }
-				return conversationIds.size();
-			}
         },
         GET_SETTINGS{
             @Override
@@ -238,7 +223,7 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String title = (String) argsObjects[0];
-                HttpServletResponse response = (HttpServletResponse) argsObjects[1];
+                response = (HttpServletResponse) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
                 if (conversation != null) {
                     response.sendRedirect("/chat/" + title);
@@ -372,20 +357,27 @@ public class BotActions {
         userStore = uStore;
     }
 
+    /** 
+     * Checks the content of every message to check if it contains the keyword and 
+     * then add it in a vector 
+     */
     private static List<Message> getMessagesByKeyword(String keyword) {
         List <Message> messages = messageStore.getMessages();
-        List <Message> messagesByKeyWord = new ArrayList<>();
+        List <Message> messagesByKeyword = new ArrayList<>();
         UUID userId = user.getId();
         for (Message message : messages) {
             boolean hasKeyword = message.getContent().contains(keyword);
             boolean fromUser = message.getAuthorId().equals(userId);
             if (hasKeyword && fromUser) {
-                messagesByKeyWord.add(message);
+                messagesByKeyword.add(message);
             }
         }
-        return messagesByKeyWord; 
+        return messagesByKeyword; 
     }
 
+    /**
+     * Recieves content that will be send as a message from the bot
+     */
     private static void addAnswerMessageToStorage(String content) {
         User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
         UUID botId = botUser.getId();
@@ -396,16 +388,25 @@ public class BotActions {
         messageStore.addMessage(message);
     }
 
+    /**
+     * Checks if it is a valid conversation
+     */
     private static boolean validLocation(String location) {
         List<String> valid_locations = Lists.newArrayList("/register", "/login", "/about.jsp", "/activity",
                                                         "/admin", "/profile", "/conversations");
         return valid_locations.contains(location);
     }
 
+    /**
+     * Redirects to a location
+     */
     private static void goTo(String location) throws IOException {
         response.sendRedirect(location);
     }
 
+    /**
+     * Gets the content from the messages of a list to pass them as a string
+     */
     private static String getContentFromMessages(List<Message> messages) {
         String content = "";
         for (Message message : messages) {
@@ -414,12 +415,27 @@ public class BotActions {
         return content;
     }
 
+    /**
+     * Gets the title from the conversations of a list to pass them as a string
+     */
     private static String getTitleFromConversations(List<Conversation> conversations) {
         String title = "";
         for (Conversation conversation : conversations) {
             title += conversation.getTitle() + "\n";
         }
         return title;
+    }
+
+    /**
+     * Gets the amount of unique conversation in a list of messages, 
+     * adding the UUID of the conversation of the message in a set.
+     */
+    private static int getConversationCount(List<Message> userMessages) {
+        HashSet<UUID>conversationIds = new HashSet<UUID>();
+        for (Message message : userMessages) {
+            conversationIds.add(message.getConversationId());
+        }
+        return conversationIds.size();
     }
 
 }
