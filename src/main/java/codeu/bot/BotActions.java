@@ -86,14 +86,14 @@ public class BotActions {
         SET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                return;   
+                return;
             }
         },
         NAVIGATE{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
-                response = (HttpServletResponse) argsObject[1];
+                response = (HttpServletResponse) argsObjects[1];
                 if(!location.contains("/")){
                     location = "/" + location;
                 }
@@ -192,8 +192,8 @@ public class BotActions {
         },
         GET_ALL_CONVERSATIONS{
             @Override
-            public void doAction(Object ... argsObjects) {        
-                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());                
+            public void doAction(Object ... argsObjects) {
+                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());
                 String content= "All conversations have been retrieved";
                 addAnswerMessageToStorage(titleConversations + content);
             }
@@ -269,7 +269,7 @@ public class BotActions {
                 }
 				return conversations;
             }
-            
+
             private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
                 HashSet<UUID> conversationsIds = new HashSet<>();
                 for (Message message : messages) {
@@ -335,7 +335,7 @@ public class BotActions {
 	public static void setActivityStore(ActivityStore aStore) {
 		activityStore = aStore;
     }
-    
+
     /**
      * @param conversationStore the conversationStore to set
      */
@@ -357,9 +357,9 @@ public class BotActions {
         userStore = uStore;
     }
 
-    /** 
-     * Checks the content of every message to check if it contains the keyword and 
-     * then add it in a vector 
+    /**
+     * Checks the content of every message to check if it contains the keyword and
+     * then add it in a vector
      */
     private static List<Message> getMessagesByKeyword(String keyword) {
         List <Message> messages = messageStore.getMessages();
@@ -372,7 +372,7 @@ public class BotActions {
                 messagesByKeyword.add(message);
             }
         }
-        return messagesByKeyword; 
+        return messagesByKeyword;
     }
 
     /**
@@ -381,7 +381,7 @@ public class BotActions {
     private static void addAnswerMessageToStorage(String content) {
         User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
         UUID botId = botUser.getId();
-        Message message = new Message(UUID.randomUUID(), conversation.getId(), 
+        Message message = new Message(UUID.randomUUID(), conversation.getId(),
                                         botId,
                                         content,
                                         Instant.now());
@@ -401,6 +401,10 @@ public class BotActions {
      * Redirects to a location
      */
     private static void goTo(String location) throws IOException {
+        goTo(location, response);
+    }
+
+    private static void goTo(String location, HttpServletResponse response) throws IOException {
         response.sendRedirect(location);
     }
 
@@ -427,7 +431,7 @@ public class BotActions {
     }
 
     /**
-     * Gets the amount of unique conversation in a list of messages, 
+     * Gets the amount of unique conversation in a list of messages,
      * adding the UUID of the conversation of the message in a set.
      */
     private static int getConversationCount(List<Message> userMessages) {
