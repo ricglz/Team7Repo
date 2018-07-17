@@ -20,7 +20,7 @@
 <html>
 <head>
   <title>Conversations</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <%@ include file="/files.jsp" %>
 </head>
 <body>
 

@@ -17,12 +17,12 @@
 <html>
 <head>
   <title>Register</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <%@ include file="/files.jsp" %>
 </head>
 <body>
 
   <nav>
-    <%@ include file="navbar.jsp" %>    
+    <%@ include file="navbar.jsp" %>
   </nav>
 
   <div id="container">
@@ -33,15 +33,11 @@
     <% } %>
 
     <form action="/register" method="POST">
-      <label for="username">Username: </label>
-      <br/>
-      <input type="text" name="username" id="username">
-      <br/>
-      <label for="password">Password: </label>
-      <br/>
-      <input type="password" name="password" id="password">
-      <br/><br/>
-      <button type="submit">Submit</button>
+      <%@ include file="user_form.jsp" %>
+      <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" 
+              type="submit">
+        Submit
+      </button>
     </form>
   </div>
 </body>

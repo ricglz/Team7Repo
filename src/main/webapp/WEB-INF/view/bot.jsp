@@ -16,7 +16,7 @@
 <html>
 <head>
     <title>Bot Conversation Page</title>
-    <link rel="stylesheet" href="/css/main.css" type="text/css">
+    <%@ include file="/files.jsp" %>
 
     <style>
         #chat {

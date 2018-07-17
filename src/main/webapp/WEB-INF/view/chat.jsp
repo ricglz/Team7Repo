@@ -26,7 +26,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <html>
 <head>
   <title><%= conversation.getTitle() %></title>
-  <link rel="stylesheet" href="/css/main.css" type="text/css">
+  <%@ include file="/files.jsp" %>
 
   <style>
     #chat {

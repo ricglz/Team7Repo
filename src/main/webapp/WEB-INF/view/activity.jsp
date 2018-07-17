@@ -15,7 +15,7 @@
 
 <head>
     <title>Activity</title>
-    <link rel="stylesheet" href="/css/main.css">
+    <%@ include file="/files.jsp" %>
 
     <style>
         #activity {

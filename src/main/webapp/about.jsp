@@ -17,7 +17,7 @@
 <html>
 <head>
   <title>CodeU Chat App</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <%@ include file="/files.jsp" %>  
 </head>
 <body>
 
