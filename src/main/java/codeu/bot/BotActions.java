@@ -3,6 +3,8 @@ package codeu.bot;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,18 @@ import com.google.common.collect.Lists;
 public class BotActions {
 
     public enum Action {
+        MISSING_PARAMETER{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("missing parameters");
+            }
+        },
+        GET_CONVERSATIONS_WITH_UNREAD_MESSAGES{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.printf("get conversations with unread messages");
+            }
+        },
         SET_DESCRIPTION{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -36,6 +50,7 @@ public class BotActions {
                 UUID owner = user.getId();
                 Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
                 conversationStore.addConversation(conversation);
+                activityStore.addActivity(conversation);
                 String content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> has been created !";
                 addAnswerMessageToStorage(content);
             }
@@ -43,14 +58,16 @@ public class BotActions {
         SEND_MESSAGE{
             @Override
             public void doAction(Object ... argsObjects) {
-                String title = (String) argsObjects[0];
-                String content = (String) argsObjects[1];
+                String content = (String) argsObjects[0];
+                String title = (String) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
+                System.out.println(conversation);
                 UUID id = conversation.getId();
                 UUID author = user.getId();
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
                 messageStore.addMessage(message);
-                String  answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
+                activityStore.addActivity(message);
+                String answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(answerContent);
             }
         },
@@ -65,43 +82,62 @@ public class BotActions {
                 String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(contentMessages + content);
             }
-        },/*
+        },
         SET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                return;   
             }
-        },*/
+        },
         NAVIGATE{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
+                response = (HttpServletResponse) argsObject[1];
                 if(!location.contains("/")){
                     location = "/" + location;
                 }
                 String content;
                 if (validLocation(location)) {
                     content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location);
+                    goTo(location, response);
                 }
                 else {
                     content = "Location is invalid";
                 }
                 addAnswerMessageToStorage(content);
             }
-        },/*
+        },
         GET_STAT{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                boolean getMessageCount = (Boolean) argsObjects[0];
+                boolean canGetConversationCount = (Boolean) argsObjects[1];
+                boolean getLongestMessage = (Boolean) argsObjects[2];
+                List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
+                String content = "";
+                if (getMessageCount) {
+                    content += "Amount of messages: " + userMessages.size() + "\n";
+                }
+                if (canGetConversationCount) {
+                    int conversationCount = getConversationCount(userMessages);
+                    content += "Conversations you have participated: " + conversationCount + "\n";
+                }
+                if (getLongestMessage) {
+                    userMessages.sort(Message.messageComparator);
+                    Message longestMessage = userMessages.get(userMessages.size()-1);
+                    long maxCharactersLength = longestMessage.getContent().length()-1;
+                    content += "Longest message with " + maxCharactersLength + " characerts\n";
+                }
+                addAnswerMessageToStorage(content);
             }
         },
         GET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("get setting");
             }
-        },*/
+        },
         GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -111,19 +147,27 @@ public class BotActions {
                 String  content= "Messages within the time of " + time.toString() + " have been retrieved";
                 addAnswerMessageToStorage(contentMessages + content);
             }
-        },/*
-        GET_TUTORIAL{
+        },
+        GET_HELP{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                String content = "This are the actions you can do\n";
+                content += "Send message to a conversation, create a conversation, get messages you have send\n";
+                content += "Go to a specific page, set your description, get all the conversations\n";
+                content += "get conversations done by someone and in a specific time\n";
+                addAnswerMessageToStorage(content);
             }
         },
         GET_MY_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                UUID author = user.getId();
+                List<Message> messages = messageStore.getMessagesByAuthor(author);
+                String contentMessages = getContentFromMessages(messages);
+                String content = "Your messages have been retrieved";
+                addAnswerMessageToStorage(contentMessages + content);
             }
-        },*/
+        },
         GET_CONVERSATIONS_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
@@ -134,7 +178,7 @@ public class BotActions {
                 addAnswerMessageToStorage(titleConversations + content);
             }
         },
-        GET_CONVERSATION_BY_AUTHOR{
+        GET_CONVERSATIONS_BY_AUTHOR{
             @Override
             public void doAction(Object ... argsObjects) {
                 String username = (String) argsObjects[0];
@@ -153,24 +197,33 @@ public class BotActions {
                 String content= "All conversations have been retrieved";
                 addAnswerMessageToStorage(titleConversations + content);
             }
-        },/*
+        },
         GET_STATS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
+                int conversationCount = getConversationCount(userMessages);
+                userMessages.sort(Message.messageComparator);
+                Message longestMessage = userMessages.get(userMessages.size()-1);
+                long maxCharactersLength = longestMessage.getContent().length()-1;
+                String content = "This are your stats\n";
+                content += "Amount of messages: " + userMessages.size() + "\n";
+                content += "Conversations you have participated: " + conversationCount + "\n";
+                content += "Longest message with " + maxCharactersLength + " characerts\n";
+                addAnswerMessageToStorage(content);
             }
         },
         GET_SETTINGS{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("get settings");
             }
-        },*/
+        },
         NAVIGATE_TO_CONVERSATION{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String title = (String) argsObjects[0];
-                HttpServletResponse response = (HttpServletResponse) argsObjects[1];
+                response = (HttpServletResponse) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
                 if (conversation != null) {
                     response.sendRedirect("/chat/" + title);
@@ -178,37 +231,84 @@ public class BotActions {
                 String content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
                 addAnswerMessageToStorage(content);
             }
-        },/*
+        },
         GET_CONVERSATION_SUMMARY{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                System.out.println("getting conversation summary");
             }
         },
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
-            }
-        },
-        GET_CONVESATION_WITH_CONTENT_LIKE_KEYWORD{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                
+                String keyword = (String) argsObjects[0];
+                List<Message> messages = getMessagesByKeyword(keyword);
+                String contentMessages = getContentFromMessages(messages);
+                String content = "These are the messages that contains the keyword";
+                addAnswerMessageToStorage(contentMessages + content);
             }
         },
         GET_CONVERSATION_LIKE_KEYWORD{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                String keyword = (String) argsObjects[0];
+                List<Message> messages = getMessagesByKeyword(keyword);
+                HashSet<UUID> ids = conversationsIdsFromMessages(messages);
+                ids = conversationsByKeyword(keyword, ids);
+                List<Conversation> conversations = getConversationsById(ids);
+                String conversationsTitles = getTitleFromConversations(conversations);
+                String content = "These are the the conversations that its title contains the keyword";
+                addAnswerMessageToStorage(conversationsTitles + content);
+            }
+
+            private List<Conversation> getConversationsById(HashSet<UUID> ids) {
+                List<Conversation> conversations = new ArrayList<>();
+                for (UUID id : ids) {
+                    Conversation conversation = conversationStore.getConversationWithUUID(id);
+                    conversations.add(conversation);
+                }
+				return conversations;
+            }
+            
+            private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
+                HashSet<UUID> conversationsIds = new HashSet<>();
+                for (Message message : messages) {
+                    conversationsIds.add(message.getConversationId());
+                }
+                return conversationsIds;
+            }
+
+            private HashSet<UUID> conversationsByKeyword(String keyword, HashSet<UUID> ids) {
+                List<Conversation> conversations = conversationStore.getAllConversations();
+                for (Conversation conversation : conversations) {
+                    boolean titleHasKeyword = conversation.getTitle().contains(keyword);
+                    if (titleHasKeyword) {
+                        ids.add(conversation.getId());
+                    }
+                }
+                return ids;
+            }
+        },
+        GET_CONVERSATIONS_ABOUT_KEYWORD{
+            @Override
+            public void doAction(Object ... argsObjects) {
+                System.out.println("get conversation about keyword");
             }
         },
         GET_CONVERSATION_WITH_UNREAD_MESSAGES{
             @Override
             public void doAction(Object ... argsObjects) {
-                
+                return;
             }
-        }*/;
+        },
+        NOT_FOUND{
+            @Override
+            public void doAction(Object ... argsObjects) throws IOException {
+                String content = "The action that you're trying to do can't be executed.";
+                addAnswerMessageToStorage(content);
+                Action.GET_HELP.doAction();
+            }
+        };
         public abstract void doAction(Object ... argsObjects) throws IOException;
     }
 
@@ -257,6 +357,27 @@ public class BotActions {
         userStore = uStore;
     }
 
+    /** 
+     * Checks the content of every message to check if it contains the keyword and 
+     * then add it in a vector 
+     */
+    private static List<Message> getMessagesByKeyword(String keyword) {
+        List <Message> messages = messageStore.getMessages();
+        List <Message> messagesByKeyword = new ArrayList<>();
+        UUID userId = user.getId();
+        for (Message message : messages) {
+            boolean hasKeyword = message.getContent().contains(keyword);
+            boolean fromUser = message.getAuthorId().equals(userId);
+            if (hasKeyword && fromUser) {
+                messagesByKeyword.add(message);
+            }
+        }
+        return messagesByKeyword; 
+    }
+
+    /**
+     * Recieves content that will be send as a message from the bot
+     */
     private static void addAnswerMessageToStorage(String content) {
         User botUser = userStore.getUser(UserStore.BOT_USER_NAME);
         UUID botId = botUser.getId();
@@ -267,16 +388,25 @@ public class BotActions {
         messageStore.addMessage(message);
     }
 
+    /**
+     * Checks if it is a valid conversation
+     */
     private static boolean validLocation(String location) {
         List<String> valid_locations = Lists.newArrayList("/register", "/login", "/about.jsp", "/activity",
                                                         "/admin", "/profile", "/conversations");
         return valid_locations.contains(location);
     }
 
+    /**
+     * Redirects to a location
+     */
     private static void goTo(String location) throws IOException {
         response.sendRedirect(location);
     }
 
+    /**
+     * Gets the content from the messages of a list to pass them as a string
+     */
     private static String getContentFromMessages(List<Message> messages) {
         String content = "";
         for (Message message : messages) {
@@ -285,12 +415,27 @@ public class BotActions {
         return content;
     }
 
+    /**
+     * Gets the title from the conversations of a list to pass them as a string
+     */
     private static String getTitleFromConversations(List<Conversation> conversations) {
         String title = "";
         for (Conversation conversation : conversations) {
             title += conversation.getTitle() + "\n";
         }
         return title;
+    }
+
+    /**
+     * Gets the amount of unique conversation in a list of messages, 
+     * adding the UUID of the conversation of the message in a set.
+     */
+    private static int getConversationCount(List<Message> userMessages) {
+        HashSet<UUID>conversationIds = new HashSet<UUID>();
+        for (Message message : userMessages) {
+            conversationIds.add(message.getConversationId());
+        }
+        return conversationIds.size();
     }
 
 }
