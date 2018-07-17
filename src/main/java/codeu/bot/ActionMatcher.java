@@ -272,39 +272,39 @@ public class ActionMatcher {
 
             if (actionMatched) {
                 return;
-            } else {
-                String setting = findFuzzyMatch(settingNames, 3);
-                if (!setting.isEmpty()) {
-                    System.out.printf("Getting %s.",setting);
-                    BotActions.Action.GET_SETTING.doAction(setting);
-                    actionMatched = true;
-                    return;
-                }
-
-                if (input.contains("settings")) {
-                    System.out.println("Getting all settings.");
-                    BotActions.Action.GET_SETTINGS.doAction();
-                    actionMatched = true;
-                    return;
-                }
-
-                // STATISTICS
-                String statistic = findFuzzyMatch(STATS, 5);
-                if (!statistic.isEmpty()) {
-                    System.out.printf("Getting %s.",statistic);
-                    BotActions.Action.GET_STAT.doAction(statistic);
-                    actionMatched = true;
-                    return;
-                }
-
-                if (input.contains("statistics") || input.contains("stats")) {
-                    System.out.println("Getting all statistics.");
-                    BotActions.Action.GET_STATS.doAction();
-                    actionMatched = true;
-                    return;
-                }
-
+            }   
+                
+            String setting = findFuzzyMatch(settingNames, 3);
+            if (!setting.isEmpty()) {
+                System.out.printf("Getting %s.",setting);
+                BotActions.Action.GET_SETTING.doAction(setting);
+                actionMatched = true;
+                return;
             }
+
+            if (input.contains("settings")) {
+                System.out.println("Getting all settings.");
+                BotActions.Action.GET_SETTINGS.doAction();
+                actionMatched = true;
+                return;
+            }
+
+            // STATISTICS
+            String statistic = findFuzzyMatch(STATS, 5);
+            if (!statistic.isEmpty()) {
+                System.out.printf("Getting %s.",statistic);
+                BotActions.Action.GET_STAT.doAction(statistic);
+                actionMatched = true;
+                return;
+            }
+
+            if (input.contains("statistics") || input.contains("stats")) {
+                System.out.println("Getting all statistics.");
+                BotActions.Action.GET_STATS.doAction();
+                actionMatched = true;
+                return;
+            }
+            
         }
         return;
     }
