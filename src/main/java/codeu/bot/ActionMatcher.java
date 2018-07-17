@@ -50,7 +50,7 @@ public class ActionMatcher {
 
     public static final String[] SET_KEYWORDS = new String[] {"set","update","change"};
     public static final String[] CREATE_KEYWORDS = new String[] {"create","make"};
-    public static final String[] GET_KEYWORDS = new String[] {"get","find","display","show","give"}; 
+    public static final String[] GET_KEYWORDS = new String[] {"get","find","display","show","give"};
     public static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
     public static final String[] UNREAD_KEYWORDS = new String[] {"unread","respond"};
 
@@ -129,8 +129,8 @@ public class ActionMatcher {
 
     private void matchSet() throws IOException {
         int setOrUpdateOrChangeIndex = getKeywordIndex(SET_KEYWORDS, commandTokensLemmas);
-        if (setOrUpdateOrChangeIndex != -1 && 
-            commandPOS.get(setOrUpdateOrChangeIndex).contains("VB")) {
+        if (setOrUpdateOrChangeIndex != -1 &&
+                commandPOS.get(setOrUpdateOrChangeIndex).contains("VB")) {
 
             int descIndex = commandTokensLemmas.indexOf("description");
             String description = "";
@@ -151,8 +151,8 @@ public class ActionMatcher {
 
     private void matchCreateConversation() throws IOException {
         int createOrMakeIndex = getKeywordIndex(CREATE_KEYWORDS, commandTokensLemmas);
-        if (createOrMakeIndex != -1 && 
-            commandPOS.get(createOrMakeIndex).contains("VB")) {
+        if (createOrMakeIndex != -1 &&
+                commandPOS.get(createOrMakeIndex).contains("VB")) {
             // Going to be creating something
             // Right now we can only create conversations so don't need to
             // look for conversation keyword
@@ -171,8 +171,8 @@ public class ActionMatcher {
 
     private void matchSendMessage() throws IOException {
         int sendIndex = commandTokensLemmas.indexOf("send");
-        if (sendIndex != -1 && 
-            commandPOS.get(sendIndex).contains("VB")) {
+        if (sendIndex != -1 &&
+                commandPOS.get(sendIndex).contains("VB")) {
             // Going to be sending something
             // Same logic for create, know we're looking for a message and conversation
 
@@ -192,12 +192,12 @@ public class ActionMatcher {
 
     public void matchGet() throws IOException {
         int getOrFindOrDisplayorShoworGiveIndex = getKeywordIndex(GET_KEYWORDS, commandTokensLemmas);
-        if (getOrFindOrDisplayorShoworGiveIndex != -1 && 
-            commandPOS.get(getOrFindOrDisplayorShoworGiveIndex).contains("VB")) {
+        if (getOrFindOrDisplayorShoworGiveIndex != -1 &&
+                commandPOS.get(getOrFindOrDisplayorShoworGiveIndex).contains("VB")) {
 
             // Getting the lemma so we can ignore pluralizations
             IndexedWord verbOfInterest = new IndexedWord(commandTokens.get(getOrFindOrDisplayorShoworGiveIndex));
-        
+
             // Find object we're getting
             Set<IndexedWord> directObjects = dependencyParse.getChildrenWithReln(verbOfInterest,UniversalEnglishGrammaticalRelations.DIRECT_OBJECT);
             String directObject = "";
@@ -250,7 +250,7 @@ public class ActionMatcher {
             //     // RAISE SORRY IDK
             //     return;
             // }
-            
+
             // if (!keyword.equals("")) {
             // BotActions.Action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
             System.out.printf("Getting messages like keyword \"%s\".",keyword);
@@ -293,7 +293,7 @@ public class ActionMatcher {
             String author = findFuzzyMatch(userNames, 3);
 
             // if (!author.equals("")) {
-                // BotActions.Action.GET_MESSAGES_BY_AUTHOR.doAction(author);
+            // BotActions.Action.GET_MESSAGES_BY_AUTHOR.doAction(author);
             System.out.printf("Getting conversations made by %s.",author);
             return;
             // } else {
@@ -335,8 +335,8 @@ public class ActionMatcher {
 
     public void matchSummarize() throws IOException {
         int summarizeOrSummariseOrOverviewOrTLDRIndex = getKeywordIndex(
-            SUMMARIZE_KEYWORDS,
-            commandTokensLemmas);
+                SUMMARIZE_KEYWORDS,
+                commandTokensLemmas);
         if (summarizeOrSummariseOrOverviewOrTLDRIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles,3);
             System.out.printf("Getting a summary of %s.",conversationTitle);

@@ -24,7 +24,6 @@
 </script>
 <nav>
     <div id="color"><%String color = SettingStore.getInstance().getColor();%>
-        <%= color%>
     </div>
     <a id="navTitle" href="/">CodeU Chat App</a>
     <% if(request.getSession().getAttribute("user") == null) { %>

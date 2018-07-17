@@ -29,24 +29,24 @@ public class SettingStore {
     private PersistentStorageAgent persistentStorageAgent;
 
     //** The in list memory of the setting. */
-    private List<Setting > setting;
+    private List<Setting > settings;
     /**
      * This class is a singleton, so its constructor is private. Call getInstance() instead.
      */
     private SettingStore(PersistentStorageAgent persistentStorageAgent) {
         this.persistentStorageAgent = persistentStorageAgent;
-        setting = new ArrayList<>();
+        settings = new ArrayList<>();
     }
     //
     public void updateColor(Setting setting) {
+        settings.add(setting);
         persistentStorageAgent.writeThrough(setting);
     }
 
     //Returning individual color from name from setting store, set by kirielle
     public String getColor(){
-        return setting.get(0).getColor();
-        //for instance
-        //return "red";
+        return settings.get(0).getColor();
+       // return "red";
     }
 
 
@@ -56,7 +56,7 @@ public class SettingStore {
      * is loaded from Datastore.
      */
     public void setSetting(List<Setting> setting) {
-        this.setting = setting;
+        this.settings = setting;
         // getUser(DEFAULT_BOT_USERNAME)
     }
 

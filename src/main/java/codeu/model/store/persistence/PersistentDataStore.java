@@ -202,7 +202,7 @@ public class PersistentDataStore {
   }
   public List<Setting> loadSetting()throws PersistentDataStoreException{
     List<Setting> setting = new ArrayList<>();
-    Query query = new Query("background-color");
+    Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
 
     for(Entity entity : results.asIterable()){
@@ -261,7 +261,7 @@ public class PersistentDataStore {
     datastore.put(activityEntity);
   }
   public void writeThrough(Setting setting){
-    Entity settingEntity = new Entity("background-color");
+    Entity settingEntity = new Entity("settings");
     settingEntity.setProperty("color", setting.getColor());
     datastore.put(settingEntity);
   }
