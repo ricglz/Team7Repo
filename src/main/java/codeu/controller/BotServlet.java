@@ -131,11 +131,10 @@ public class BotServlet extends HttpServlet {
         try {
             // TODO Check why here is nullpointer in the test
 			actionMatcher.matchAction(cleanedMessageContent, username, response);
-		} catch (PersistentDataStoreException e) {
+		} catch (PersistentDataStoreException e | NullPointerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (NullPointerException e) {
-            e.printStackTrace();
+		}
         }
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         System.out.println("130");
