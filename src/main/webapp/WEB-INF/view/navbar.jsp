@@ -9,26 +9,44 @@
         - Have access to: Activity Feed, Admin Page, Profile, Conversations, About
         - Display "Hello, Admin <user>!"
 -->
-<nav>
-    <a id="navTitle" href="/">CodeU Chat App</a>
-    <% if(request.getSession().getAttribute("user") == null) { %>
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
-        <a href="/about.jsp">About</a>
-    <% }
-    else { %>
-        <% if(request.getSession().getAttribute("admin") != null) { %>
-            <a>Hello, Admin <%= request.getSession().getAttribute("user") %>!</a>
+<header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <a class="mdl-navigation__link" id="navTitle" href="/">CodeU Chat App</a>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation. We hide it in small screens. -->
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+        <% if(request.getSession().getAttribute("user") == null) { %>
+            <a class="mdl-navigation__link" href="/register">Register</a>
+            <a class="mdl-navigation__link" href="/login">Login</a>
         <% } else { %>
-            <a>Hello, <%= request.getSession().getAttribute("user") %>!</a>
+            <a class="mdl-navigation__link" href="/bot">Bot Conversation</a>
+            <a class="mdl-navigation__link" href="/conversations">Conversations</a>  
         <% } %>
-        <a href="/activity">Activity</a>
-        <% if(request.getSession().getAttribute("admin") != null) { %>
-            <a href="/admin">Admin Page</a>
-        <% } %>  
-        <a href="/profile">Profile</a>
-        <a href="/bot">Bot Conversation</a>
-        <a href="/conversations">Conversations</a>  
-        <a href="/about.jsp">About</a>
-    <% } %>
-</nav>
+      </nav>
+    </div>
+</header>
+<div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">
+        <% if(request.getSession().getAttribute("user") != null) { %>
+            <% if(request.getSession().getAttribute("admin") != null) { %>
+                Hello, Admin <%= request.getSession().getAttribute("user") %>!
+            <% } else { %>
+                Hello, <%= request.getSession().getAttribute("user") %>!
+            <% } %>
+        <% } %>
+    </span>
+    <nav class="mdl-navigation">
+        <% if(request.getSession().getAttribute("user") != null) { %>
+            <a class="mdl-navigation__link" href="/activity">Activity</a>
+            <% if(request.getSession().getAttribute("admin") != null) { %>
+                <a class="mdl-navigation__link" href="/admin">Admin Page</a>
+            <% } %>  
+            <a class="mdl-navigation__link" href="/profile">Profile</a>
+            <a class="mdl-navigation__link" href="/bot">Bot Conversation</a>
+            <a class="mdl-navigation__link" href="/conversations">Conversations</a>  
+        <% } %>
+        <a class="mdl-navigation__link" href="/about.jsp">About</a>
+    </nav>
+</div>

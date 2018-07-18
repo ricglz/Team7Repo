@@ -16,7 +16,7 @@
 <html>
 <head>
     <title>Bot Conversation Page</title>
-    <link rel="stylesheet" href="/css/main.css" type="text/css">
+    <%@ include file="/files.jsp" %>
 
     <style>
         #chat {
@@ -35,46 +35,42 @@
     </script>
 </head>
 <body onload="scrollChat()">
-
-<nav>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <%@ include file="navbar.jsp" %>
-</nav>
-
-<div id="container">
-
-    <h1><a href="" style="float: right">&#8635;</a>Bot Conversation</h1>
-
-    <hr/>
-
-    <div id="chat">
-        <ul>
-            <%
-                for (Message message : messages) {
-                    String author = UserStore.getInstance()
-                            .getUser(message.getAuthorId()).getName();
-            %>
-            <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-            <%
-                }
-            %>
-        </ul>
-    </div>
-
-    <hr/>
-
-    <% if (request.getSession().getAttribute("user") != null) { %>
-    <form action="/bot" method="POST">
-        <input type="text" name="botmessage">
-        <br/>
-        <button type="submit">Send</button>
-    </form>
-    <% } else { %>
-    <p><a href="/login">Login</a> to send a message.</p>
-    <% } %>
-
-    <hr/>
-
+    <main class="mdl-layout__content">
+        <div id="container">
+            <h1><a href="" style="float: right; font-size: 56px;" class="">&#8635;</a>Bot Conversation</h1>
+            <hr/>
+            <div id="chat">
+                <ul>
+                    <%
+                        for (Message message : messages) {
+                            String author = UserStore.getInstance()
+                                    .getUser(message.getAuthorId()).getName();
+                    %>
+                    <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
+                    <%
+                        }
+                    %>
+                </ul>
+            </div>
+            <hr/>
+            <% if (request.getSession().getAttribute("user") != null) { %>
+            <form action="/bot" method="POST">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" name="botmessage" id="botmessage">
+                    <label class="mdl-textfield__label" for="botmessage">Message</label>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+                  <i class="material-icons">send</i>
+                </button>
+            </form>
+            <% } else { %>
+                <p><a href="/login">Login</a> to send a message.</p>
+            <% } %>
+            <hr/>
+        </div>
+    </main>
 </div>
-
 </body>
 </html>
