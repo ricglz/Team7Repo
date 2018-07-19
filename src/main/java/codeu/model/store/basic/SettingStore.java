@@ -41,20 +41,9 @@ public class SettingStore {
     public void updateSetting(Setting setting) {
         persistentStorageAgent.writeThrough(setting);
     }
-    /**
-     * Add a new setting to the current set of settings known to the application.
-     */
-    public void addSetting(Setting setting) {
-        settings.add(setting);
-        persistentStorageAgent.writeThrough(setting);
-    }
 
-    public List<Setting> getallSetting(){
+    public List<Setting> getallSettings(){
         return  new ArrayList<>(settings);
-    }
-
-    public void setUsers(List<Setting> setting_newType){
-        this.settings = setting_newType;
     }
 
     public Setting getSettingbyType(Setting.SettingType type){
@@ -65,7 +54,7 @@ public class SettingStore {
         }
         return null;
     }
-    public void setSetting(List<Setting> setting) {
+    public void setSettings(List<Setting> setting) {
         this.settings = setting;
     }
 

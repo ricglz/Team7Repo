@@ -21,13 +21,9 @@ import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
 import codeu.model.data.Setting;
 import codeu.model.store.persistence.PersistentDataStoreException;
+import com.google.appengine.api.datastore.*;
 import edu.stanford.nlp.trees.international.negra.NegraLabel;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -206,19 +202,16 @@ public class PersistentDataStore {
     Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
 
-    for(Entity entity : results.asIterable()){
-      try {
-        String color = (String) entity.getProperty(Setting.SettingType.COLORS.getStorageKey());
-        String font_size = (String) entity.getProperty(Setting.SettingType.FONT_SIZE.getStorageKey());
-        Setting setting1 = new Setting(Setting.SettingType.FONT_SIZE, font_size);
-        Setting setting2 = new Setting(Setting.SettingType.COLORS, color);
-        setting.add(setting1);
-        setting.add(setting2);
-
-      } catch (Exception e){
-         throw new PersistentDataStoreException(e);
+    for(Entity entity: results.asIterable()){
+      try{
+      Setting setting1 = new Setting(Setting.SettingType.getSettingType((String) entity.getProperty("type")),(String)entity.getProperty("value"));
+      setting.add(setting1);
+      } catch (Exception e) {
+        throw new PersistentDataStoreException(e);
       }
     }
+
+
     return setting;
   }
 
@@ -266,8 +259,9 @@ public class PersistentDataStore {
     datastore.put(activityEntity);
   }
   public void writeThrough(Setting setting){
-    Entity settingEntity = new Entity("settings");
-    settingEntity.setProperty(setting.getType().getStorageKey(), setting.getValue());
+    Entity settingEntity = new Entity("settings",setting.getType().getTypeString());
+    settingEntity.setProperty("type",setting.getType().getTypeString());
+    settingEntity.setProperty("value",setting.getValue());
     datastore.put(settingEntity);
   }
 }

@@ -29,8 +29,17 @@ public class Setting {
             this.storageKey = storageKey;
         }
 
-        public String getStorageKey() {
+        public String getTypeString() {
             return this.storageKey;
+        }
+
+        public static SettingType getSettingType(String typeString){
+            for(SettingType type: SettingType.values()){
+            if(type.getTypeString().equals(typeString)){
+                return type;
+            }
+            }
+            return null;
         }
     }
     }
