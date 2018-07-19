@@ -20,7 +20,6 @@ import codeu.model.data.Conversation;
 import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
-import edu.stanford.nlp.trees.international.negra.NegraLabel;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
