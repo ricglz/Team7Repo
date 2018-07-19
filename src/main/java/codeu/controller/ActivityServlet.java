@@ -52,7 +52,6 @@ public class ActivityServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
     String username = (String) request.getSession().getAttribute("user");
     if (username == null) {
       // user is not logged in, don't let them access the activity feed
@@ -69,7 +68,6 @@ public class ActivityServlet extends HttpServlet {
 
     List<Activity> activities = activityStore.getAllSortedActivities();
     request.setAttribute("activities", activities);
-    request.setAttribute("color", "blue");
     request.getRequestDispatcher("/WEB-INF/view/activity.jsp").forward(request, response);
   }
 

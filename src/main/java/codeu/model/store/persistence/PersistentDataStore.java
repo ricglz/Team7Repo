@@ -200,16 +200,21 @@ public class PersistentDataStore {
 
     return activities;
   }
-  public List<Setting> loadSetting()throws PersistentDataStoreException{
+
+  public List<Setting> loadSettings()throws PersistentDataStoreException{
     List<Setting> setting = new ArrayList<>();
     Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
 
     for(Entity entity : results.asIterable()){
       try {
-        String color = (String) entity.getProperty("color");
-        Setting colorsetting = new Setting(color);
-        setting.add(colorsetting);
+        String color = (String) entity.getProperty(Setting.SettingType.COLORS.getStorageKey());
+        String font_size = (String) entity.getProperty(Setting.SettingType.FONT_SIZE.getStorageKey());
+        Setting setting1 = new Setting(Setting.SettingType.FONT_SIZE, font_size);
+        Setting setting2 = new Setting(Setting.SettingType.COLORS, color);
+        setting.add(setting1);
+        setting.add(setting2);
+
       } catch (Exception e){
          throw new PersistentDataStoreException(e);
       }
@@ -262,7 +267,7 @@ public class PersistentDataStore {
   }
   public void writeThrough(Setting setting){
     Entity settingEntity = new Entity("settings");
-    settingEntity.setProperty("color", setting.getColor());
+    settingEntity.setProperty(setting.getType().getStorageKey(), setting.getValue());
     datastore.put(settingEntity);
   }
 }

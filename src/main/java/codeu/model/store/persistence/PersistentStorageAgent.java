@@ -77,8 +77,8 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public List<Setting> loadSetting()throws PersistentDataStoreException{
-    return persistentDataStore.loadSetting();
+  public List<Setting> loadSettings()throws PersistentDataStoreException{
+    return persistentDataStore.loadSettings();
   }
 
   /**

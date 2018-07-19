@@ -38,26 +38,35 @@ public class SettingStore {
         settings = new ArrayList<>();
     }
     //
-    public void updateColor(Setting setting) {
+    public void updateSetting(Setting setting) {
+        persistentStorageAgent.writeThrough(setting);
+    }
+    /**
+     * Add a new setting to the current set of settings known to the application.
+     */
+    public void addSetting(Setting setting) {
         settings.add(setting);
         persistentStorageAgent.writeThrough(setting);
     }
 
-    //Returning individual color from name from setting store, set by kirielle
-    public String getColor(){
-        return settings.get(0).getColor();
-       // return "red";
+    public List<Setting> getallSetting(){
+        return  new ArrayList<>(settings);
     }
 
+    public void setUsers(List<Setting> setting_newType){
+        this.settings = setting_newType;
+    }
 
-
-    /**
-     * Sets the List of Users stored by this UserStore. This should only be called once, when the data
-     * is loaded from Datastore.
-     */
+    public Setting getSettingbyType(Setting.SettingType type){
+        for(Setting types: settings){
+            if(types.getType().equals(type)){
+                return types;
+            }
+        }
+        return null;
+    }
     public void setSetting(List<Setting> setting) {
         this.settings = setting;
-        // getUser(DEFAULT_BOT_USERNAME)
     }
 
 }
