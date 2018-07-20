@@ -7,8 +7,6 @@ import codeu.model.data.User;
 import codeu.model.data.Activity;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +21,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import codeu.bot.ActionMatcher;
-import codeu.bot.BotActions.Action;
 
 public class ActionMatcherTest {
 
     private ActionMatcher actionMatcher;
     private ActivityServlet activityServlet;
+    private ActivityStore mockActivityStore;
     private HttpServletRequest mockRequest;
     private RequestDispatcher mockRequestDispatcher;
     private HttpSession mockSession;    
@@ -38,11 +36,15 @@ public class ActionMatcherTest {
 
     @Before
     public void before() {
-        actionMatcher = new ActionMatcher();
+        actionMatcher = ActionMatcher.getInstance();
+        activityServlet = new ActivityServlet();
 
         mockRequest = Mockito.mock(HttpServletRequest.class);
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);                
         mockSession = Mockito.mock(HttpSession.class);
+        Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/activity.jsp"))
+        .thenReturn(mockRequestDispatcher);
+        Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
     
         mockResponse = Mockito.mock(HttpServletResponse.class);
 

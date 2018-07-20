@@ -13,35 +13,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
-    <link rel="stylesheet" href="/css/main.css">
+  <title>Login</title>
+  <%@ include file="/files.jsp" %>
 </head>
 <body>
-
-<nav>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <%@ include file="navbar.jsp" %>
-</nav>
-
-<div id="container">
-    <h1>Login</h1>
-
-    <% if(request.getAttribute("error") != null){ %>
-    <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
-
-    <form action="/login" method="POST">
-        <label for="username">Username: </label>
-        <br/>
-        <input type="text" name="username" id="username">
-        <br/>
-        <label for="password">Password: </label>
-        <br/>
-        <input type="password" name="password" id="password">
-        <br/><br/>
-        <button type="submit">Login</button>
-    </form>
-
-    <p>New users can register <a href="/register">here</a>.</p>
-</div>
+    <main class="mdl-layout__content">
+      <div class="page-content" id="container">
+        <h1>Login</h1>
+        <% if(request.getAttribute("error") != null){ %>
+          <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+        <% } %>
+        <form action="/login" method="POST">
+          <%@ include file="user_form.jsp" %>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                        type="submit">
+                    Login
+          </button>
+        </form>
+        <p>New users can register <a href="/register">here</a>.</p>
+      </div>
+    </main>
+  </div>
 </body>
 </html>

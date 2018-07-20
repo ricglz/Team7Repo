@@ -20,60 +20,61 @@
 <html>
 <head>
   <title>Conversations</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <%@ include file="/files.jsp" %>
 </head>
 <body>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <%@ include file="navbar.jsp" %>
+    <main class="mdl-layout__content">
+      <div id="container">
 
-  <nav>
-    <%@ include file="navbar.jsp" %>    
-  </nav>
+        <% if(request.getAttribute("error") != null){ %>
+            <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+        <% } %>
 
-  <div id="container">
+        <% if(request.getSession().getAttribute("user") != null){ %>
+          <h1>New Conversation</h1>
+          <form action="/conversations" method="POST">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <label class="mdl-textfield__label" for="conversationTitle">Conversation title: </label>
+              <input class="mdl-textfield__input" type="text" name="conversationTitle" id="conversationTitle">
+            </div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                    type="submit">
+                  Create
+            </button>
+          </form>
+          <hr/>
+        <% } %>
 
-    <% if(request.getAttribute("error") != null){ %>
-        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
+        <h1>Conversations</h1>
 
-    <% if(request.getSession().getAttribute("user") != null){ %>
-      <h1>New Conversation</h1>
-      <form action="/conversations" method="POST">
-          <div class="form-group">
-            <label class="form-control-label">Title:</label>
-          <input type="text" name="conversationTitle">
-        </div>
-
-        <button type="submit">Create</button>
-      </form>
-
-      <hr/>
-    <% } %>
-
-    <h1>Conversations</h1>
-
-    <%
-    List<Conversation> conversations =
-      (List<Conversation>) request.getAttribute("conversations");
-    if(conversations == null || conversations.isEmpty()){
-    %>
-      <p>Create a conversation to get started.</p>
-    <%
-    }
-    else{
-    %>
-      <ul class="mdl-list">
-    <%
-      for(Conversation conversation : conversations){
-    %>
-      <li><a href="/chat/<%= conversation.getTitle() %>">
-        <%= conversation.getTitle() %></a></li>
-    <%
-      }
-    %>
-      </ul>
-    <%
-    }
-    %>
-    <hr/>
+        <%
+        List<Conversation> conversations =
+          (List<Conversation>) request.getAttribute("conversations");
+        if(conversations == null || conversations.isEmpty()){
+        %>
+          <p>Create a conversation to get started.</p>
+        <%
+        }
+        else{
+        %>
+          <ul class="mdl-list">
+        <%
+          for(Conversation conversation : conversations){
+        %>
+          <li><a href="/chat/<%= conversation.getTitle() %>">
+            <%= conversation.getTitle() %></a></li>
+        <%
+          }
+        %>
+          </ul>
+        <%
+        }
+        %>
+        <hr/>
+      </div>
+    </main>
   </div>
 </body>
 </html>
