@@ -19,19 +19,23 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class ActivityServletTest {
+import codeu.bot.ActionMatcher;
 
+public class ActionMatcherTest {
+
+    private ActionMatcher actionMatcher;
     private ActivityServlet activityServlet;
+    private ActivityStore mockActivityStore;
     private HttpServletRequest mockRequest;
     private RequestDispatcher mockRequestDispatcher;
     private HttpSession mockSession;    
     private HttpServletResponse mockResponse;
     private UserStore mockUserStore;
     private User mockUser;
-    private ActivityStore mockActivityStore;
 
     @Before
     public void before() {
+        actionMatcher = ActionMatcher.getInstance();
         activityServlet = new ActivityServlet();
 
         mockRequest = Mockito.mock(HttpServletRequest.class);
@@ -40,7 +44,6 @@ public class ActivityServletTest {
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/activity.jsp"))
         .thenReturn(mockRequestDispatcher);
         Mockito.when(mockRequest.getSession()).thenReturn(mockSession);
-
     
         mockResponse = Mockito.mock(HttpServletResponse.class);
 

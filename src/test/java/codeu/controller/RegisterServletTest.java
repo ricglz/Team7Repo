@@ -1,8 +1,6 @@
 package codeu.controller;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.time.Instant;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,7 +15,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import codeu.model.data.User;
-import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
 import codeu.model.store.basic.ActivityStore;
 
