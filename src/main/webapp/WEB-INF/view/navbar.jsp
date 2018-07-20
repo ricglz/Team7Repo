@@ -21,7 +21,7 @@
             <a class="mdl-navigation__link" href="/register">Register</a>
             <a class="mdl-navigation__link" href="/login">Login</a>
         <% } else { %>
-            <a class="mdl-navigation__link" href="/bot">Bot Conversation</a>
+            <a class="mdl-navigation__link" href="/bot">Botler</a>
             <a class="mdl-navigation__link" href="/conversations">Conversations</a>  
         <% } %>
       </nav>

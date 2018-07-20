@@ -77,12 +77,15 @@ public class ActionMatcher {
     public List<DateGroup> groups;
 
     private ActionMatcher() {
+        System.out.println("init1");
         distance = new LevenshteinDistance();
+        System.out.println("init2");
         parser = new Parser();
     }
 
     public static ActionMatcher getInstance() {
         if (actionMatcherInstance == null) {
+            System.out.println("it's null");
             actionMatcherInstance = new ActionMatcher();
         }
         return actionMatcherInstance;

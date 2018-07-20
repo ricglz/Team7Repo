@@ -15,7 +15,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bot Conversation Page</title>
+    <title>Botler</title>
     <%@ include file="/files.jsp" %>
 
     <style>
@@ -39,7 +39,7 @@
     <%@ include file="navbar.jsp" %>
     <main class="mdl-layout__content">
         <div id="container">
-            <h1><a href="" style="float: right; font-size: 56px;" class="">&#8635;</a>Bot Conversation</h1>
+            <h1><a href="" style="float: right; font-size: 56px;" class="">&#8635;</a>Botler, at your service.</h1>
             <hr/>
             <div id="chat">
                 <ul>
