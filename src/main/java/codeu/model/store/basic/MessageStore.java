@@ -18,8 +18,6 @@ import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import codeu.model.data.User;
-import codeu.model.data.Conversation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -83,6 +81,10 @@ public class MessageStore {
       }
     }
     return null;
+  }
+
+  public List<Message> getMessages() {
+    return messages;
   }
 
   /** Access the current set of Messages within the given Conversation. */

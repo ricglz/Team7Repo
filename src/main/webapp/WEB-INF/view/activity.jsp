@@ -15,6 +15,7 @@
 
 <head>
     <title>Activity</title>
+    <%@ include file="/files.jsp" %>
 
     <style>
         body {
@@ -59,9 +60,6 @@
             margin-right:auto;
             margin-top: 50px;
         }
-    </style>
-
-    <style>
         #activity {
           background-color: white;
           height: 500px;
@@ -75,17 +73,19 @@
 </head>
 
 <body>
-    <%@ include file="navbar.jsp" %>
-    <h1>Activity</h1>   
-
-    <div id="container">
-        <div id="activity">
-            <ul>
-                <% for (Activity activity : activities) { %>
-                    <li> <%= activity.getDisplayString() %> </li>
-
-                <% } %>
-            </ul>
-        </div>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <%@ include file="navbar.jsp" %>
+        <main class="mdl-layout__content">
+            <h1>Activity</h1>   
+            <div id="container">
+                <div id="activity">
+                    <ul>
+                        <% for (Activity activity : activities) { %>
+                            <li> <%= activity.getDisplayString() %> </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </main>
     </div>
 </body>
