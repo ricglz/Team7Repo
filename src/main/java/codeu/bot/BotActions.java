@@ -93,14 +93,14 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
-                response = (HttpServletResponse) argsObject[1];
+                response = (HttpServletResponse) argsObjects[1];
                 if(!location.contains("/")){
                     location = "/" + location;
                 }
                 String content;
                 if (validLocation(location)) {
                     content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location, response);
+                    goTo(location);
                 }
                 else {
                     content = "Location is invalid";

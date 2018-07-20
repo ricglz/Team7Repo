@@ -1,32 +1,28 @@
 package codeu.controller;
+
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.mock.*;
 import org.junit.Before;
-import org.junit.After;
+import org.mockito.Mockito;
 import org.mockito.ArgumentCaptor;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import codeu.model.store.basic.UserStore;
 
 
 public class BotServletTest {
@@ -37,7 +33,6 @@ public class BotServletTest {
     private RequestDispatcher mockRequestDispatcher;
     private UserStore mockUserStore;
     private ConversationStore mockConversationStore;
-    private User mockUser;
     private MessageStore mockMessageStore;
 
 
@@ -54,13 +49,15 @@ public class BotServletTest {
         mockRequestDispatcher = Mockito.mock(RequestDispatcher.class);
         Mockito.when(mockRequest.getRequestDispatcher("/WEB-INF/view/bot.jsp"))
                 .thenReturn(mockRequestDispatcher);
+
         mockConversationStore = Mockito.mock(ConversationStore.class);
         botServlet.setConversationStore(mockConversationStore);
+
         mockMessageStore = Mockito.mock(MessageStore.class);
+        botServlet.setMessageStore(mockMessageStore);
 
-
-
-
+        mockUserStore = Mockito.mock(UserStore.class);
+        botServlet.setUserStore(mockUserStore);
     }
 
     @Test
@@ -82,7 +79,7 @@ public class BotServletTest {
                 new Conversation(fakeConversationId, user.getId(), "test_conversation", Instant.now());
 
         mockConversationStore.addConversation(fakeConversation);
-        Mockito.when(mockConversationStore.getBotConversation(user.getId())).thenReturn(fakeConversation);
+        Mockito.when(mockConversationStore.getBotConversation(user)).thenReturn(fakeConversation);
         List<Message> fakeMessageList = new ArrayList<>();
         Message fakeMessage = new Message(
                 UUID.randomUUID(),
@@ -102,7 +99,7 @@ public class BotServletTest {
 
 
     @Test
-    public void testDoGett_UserNotLoggedIn() throws IOException, ServletException {
+    public void testDoGet_UserNotLoggedIn() throws IOException, ServletException {
         Mockito.when(mockSession.getAttribute("user")).thenReturn(null);
 
         botServlet.doGet(mockRequest, mockResponse);
@@ -128,11 +125,6 @@ public class BotServletTest {
                         "$2a$10$bBiLUAVmUFK6Iwg5rmpBUOIBW6rIMhU1eKfi3KR60V9UXaYTwPfHy",
                         Instant.now());
 
-        UserStore mockUserStore = Mockito.mock(UserStore.class);
-        botServlet.setUserStore(mockUserStore);
-
-        mockMessageStore = Mockito.mock(MessageStore.class);
-        botServlet.setMessageStore(mockMessageStore);
         Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
         Conversation fakeConversation =
@@ -145,7 +137,6 @@ public class BotServletTest {
 
         ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
         Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
-
 
         Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
         Mockito.verify(mockResponse).sendRedirect("/bot");
@@ -161,10 +152,6 @@ public class BotServletTest {
                         "$2a$10$bBiLUAVmUFK6Iwg5rmpBUOIBW6rIMhU1eKfi3KR60V9UXaYTwPfHy",
                         Instant.now());
 
-        UserStore mockUserStore = Mockito.mock(UserStore.class);
-        botServlet.setUserStore(mockUserStore);
-        mockMessageStore = Mockito.mock(MessageStore.class);
-        botServlet.setMessageStore(mockMessageStore);
         Mockito.when(mockUserStore.getUser("test_username")).thenReturn(fakeUser);
 
         Conversation fakeConversation =

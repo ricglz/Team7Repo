@@ -6,8 +6,6 @@ import codeu.model.data.User;
 import codeu.model.data.Activity;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +29,6 @@ public class ActivityServletTest {
     private UserStore mockUserStore;
     private User mockUser;
     private ActivityStore mockActivityStore;
-    private String[] fakeActivityList;
 
     @Before
     public void before() {
