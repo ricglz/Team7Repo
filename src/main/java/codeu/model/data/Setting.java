@@ -1,6 +1,4 @@
 package codeu.model.data;
-import java.util.HashMap;
-import java.util.Map;
 public class Setting {
     SettingType type;
     String value;
