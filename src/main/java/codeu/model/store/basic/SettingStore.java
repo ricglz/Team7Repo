@@ -47,15 +47,15 @@ public class SettingStore {
     }
 
     public Setting getSettingbyType(Setting.SettingType type){
-        for(Setting types: settings){
-            if(types.getType().equals(type)){
-                return types;
+        for(Setting setting: settings){
+            if(setting.getType().equals(type)){
+                return setting;
             }
         }
         return null;
     }
-    public void setSettings(List<Setting> setting) {
-        this.settings = setting;
+    public void setSettings(List<Setting> settings) {
+        this.settings = settings;
     }
 
 }

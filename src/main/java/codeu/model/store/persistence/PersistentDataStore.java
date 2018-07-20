@@ -201,16 +201,25 @@ public class PersistentDataStore {
     List<Setting> setting = new ArrayList<>();
     Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
+    if (!results.asIterator().hasNext()) {
+      System.out.println("The setting type is empty.");} else{
 
-    for(Entity entity: results.asIterable()){
-      try{
-      Setting setting1 = new Setting(Setting.SettingType.getSettingType((String) entity.getProperty("type")),(String)entity.getProperty("value"));
-      setting.add(setting1);
-      } catch (Exception e) {
-        throw new PersistentDataStoreException(e);
+      for (Entity entity : results.asIterable()) {
+        try {
+          Setting.SettingType type = Setting.SettingType.getSettingType((String) entity.getProperty("type"));
+          if(type==null){
+            System.out.println("Error");
+          }else{
+            String value = ((String) entity.getProperty("value"));
+            Setting setting1 = new Setting(type,value);
+            setting.add(setting1);
+          }
+
+        } catch (Exception e) {
+          throw new PersistentDataStoreException(e);
+        }
       }
     }
-
 
     return setting;
   }
