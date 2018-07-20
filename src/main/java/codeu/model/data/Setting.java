@@ -1,8 +1,10 @@
 package codeu.model.data;
-
+import java.util.HashMap;
+import java.util.Map;
 public class Setting {
     SettingType type;
     String value;
+
 
     public Setting(SettingType type, String value) {
         this.type = type;
@@ -17,11 +19,16 @@ public class Setting {
         return value;
     }
 
+    public  void setValue(String values){
+     this.value=values;
+    }
+
 
     public enum SettingType {
 
 
         FONT_SIZE("font_size"), COLORS("color");
+
 
         private String storageKey;
 
@@ -41,6 +48,7 @@ public class Setting {
             }
             return null;
         }
+
     }
     }
 

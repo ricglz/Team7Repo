@@ -24,11 +24,10 @@ import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.*;
 import edu.stanford.nlp.trees.international.negra.NegraLabel;
 
+import java.util.*;
+
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -37,10 +36,9 @@ import java.util.UUID;
  */
 public class PersistentDataStore {
 
-  // Handle to Google AppEngine's Datastore service.
+    // Handle to Google AppEngine's Datastore service.
   private DatastoreService datastore;
-
-  /**
+    /**
    * Constructs a new PersistentDataStore and sets up its state to begin loading objects from the
    * Datastore service.
    */
@@ -198,28 +196,35 @@ public class PersistentDataStore {
   }
 
   public List<Setting> loadSettings()throws PersistentDataStoreException{
-    List<Setting> setting = new ArrayList<>();
+      Map<Setting.SettingType, Setting> settingMap = new HashMap<>();
+      settingMap.put(Setting.SettingType.COLORS ,  new Setting(Setting.SettingType.COLORS, "white")));
+      settingMap.put(Setting.SettingType.FONT_SIZE, new Setting(Setting.SettingType.FONT_SIZE, "normal"));
+
+      List<Setting> setting = new ArrayList<>();
     Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
-    if (!results.asIterator().hasNext()) {
-      System.out.println("The setting type is empty.");} else{
 
       for (Entity entity : results.asIterable()) {
         try {
-          Setting.SettingType type = Setting.SettingType.getSettingType((String) entity.getProperty("type"));
-          if(type==null){
-            System.out.println("Error");
-          }else{
-            String value = ((String) entity.getProperty("value"));
-            Setting setting1 = new Setting(type,value);
-            setting.add(setting1);
+            Setting settings = settingMap.get(Setting.SettingType.getSettingType((String) entity.getProperty("type")));
+            settings.setValue((String) entity.getProperty("value"));
+            Setting.SettingType type = Setting.SettingType.getSettingType((String) entity.getProperty("type"));
+            if(type==null){
+                System.out.println("Error");
+            }else{
+                String value = ((String) entity.getProperty("value"));
+                Setting setting1 = new Setting(type,value);
+                setting.add(setting1);
           }
 
         } catch (Exception e) {
           throw new PersistentDataStoreException(e);
         }
       }
-    }
+
+      for (Setting setting3: settingMap.values()) {
+          setting.add(setting3);
+      }
 
     return setting;
   }
