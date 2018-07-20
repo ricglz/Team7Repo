@@ -29,50 +29,55 @@
 <html>
 <head>
   <title>Admin</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <%@ include file="/files.jsp" %>
 </head>
 <body>
-
-  <nav>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <%@ include file="navbar.jsp" %>
-  </nav>
+    <main class="mdl-layout__content">
+      <div class="stat-information" id="container">
+        <h1>Statistics</h1>
+        <ul>
+          <li>Conversations: <%=conversationStore.getConversationCount()%></li>
+          <li>Users: <%=userStore.getUserCount()%></li>
+          <li>Messages: <%=messageStore.getMessagesCount()%></li>
+          <%if(userStore.getUserCount() != 0) {%>
+            <li>Most active user: <%=userStore.getMostActiveUserName()%> 
+                with <%=userStore.getMaxMessageCount()%> messages</li>
+          <%}%>
+          <%if(conversationStore.getConversationCount() != 0){%>
+            <li>Most active conversation: <%=conversationStore.getMostActiveConversationTitle()%> 
+                with <%=conversationStore.getMaxMessageCount()%> messages</li>
+          <%}%>
+          <%if(messageStore.getMessagesCount() != 0) {
+            longestMessage = messageStore.getLongestMessage();
+          %>
+            <li>Longest message: <%=longestMessage.getContent().length()-1%> letters</li>
+          <%} else { %>
+            <li>There isn't any messages.</li>
+          <% }%>
+        </ul>
+        <hr>
+        <% if(request.getAttribute("error") != null){ %>
+            <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+        <% } %>
 
-  <div class="stat-information" id="container">
-    <h1>Statistics</h1>
-    <ul>
-      <li>Conversations: <%=conversationStore.getConversationCount()%></li>
-      <li>Users: <%=userStore.getUserCount()%></li>
-      <li>Messages: <%=messageStore.getMessagesCount()%></li>
-      <%if(userStore.getUserCount() != 0) {%>
-        <li>Most active user: <%=userStore.getMostActiveUserName()%> 
-            with <%=userStore.getMaxMessageCount()%> messages</li>
-      <%}%>
-      <%if(conversationStore.getConversationCount() != 0){%>
-        <li>Most active conversation: <%=conversationStore.getMostActiveConversationTitle()%> 
-            with <%=conversationStore.getMaxMessageCount()%> messages
-      <%}%>
-      <%if(messageStore.getMessagesCount() != 0) {
-        longestMessage = messageStore.getLongestMessage();
-      %>
-        <li>Longest message: <%=longestMessage.getContent().length()-1%> letters
-      <%}%>
-    </ul>
-    <hr>
-    <% if(request.getAttribute("error") != null){ %>
-        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
-
-    <% if(request.getAttribute("message") != null){ %>
-        <h2 style="color:blue"><%= request.getAttribute("message") %></h2>
-    <% } %>
-    <h1>Add admin</h1>
-    <form action="/admin" method="POST">
-      <label for="username">Username: </label>
-      <br/>
-      <input type="text" name="username" id="username">
-      <br/><br/>
-      <button type="submit">Login</button>
-    </form>
+        <% if(request.getAttribute("message") != null){ %>
+            <h2 style="color:blue"><%= request.getAttribute("message") %></h2>
+        <% } %>
+        <form action="/admin" method="POST">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <label class="mdl-textfield__label" for="username">Username: </label>
+            <input class="mdl-textfield__input" type="text" name="username" id="username">
+          </div>
+          <br/><br/>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                  type="submit">
+            Add admin
+          </button>
+        </form>
+      </div>
+    </main>
   </div>
 </body>
 </html>

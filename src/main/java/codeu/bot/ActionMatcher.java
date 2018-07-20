@@ -21,16 +21,8 @@ import com.google.appengine.repackaged.com.google.common.flogger.parser.ParseExc
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
-import com.google.cloud.language.v1.AnalyzeEntitiesRequest;
-import com.google.cloud.language.v1.AnalyzeEntitiesResponse;
-import com.google.cloud.language.v1.AnalyzeEntitySentimentRequest;
-import com.google.cloud.language.v1.AnalyzeEntitySentimentResponse;
-import com.google.cloud.language.v1.AnalyzeSentimentResponse;
 import com.google.cloud.language.v1.AnalyzeSyntaxRequest;
 import com.google.cloud.language.v1.AnalyzeSyntaxResponse;
-import com.google.cloud.language.v1.ClassificationCategory;
-import com.google.cloud.language.v1.ClassifyTextRequest;
-import com.google.cloud.language.v1.ClassifyTextResponse;
 import com.google.cloud.language.v1.Document;
 import com.google.cloud.language.v1.Document.Type;
 import com.google.cloud.language.v1.EncodingType;
@@ -38,6 +30,8 @@ import com.google.cloud.language.v1.LanguageServiceClient;
 import com.google.cloud.language.v1.Token;
 import com.google.cloud.language.v1.PartOfSpeech.Tag;
 import com.google.cloud.language.v1.DependencyEdge.Label;
+
+import com.joestelmach.natty.*;
 
 public class ActionMatcher {
     private static String input;
@@ -79,6 +73,14 @@ public class ActionMatcher {
 
     private static ActionMatcher actionMatcherInstance;
 
+    public Parser parser;
+    public List<DateGroup> groups;
+
+    private ActionMatcher() {
+        distance = new LevenshteinDistance();
+        parser = new Parser();
+    }
+
     public static ActionMatcher getInstance() {
         if (actionMatcherInstance == null) {
             actionMatcherInstance = new ActionMatcher();
@@ -91,6 +93,7 @@ public class ActionMatcher {
     }
 
     public String findFuzzyMatch(HashSet<String> set, int distanceThreshold) {
+        System.out.println(distance);
         String ret = "";
         ArrayList<Integer> spaceIndices = new ArrayList<Integer>();
 
@@ -243,8 +246,6 @@ public class ActionMatcher {
                 return;
             }
 
-            System.out.println("here"+directObject);
-
             switch (directObject) {
                 case "message": {
                     matchGetMessages();
@@ -304,22 +305,11 @@ public class ActionMatcher {
             return;
         }
 
-        // // GET_MESSAGES_BY_CREATION_TIME
-        // if (timexAnnotationsAll.size() == 1) {
-        //     CoreMap timexAnnotation = timexAnnotationsAll.get(0);
-        //     Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-        //     try {
-        //         DateFormat format = new SimpleDateFormat("YYYY-MM-dd");
-        //         Date date = format.parse(temporal.toISOString());
-        //         System.out.printf("Getting messages based on time criteria: %s.\n",temporal.toString());
-        //         Instant instant = date.toInstant();
-        //         BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(instant);
-        //         actionMatched = true;
-        //         return;
-        //     } catch (Exception e) {
-        //         return;
-        //     }
-        // }
+        // GET_MESSAGES_BY_CREATION_TIME
+        if (!groups.isEmpty() && !groups.get(0).getDates().isEmpty()) {
+            System.out.println(groups.get(0).getDates());
+            BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(groups.get(0).getDates().get(0).toInstant());
+        }
 
         // GET_MESSAGES_LIKE_KEYWORD
         int containOrAboutOrMentionIndex = getKeywordIndex(ABOUT_KEYWORDS, tokensLemmasList);
@@ -354,22 +344,11 @@ public class ActionMatcher {
     }
 
     public void matchGetConversations() throws IOException, PersistentDataStoreException {
-        // // GET_CONVERSATIONS_BY_CREATION_TIME
-        // if (!timexAnnotationsAll.isEmpty() && timexAnnotationsAll.size() == 1) {
-        //     CoreMap timexAnnotation = timexAnnotationsAll.get(0);
-        //     Temporal temporal = timexAnnotation.get(TimeExpression.Annotation.class).getTemporal();
-        //     try {
-        //         DateFormat format = new SimpleDateFormat("YYYY-MM-dd");
-        //         Date date = format.parse(temporal.toISOString());
-        //         System.out.printf("Getting conversation based on time criteria: %s.",temporal.toString());
-        //         Instant instant = date.toInstant();
-        //         BotActions.Action.GET_CONVERSATIONS_BY_CREATION_TIME.doAction(instant);
-        //         actionMatched = true;
-        //         return;
-        //     } catch (Exception e) {
-        //         return;
-        //     }
-        // }
+        // GET_CONVERSATIONS_BY_CREATION_TIME
+        if (!groups.isEmpty() && !groups.get(0).getDates().isEmpty()) {
+            System.out.println(groups.get(0).getDates());
+            BotActions.Action.GET_CONVERSATIONS_BY_CREATION_TIME.doAction(groups.get(0).getDates().get(0).toInstant());
+        }
 
         // GET_CONVERSATIONS_BY_AUTHOR
         int madeOrCreateOrOwnOrByIndex = getKeywordIndex(CREATE_KEYWORDS, tokensLemmasList);
@@ -475,13 +454,15 @@ public class ActionMatcher {
 
 
     public void matchAction(String text, String username, HttpServletResponse httpServletResponse) throws Exception, IOException, PersistentDataStoreException {
+        System.out.println("Attempting to match action.");
         actionMatched = false;
+        this.input = text;
         this.httpServletResponse = httpServletResponse;
 
         conversationTitles = ConversationStore.getInstance().getAllConversationTitles();
         userNames = UserStore.getInstance().getAllUserNames();
 
-        BotActions botActions = new BotActions(username);
+        botActions = new BotActions(username);
 
         // [START analyze_syntax_text]
         // Instantiate the Language client com.google.cloud.language.v1.LanguageServiceClient
@@ -533,6 +514,9 @@ public class ActionMatcher {
                 map(token -> token.getLemma()).
                 collect(Collectors.toList());
 
+            groups = parser.parse(input);
+            System.out.println(groups);
+
             matchSet();
             if (!actionMatched) {
                 matchSendMessage();
@@ -559,13 +543,8 @@ public class ActionMatcher {
                 return;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             BotActions.Action.NOT_FOUND.doAction();
         }
     }
-
-<<<<<<< HEAD
-
 }
-=======
-}
->>>>>>> 50c54a6c406a59598607867e532161f8d6f5ea34

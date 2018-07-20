@@ -82,7 +82,7 @@ public class BotServletTest {
                 new Conversation(fakeConversationId, user.getId(), "test_conversation", Instant.now());
 
         mockConversationStore.addConversation(fakeConversation);
-        Mockito.when(mockConversationStore.getBotConversation(user.getId())).thenReturn(fakeConversation);
+        Mockito.when(mockConversationStore.getBotConversation(user)).thenReturn(fakeConversation);
         List<Message> fakeMessageList = new ArrayList<>();
         Message fakeMessage = new Message(
                 UUID.randomUUID(),

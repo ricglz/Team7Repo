@@ -135,7 +135,6 @@ public class BotServlet extends HttpServlet {
 			e.printStackTrace();
 		}
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
-        System.out.println("130");
         response.sendRedirect("/bot");
     }
 

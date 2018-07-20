@@ -15,28 +15,12 @@
 
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Roboto', 'Arial', sans-serif;
   line-height: 1.6;
   font-size: 18px;
   line-height: 1.6;
   color: #444;
   background-color: #eeeeee;
-}
-
-nav {
-  background-color: #283593;
-}
-
-nav a {
-  color: white;
-  display: inline-block;
-  font-size: 24px;
-  margin: 15px;
-  text-decoration: none;
-}
-
-#navTitle {
-  font-size: 36px;
 }
 
 #container {
