@@ -197,36 +197,33 @@ public class PersistentDataStore {
 
   public List<Setting> loadSettings()throws PersistentDataStoreException{
       Map<Setting.SettingType, Setting> settingMap = new HashMap<>();
-      settingMap.put(Setting.SettingType.COLORS ,  new Setting(Setting.SettingType.COLORS, "white")));
+      settingMap.put(Setting.SettingType.COLOR , new Setting(Setting.SettingType.COLOR,"white" ));
       settingMap.put(Setting.SettingType.FONT_SIZE, new Setting(Setting.SettingType.FONT_SIZE, "normal"));
-
-      List<Setting> setting = new ArrayList<>();
     Query query = new Query("settings");
     PreparedQuery results = datastore.prepare(query);
 
       for (Entity entity : results.asIterable()) {
         try {
-            Setting settings = settingMap.get(Setting.SettingType.getSettingType((String) entity.getProperty("type")));
-            settings.setValue((String) entity.getProperty("value"));
-            Setting.SettingType type = Setting.SettingType.getSettingType((String) entity.getProperty("type"));
-            if(type==null){
-                System.out.println("Error");
-            }else{
-                String value = ((String) entity.getProperty("value"));
-                Setting setting1 = new Setting(type,value);
-                setting.add(setting1);
+          String type = (String) entity.getProperty("type");
+          if (type == null) {
+            System.out.println("Type is null. ");
+          } else {
+            Setting setting = settingMap.get(Setting.SettingType.getSettingType((String) entity.getProperty("type")));
+
+            if (setting ==null) {
+              String value = ((String) entity.getProperty("value"));
+              if (value != null){
+                setting.setValue((String) entity.getProperty("value"));
+              }
+            } else {
+              System.out.println("Unknown setting");
+            }
           }
-
-        } catch (Exception e) {
-          throw new PersistentDataStoreException(e);
+        } catch(Exception e){
+            throw new PersistentDataStoreException(e);
+          }
         }
-      }
-
-      for (Setting setting3: settingMap.values()) {
-          setting.add(setting3);
-      }
-
-    return setting;
+        return (List<Setting>) settingMap.values();
   }
 
   /** Write a User object to the Datastore service. */

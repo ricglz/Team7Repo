@@ -25,7 +25,7 @@ public class Setting {
     public enum SettingType {
 
 
-        FONT_SIZE("font_size"), COLORS("color");
+        FONT_SIZE("font_size"), COLOR("color");
 
 
         private String storageKey;
