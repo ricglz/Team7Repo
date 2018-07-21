@@ -39,7 +39,7 @@ public class BotServlet extends HttpServlet {
     /** Store class that gives access to Conversations. */
     private ConversationStore conversationStore;
 
-    //private ActionMatcher actionMatcher;
+    private ActionMatcher actionMatcher;
 
     /**
      * Set up state for handling chat requests.
@@ -51,7 +51,7 @@ public class BotServlet extends HttpServlet {
         setMessageStore(MessageStore.getInstance());
         userStore = UserStore.getInstance();
         conversationStore = ConversationStore.getInstance();
-       // actionMatcher = ActionMatcher.getInstance();
+        actionMatcher = ActionMatcher.getInstance();
     }
 
     /**
@@ -130,14 +130,13 @@ public class BotServlet extends HttpServlet {
 
         try {
             // TODO Check why here is nullpointer in the test
-			actionMatcher.matchAction(cleanedMessageContent, username, response);
-		} catch (PersistentDataStoreException e | NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            actionMatcher.matchAction(cleanedMessageContent, username, response);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+
         List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
-        System.out.println("130");
         response.sendRedirect("/bot");
     }
 

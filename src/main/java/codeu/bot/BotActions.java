@@ -86,7 +86,7 @@ public class BotActions {
         SET_SETTING{
             @Override
             public void doAction(Object ... argsObjects) {
-                return;   
+                return;
             }
         },
         NAVIGATE{
@@ -267,9 +267,9 @@ public class BotActions {
                     Conversation conversation = conversationStore.getConversationWithUUID(id);
                     conversations.add(conversation);
                 }
-				return conversations;
+                return conversations;
             }
-            
+
             private HashSet<UUID> conversationsIdsFromMessages(List<Message> messages) {
                 HashSet<UUID> conversationsIds = new HashSet<>();
                 for (Message message : messages) {
@@ -357,9 +357,9 @@ public class BotActions {
         userStore = uStore;
     }
 
-    /** 
-     * Checks the content of every message to check if it contains the keyword and 
-     * then add it in a vector 
+    /**
+     * Checks the content of every message to check if it contains the keyword and
+     * then add it in a vector
      */
     private static List<Message> getMessagesByKeyword(String keyword) {
         List <Message> messages = messageStore.getMessages();
@@ -372,7 +372,7 @@ public class BotActions {
                 messagesByKeyword.add(message);
             }
         }
-        return messagesByKeyword; 
+        return messagesByKeyword;
     }
 
     /**
@@ -427,7 +427,7 @@ public class BotActions {
     }
 
     /**
-     * Gets the amount of unique conversation in a list of messages, 
+     * Gets the amount of unique conversation in a list of messages,
      * adding the UUID of the conversation of the message in a set.
      */
     private static int getConversationCount(List<Message> userMessages) {

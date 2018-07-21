@@ -1,4 +1,3 @@
-/*
 package codeu.controller;
 
 import codeu.model.data.Conversation;
@@ -141,7 +140,7 @@ public class BotServletTest {
 
         Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
         Mockito.verify(mockResponse).sendRedirect("/bot");
-        }
+    }
 
     @Test
     public void testDoPost_SanitizeMessage() throws IOException, ServletException {
@@ -170,8 +169,4 @@ public class BotServletTest {
         Assert.assertEquals("Contains html and  content.", messageArgumentCaptor.getValue().getContent());
         Mockito.verify(mockResponse).sendRedirect("/bot");
     }
-        }
-
-*/
-
-
+}
