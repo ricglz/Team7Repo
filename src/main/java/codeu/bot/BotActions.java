@@ -117,17 +117,17 @@ public class BotActions {
                 List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
                 String content = "";
                 if (getMessageCount) {
-                    content += "Amount of messages: " + userMessages.size() + "\n";
+                    content += "<p>Amount of messages: " + userMessages.size() + "</p>";
                 }
                 if (canGetConversationCount) {
                     int conversationCount = getConversationCount(userMessages);
-                    content += "Conversations you have participated: " + conversationCount + "\n";
+                    content += "<p>Conversations you have participated: " + conversationCount + "</p>";
                 }
                 if (getLongestMessage) {
                     userMessages.sort(Message.messageComparator);
                     Message longestMessage = userMessages.get(userMessages.size()-1);
                     long maxCharactersLength = longestMessage.getContent().length()-1;
-                    content += "Longest message with " + maxCharactersLength + " characerts\n";
+                    content += "<p>Longest message with " + maxCharactersLength + " characerts</p>";
                 }
                 addAnswerMessageToStorage(content);
             }
@@ -151,10 +151,10 @@ public class BotActions {
         GET_HELP{
             @Override
             public void doAction(Object ... argsObjects) {
-                String content = "This are the actions you can do\n";
-                content += "Send message to a conversation, create a conversation, get messages you have send\n";
-                content += "Go to a specific page, set your description, get all the conversations\n";
-                content += "get conversations done by someone and in a specific time\n";
+                String content = "<p>This are the actions you can do</p>";
+                content += "<p>Send message to a conversation, create a conversation, get messages you have send</p>";
+                content += "<p>Go to a specific page, set your description, get all the conversations</p>";
+                content += "<p>get conversations done by someone and in a specific time</p>";
                 addAnswerMessageToStorage(content);
             }
         },
@@ -206,10 +206,10 @@ public class BotActions {
                 userMessages.sort(Message.messageComparator);
                 Message longestMessage = userMessages.get(userMessages.size()-1);
                 long maxCharactersLength = longestMessage.getContent().length()-1;
-                String content = "This are your stats\n";
-                content += "Amount of messages: " + userMessages.size() + "\n";
-                content += "Conversations you have participated: " + conversationCount + "\n";
-                content += "Longest message with " + maxCharactersLength + " characerts\n";
+                String content = "<p>This are your stats</p>";
+                content += "<p>Amount of messages: " + userMessages.size() + "</p>";
+                content += "<p>Conversations you have participated: " + conversationCount + "</p>";
+                content += "<p>Longest message with " + maxCharactersLength + " characerts</p>";
                 addAnswerMessageToStorage(content);
             }
         },
@@ -410,7 +410,7 @@ public class BotActions {
     private static String getContentFromMessages(List<Message> messages) {
         String content = "";
         for (Message message : messages) {
-            content += message.getContent() + "\n";
+            content += "<p>" + message.getContent() + "</p>";
         }
         return content;
     }
@@ -421,7 +421,7 @@ public class BotActions {
     private static String getTitleFromConversations(List<Conversation> conversations) {
         String title = "";
         for (Conversation conversation : conversations) {
-            title += conversation.getTitle() + "\n";
+            title += "<p>" + conversation.getTitle() + "</p>";
         }
         return title;
     }

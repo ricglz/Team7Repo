@@ -77,6 +77,17 @@ public class ConversationStore {
     return new ArrayList<Conversation>(conversations);
   }
 
+  public List<Conversation> getUserConversations() {
+    List<Conversation> userConversations = new ArrayList<>();
+    final String DEFULT_BOT_CONVERSATION_TITLE="Bot-Conversation ";
+    for (Conversation conversation : conversations) {
+      if (!conversation.title.contains(DEFULT_BOT_CONVERSATION_TITLE)) {
+        userConversations.add(conversation);
+      }
+    }
+    return userConversations;
+  }
+
   public HashSet<String> getAllConversationTitles() {
     HashSet<String> titles = getAllConversations().stream().map(
       x -> x.getTitle()).collect(Collectors.toCollection(HashSet::new));

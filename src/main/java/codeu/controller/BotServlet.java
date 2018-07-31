@@ -7,7 +7,6 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.data.Conversation;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.bot.ActionMatcher;
 import java.io.IOException;
 import java.time.Instant;
@@ -135,8 +134,6 @@ public class BotServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         response.sendRedirect("/bot");
     }
 
