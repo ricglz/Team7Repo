@@ -48,9 +48,13 @@ public class BotServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         setMessageStore(MessageStore.getInstance());
-        userStore = UserStore.getInstance();
-        conversationStore = ConversationStore.getInstance();
-        actionMatcher = ActionMatcher.getInstance();
+        setUserStore(UserStore.getInstance());
+        setConversationStore(ConversationStore.getInstance());
+        setActionMatcher(new ActionMatcher());
+    }
+
+    void setActionMatcher(ActionMatcher actionMatcher) {
+      this.actionMatcher = actionMatcher;
     }
 
     /**
