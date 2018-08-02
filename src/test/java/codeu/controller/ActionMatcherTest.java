@@ -35,7 +35,7 @@ public class ActionMatcherTest {
 
     @Before
     public void before() {
-        actionMatcher = ActionMatcher.getInstance();
+        actionMatcher = new ActionMatcher();
         activityServlet = new ActivityServlet();
 
         mockRequest = Mockito.mock(HttpServletRequest.class);

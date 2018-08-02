@@ -6,6 +6,7 @@ import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import codeu.bot.ActionMatcher;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,6 +35,7 @@ public class BotServletTest {
     private UserStore mockUserStore;
     private ConversationStore mockConversationStore;
     private MessageStore mockMessageStore;
+    private ActionMatcher mockActionMatcher;
 
 
     @Before
@@ -58,6 +60,9 @@ public class BotServletTest {
 
         mockUserStore = Mockito.mock(UserStore.class);
         botServlet.setUserStore(mockUserStore);
+
+        mockActionMatcher = Mockito.mock(ActionMatcher.class);
+        botServlet.setActionMatcher(mockActionMatcher);
     }
 
     @Test
@@ -116,7 +121,7 @@ public class BotServletTest {
     }
 
     @Test
-    public void testDoPost_StoresMessage() throws IOException, ServletException {
+    public void testDoPost_StoresMessage() throws Exception {
         Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
         User fakeUser =
                 new User(
@@ -138,12 +143,16 @@ public class BotServletTest {
         ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
         Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
 
+        Mockito.verify(mockActionMatcher).matchAction(
+                    Mockito.anyString(),
+                    Mockito.anyString(),
+                    Mockito.any(HttpServletResponse.class));
         Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
         Mockito.verify(mockResponse).sendRedirect("/bot");
     }
 
     @Test
-    public void testDoPost_SanitizeMessage() throws IOException, ServletException {
+    public void testDoPost_SanitizeMessage() throws Exception {
         Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
         User fakeUser =
                 new User(
@@ -165,7 +174,10 @@ public class BotServletTest {
         ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
         Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
 
-
+        Mockito.verify(mockActionMatcher).matchAction(
+                    Mockito.anyString(),
+                    Mockito.anyString(),
+                    Mockito.any(HttpServletResponse.class));
         Assert.assertEquals("Contains html and  content.", messageArgumentCaptor.getValue().getContent());
         Mockito.verify(mockResponse).sendRedirect("/bot");
     }
