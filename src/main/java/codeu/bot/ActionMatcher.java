@@ -62,7 +62,7 @@ public class ActionMatcher {
     private static final String[] ABOUT_KEYWORDS = new String[] {"contain","about","mention","like"};
 
     private static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
-    private static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","user count","message count","most active user", "most active conversation"}));
+    private static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","message count","longest message", "most active conversation"}));
     private static final String[] PAGES = new String[] {"activity","profile","conversations","setting"};
 
     private static final Pattern doubleQuotesPattern = Pattern.compile("\"([^\"]*)\"");

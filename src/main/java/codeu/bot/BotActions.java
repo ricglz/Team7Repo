@@ -45,6 +45,8 @@ public class BotActions {
                 String description = (String) argsObjects[0];
                 user.setDescription(description);
                 userStore.updateUser(user);
+                String content = "Description set, <a href=\"/profile\"> View your profile </a>";
+                addAnswerMessageToStorage(content);
             }
         },
         // DONE (create conversation "team7bottest")
@@ -53,11 +55,17 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) {
                 String title = (String) argsObjects[0];
-                UUID owner = user.getId();
-                Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
-                conversationStore.addConversation(conversation);
-                activityStore.addActivity(conversation);
-                String content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> has been created !";
+                String content;
+                if (conversationStore.isTitleTaken(title)) {
+                    content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> conversation was already created";
+                }
+                else {
+                    UUID owner = user.getId();
+                    Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
+                    conversationStore.addConversation(conversation);
+                    activityStore.addActivity(conversation);
+                    content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> conversation has been created !";
+                }
                 addAnswerMessageToStorage(content);
             }
         },
@@ -75,6 +83,12 @@ public class BotActions {
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
                 messageStore.addMessage(message);
                 activityStore.addActivity(message);
+                //Updating user
+                user.increaseMessageCount();
+                userStore.updateUser(user);
+                //Updating conversation
+                conversation.increaseMessageCount();
+                conversationStore.updateConversation(conversation);
                 String answerContent= content + " sent to <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
                 addAnswerMessageToStorage(answerContent);
             }
@@ -87,10 +101,10 @@ public class BotActions {
                 String title = (String) argsObjects[0];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
                 UUID id = conversation.getId();
-                List<Message> messages = messageStore.getMessagesInConversation(id);
+                List<Message> messages = messageStore.getMyMessagesInConversation(id, user.getId());
                 String contentMessages = getContentFromMessages(messages);
-                String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a>";
-                addAnswerMessageToStorage(contentMessages + content);
+                String  content= "Messages in the conversation <a href=\"/chat/"+ title+ "\">"+ title + "</a> <br/>";
+                addAnswerMessageToStorage(content + contentMessages);
             }
         },
         // NOT DONE
@@ -126,23 +140,27 @@ public class BotActions {
         GET_STAT{
             @Override
             public void doAction(Object ... argsObjects) {
-                boolean getMessageCount = (Boolean) argsObjects[0];
-                boolean canGetConversationCount = (Boolean) argsObjects[1];
-                boolean getLongestMessage = (Boolean) argsObjects[2];
+                String statistic = (String) argsObjects[0];
                 List<Message> userMessages = messageStore.getMessagesByAuthor(user.getId());
-                String content = "";
-                if (getMessageCount) {
-                    content += "Amount of messages: " + userMessages.size() + "<br />";
+                String content;
+                if (statistic.equals("message count")) {
+                    content = "Amount of messages: " + userMessages.size() + "<br />";
                 }
-                if (canGetConversationCount) {
+                else if (statistic.equals("conversation count")) {
                     int conversationCount = getConversationCount(userMessages);
-                    content += "Conversations you have participated: " + conversationCount + "<br />";
+                    content = "Conversations you have participated: " + (conversationCount - 1) + "<br />";
                 }
-                if (getLongestMessage) {
+                else if (statistic.equals("longest message")) {
                     userMessages.sort(Message.messageComparator);
                     Message longestMessage = userMessages.get(userMessages.size()-1);
                     long maxCharactersLength = longestMessage.getContent().length()-1;
-                    content += "Longest message with " + maxCharactersLength + " characerts<br />";
+                    content = "Longest message with " + maxCharactersLength + " characerts<br />";
+                }
+                else {
+                    String title = conversationStore.getMostActiveConversationTitle();
+                    long messageCount = conversationStore.getMaxMessageCount();
+                    content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> is the most active conversation with " 
+                              + messageCount +" messages";
                 }
                 addAnswerMessageToStorage(content);
             }
@@ -157,14 +175,15 @@ public class BotActions {
         // get messages from [time expression]
         // includes bot messages. aka is not specific to user.
         // "get messages from last friday" doesnt work
+        // Currently also gives ACTION_NOT_FOUND message
         GET_MESSAGES_BY_CREATION_TIME{
             @Override
             public void doAction(Object ... argsObjects) {
                 Instant time = (Instant) argsObjects[0];
-                List<Message> messages = messageStore.getMessagesInTime(time);
+                List<Message> messages = messageStore.getMyMessagesInTime(time, user.getId());
                 String contentMessages = getContentFromMessages(messages);
                 String  content= "Messages within the time of " + time.toString() + " have been retrieved";
-                addAnswerMessageToStorage(contentMessages + content);
+                addAnswerMessageToStorage(content + contentMessages);
             }
         },
         // DONE (help, tutorial, guide)
@@ -188,7 +207,7 @@ public class BotActions {
                 List<Message> messages = messageStore.getMessagesByAuthor(author);
                 String contentMessages = getContentFromMessages(messages);
                 String content = "Your messages have been retrieved";
-                addAnswerMessageToStorage(contentMessages + content);
+                addAnswerMessageToStorage(content + contentMessages);
             }
         },
         // DONE (get conversations made [time expression])
@@ -200,7 +219,7 @@ public class BotActions {
                 List<Conversation> conversations = conversationStore.getConversationsByTime(time);
                 String titleConversations = getTitleFromConversations(conversations);
                 String  content= "Conversations within the time of " + time.toString() + " have been retrieved";
-                addAnswerMessageToStorage(titleConversations + content);
+                addAnswerMessageToStorage(content + titleConversations);
             }
         },
         // get conversation by [author]
@@ -214,7 +233,7 @@ public class BotActions {
                 List<Conversation> conversations = conversationStore.getConversationsByAuthor(ownerId);
                 String titleConversations = getTitleFromConversations(conversations);
                 String  content= "Conversations done by " + username + " have been retrieved";
-                addAnswerMessageToStorage(titleConversations + content);
+                addAnswerMessageToStorage(content + titleConversations);
             }
         },
         // get all conversations
@@ -222,9 +241,9 @@ public class BotActions {
         GET_ALL_CONVERSATIONS{
             @Override
             public void doAction(Object ... argsObjects) {
-                String titleConversations = getTitleFromConversations(conversationStore.getAllConversations());
+                String titleConversations = getTitleFromConversations(conversationStore.getUserConversations());
                 String content= "All conversations have been retrieved";
-                addAnswerMessageToStorage(titleConversations + content);
+                addAnswerMessageToStorage(content + titleConversations);
             }
         },
         // DONE (get all stats, get statistics)
@@ -236,10 +255,14 @@ public class BotActions {
                 userMessages.sort(Message.messageComparator);
                 Message longestMessage = userMessages.get(userMessages.size()-1);
                 long maxCharactersLength = longestMessage.getContent().length()-1;
+                String title = conversationStore.getMostActiveConversationTitle();
+                long messageCount = conversationStore.getMaxMessageCount();
                 String content = "This are your stats<br />";
                 content += "Amount of messages: " + userMessages.size() + "<br />";
                 content += "Conversations you have participated: " + conversationCount + "<br />";
                 content += "Longest message with " + maxCharactersLength + " characerts<br />";
+                content += "<a href=\"/chat/"+ title+ "\">"+ title + "</a> is the most active conversation with " 
+                          + messageCount +" messages<br />";
                 addAnswerMessageToStorage(content);
             }
         },
@@ -278,10 +301,10 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) {
                 String keyword = (String) argsObjects[0];
-                List<Message> messages = getMessagesByKeyword(keyword);
+                List<Message> messages = getMyMessagesByKeyword(keyword);
                 String contentMessages = getContentFromMessages(messages);
                 String content = "These are the messages that contains the keyword";
-                addAnswerMessageToStorage(contentMessages + content);
+                addAnswerMessageToStorage(content + contentMessages);
             }
         },
         // Maybe it works
@@ -290,12 +313,12 @@ public class BotActions {
             @Override
             public void doAction(Object ... argsObjects) {
                 String keyword = (String) argsObjects[0];
-                List<Message> messages = getMessagesByKeyword(keyword);
+                List<Message> messages = getMyMessagesByKeyword(keyword);
                 HashSet<UUID> ids = conversationsIdsFromMessages(messages);
                 ids = conversationsByKeyword(keyword, ids);
                 List<Conversation> conversations = getConversationsById(ids);
                 String conversationsTitles = getTitleFromConversations(conversations);
-                String content = "These are the the conversations that its title contains the keyword";
+                String content = "These are the the conversations that its content contains the keyword";
                 addAnswerMessageToStorage(conversationsTitles + content);
             }
 
@@ -394,7 +417,7 @@ public class BotActions {
      * Checks the content of every message to check if it contains the keyword and
      * then add it in a vector
      */
-    private static List<Message> getMessagesByKeyword(String keyword) {
+    private static List<Message> getMyMessagesByKeyword(String keyword) {
         List <Message> messages = messageStore.getMessages();
         List <Message> messagesByKeyword = new ArrayList<>();
         UUID userId = user.getId();
@@ -441,10 +464,11 @@ public class BotActions {
      * Gets the content from the messages of a list to pass them as a string
      */
     private static String getContentFromMessages(List<Message> messages) {
-        String content = "";
+        String content = "<ul>";
         for (Message message : messages) {
-            content += message.getContent() + "<br />";
+            content += "<li>" + message.getContent() + "</li>";
         }
+        content += "</ul>";
         return content;
     }
 
@@ -452,10 +476,11 @@ public class BotActions {
      * Gets the title from the conversations of a list to pass them as a string
      */
     private static String getTitleFromConversations(List<Conversation> conversations) {
-        String title = "";
+        String title = "<ul>";
         for (Conversation conversation : conversations) {
-            title += conversation.getTitle() + "<br />";
+            title += "<li>" + conversation.getTitle() + "</li>";
         }
+        title += "</ul>";
         return title;
     }
 

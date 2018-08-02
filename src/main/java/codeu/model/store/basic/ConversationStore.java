@@ -114,8 +114,10 @@ public class ConversationStore {
 
   public List<Conversation> getConversationsByAuthor(UUID ownerId) {
     List<Conversation> conversationsInTime = new ArrayList<>();
+    final String DEFULT_BOT_CONVERSATION_TITLE="Bot-Conversation ";
     for (Conversation conversation : conversations) {
-      if (conversation.getOwnerId().equals(ownerId)) {
+      boolean botConversation = conversation.getTitle().contains(DEFULT_BOT_CONVERSATION_TITLE);
+      if (conversation.getOwnerId().equals(ownerId) && !botConversation) {
         conversationsInTime.add(conversation);
       }
     }
