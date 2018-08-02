@@ -148,7 +148,7 @@ public class ActionMatcher {
                 Matcher matcher = doubleQuotesPattern.matcher(input);
                 if (matcher.find()) {
                     description = matcher.group(1);
-                    //System.out.printf("Setting description to %s.",description);
+                    System.out.printf("Setting description to %s.",description);
                     BotActions.Action.SET_DESCRIPTION.doAction(description);
                     return true;
                 } else {
@@ -195,7 +195,7 @@ public class ActionMatcher {
             Matcher matcher = doubleQuotesPattern.matcher(input);
             if (matcher.find()) {
                 conversationTitle = matcher.group(1);
-                //System.out.printf("Creating conversation %s.",conversationTitle);
+                System.out.printf("Creating conversation %s.",conversationTitle);
                 BotActions.Action.CREATE_CONVERSATION.doAction(conversationTitle);
                 return true;
             } else {
@@ -218,7 +218,7 @@ public class ActionMatcher {
             if (messageMatcher.find()) {
                 message = messageMatcher.group(1);
                 String conversationTitle = findFuzzyMatch(conversationTitles, 5);
-                //System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
+                System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
                 BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
                 return true;
             } else {
@@ -262,13 +262,13 @@ public class ActionMatcher {
 
             String setting = findFuzzyMatch(settingNames, 3);
             if (!setting.isEmpty()) {
-                //System.out.printf("Getting %s.",setting);
+                System.out.printf("Getting %s.",setting);
                 BotActions.Action.GET_SETTING.doAction(setting);
                 return true;
             }
 
             if (input.contains("settings")) {
-                //System.out.println("Getting all settings.");
+                System.out.println("Getting all settings.");
                 BotActions.Action.GET_SETTINGS.doAction();
                 return true;
             }
@@ -276,13 +276,13 @@ public class ActionMatcher {
             // STATISTICS
             String statistic = findFuzzyMatch(STATS, 5);
             if (!statistic.isEmpty()) {
-                //System.out.printf("Getting %s.",statistic);
+                System.out.printf("Getting %s.",statistic);
                 BotActions.Action.GET_STAT.doAction(statistic);
                 return true;
             }
 
             if (input.contains("statistics") || input.contains("stats")) {
-                //System.out.println("Getting all statistics.");
+                System.out.println("Getting all statistics.");
                 BotActions.Action.GET_STATS.doAction();
                 return true;
             }
@@ -294,14 +294,14 @@ public class ActionMatcher {
     public boolean matchGetMessages() throws IOException {
         // GET_MY_MESSAGES
         if (tokensLemmasList.contains("my") || tokensLemmasList.contains("i")) {
-            //System.out.printf("Showing your messages.");
+            System.out.printf("Showing your messages.");
             BotActions.Action.GET_MY_MESSAGES.doAction();
             return true;
         }
 
         // GET_MESSAGES_BY_CREATION_TIME
         if (!groups.isEmpty() && !groups.get(0).getDates().isEmpty()) {
-            //System.out.println(groups.get(0).getDates());
+            System.out.println(groups.get(0).getDates());
             BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(groups.get(0).getDates().get(0).toInstant());
         }
 
@@ -312,7 +312,7 @@ public class ActionMatcher {
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
-                //System.out.printf("Getting messages like keyword \"%s\".",keyword);
+                System.out.printf("Getting messages like keyword \"%s\".",keyword);
                 BotActions.Action.GET_MESSAGES_LIKE_KEYWORD.doAction(keyword);
                 return true;
             } else {
@@ -326,7 +326,7 @@ public class ActionMatcher {
         if (fromOrInIndex != -1) {
             String conversationTitle = findFuzzyMatch(conversationTitles, 3);
             if (!conversationTitle.isEmpty()) {
-                //System.out.printf("Getting messsages from %s.",conversationTitle);
+                System.out.printf("Getting messsages from %s.",conversationTitle);
                 BotActions.Action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
                 return true;
             }
@@ -337,7 +337,7 @@ public class ActionMatcher {
     public boolean matchGetConversations() throws IOException, PersistentDataStoreException {
         // GET_CONVERSATIONS_BY_CREATION_TIME
         if (!groups.isEmpty() && !groups.get(0).getDates().isEmpty()) {
-            //System.out.println(groups.get(0).getDates());
+            System.out.println(groups.get(0).getDates());
             BotActions.Action.GET_CONVERSATIONS_BY_CREATION_TIME.doAction(groups.get(0).getDates().get(0).toInstant());
             return true;
         }
@@ -347,7 +347,7 @@ public class ActionMatcher {
         if (madeOrCreateOrOwnOrByIndex != -1) {
             String author = findFuzzyMatch(userNames, 3);
             if (!author.isEmpty()) {
-                //System.out.printf("Getting conversations made by %s.",author);
+                System.out.printf("Getting conversations made by %s.",author);
                 BotActions.Action.GET_CONVERSATIONS_BY_AUTHOR.doAction(author);
                 return true;
             }
@@ -356,7 +356,7 @@ public class ActionMatcher {
         // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES
         int unreadOrRespondIndex = getKeywordIndex(UNREAD_KEYWORDS, tokensLemmasList);
         if (unreadOrRespondIndex != -1) {
-            //System.out.printf("Getting conversations with unread messages.");
+            System.out.printf("Getting conversations with unread messages.");
             BotActions.Action.GET_CONVERSATIONS_WITH_UNREAD_MESSAGES.doAction();
             return true;
         }
@@ -368,7 +368,7 @@ public class ActionMatcher {
             Matcher keywordMatcher = doubleQuotesPattern.matcher(input);
             if (keywordMatcher.find()) {
                 keyword = keywordMatcher.group(1);
-                //System.out.printf("Getting conversations about keyword \"%s\".",keyword);
+                System.out.printf("Getting conversations about keyword \"%s\".",keyword);
                 BotActions.Action.GET_CONVERSATIONS_ABOUT_KEYWORD.doAction(keyword);
                 return true;
             } else {
@@ -380,7 +380,7 @@ public class ActionMatcher {
         // GET_ALL_CONVERSATIONS
         int allIndex = getKeywordIndex(new String[] {"all"}, tokensLemmasList);
         if (allIndex != -1) {
-            //System.out.printf("Getting all conversations.");
+            System.out.printf("Getting all conversations.");
             BotActions.Action.GET_ALL_CONVERSATIONS.doAction();
             return true;
         }
@@ -394,7 +394,7 @@ public class ActionMatcher {
         if (foundAndIsRoot(summarizeOrSummariseOrOverviewOrTLDRIndex)) {
             String conversationTitle = findFuzzyMatch(conversationTitles,3);
             if (!conversationTitle.isEmpty()) {
-                //System.out.printf("Getting a summary of %s.",conversationTitle);
+                System.out.printf("Getting a summary of %s.",conversationTitle);
                 BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
                 return true;
             } else {
@@ -411,7 +411,7 @@ public class ActionMatcher {
 
             String conversation = findFuzzyMatch(conversationTitles, 3);
             if (!conversation.isEmpty()) {
-                //System.out.printf("Taking you to %s.",conversation);
+                System.out.printf("Taking you to %s.",conversation);
                 BotActions.Action.NAVIGATE_TO_CONVERSATION.doAction(conversation,httpServletResponse);
                 return true;
             }
@@ -419,7 +419,7 @@ public class ActionMatcher {
             int pageIndex = getKeywordIndex(PAGES, tokensLemmasList);
             if (pageIndex != -1) {
                 String page = tokensLemmasList.get(pageIndex);
-                //System.out.printf("Taking you to %s page.",page);
+                System.out.printf("Taking you to %s page.",page);
                 BotActions.Action.NAVIGATE.doAction(page,httpServletResponse);
                 return true;
             }
@@ -470,29 +470,6 @@ public class ActionMatcher {
 
             tokensList = response.getTokensList();
 
-            /*
-            for (Token token : tokensList) {
-                System.out.printf("\tText: %s\n", token.getText().getContent());
-                System.out.printf("\tBeginOffset: %d\n", token.getText().getBeginOffset());
-                System.out.printf("Lemma: %s\n", token.getLemma());
-                System.out.printf("PartOfSpeechTag: %s\n", token.getPartOfSpeech().getTag());
-                System.out.printf("\tAspect: %s\n", token.getPartOfSpeech().getAspect());
-                System.out.printf("\tCase: %s\n", token.getPartOfSpeech().getCase());
-                System.out.printf("\tForm: %s\n", token.getPartOfSpeech().getForm());
-                System.out.printf("\tGender: %s\n", token.getPartOfSpeech().getGender());
-                System.out.printf("\tMood: %s\n", token.getPartOfSpeech().getMood());
-                System.out.printf("\tNumber: %s\n", token.getPartOfSpeech().getNumber());
-                System.out.printf("\tPerson: %s\n", token.getPartOfSpeech().getPerson());
-                System.out.printf("\tProper: %s\n", token.getPartOfSpeech().getProper());
-                System.out.printf("\tReciprocity: %s\n", token.getPartOfSpeech().getReciprocity());
-                System.out.printf("\tTense: %s\n", token.getPartOfSpeech().getTense());
-                System.out.printf("\tVoice: %s\n", token.getPartOfSpeech().getVoice());
-                System.out.println("DependencyEdge");
-                System.out.printf("\tHeadTokenIndex: %d\n", token.getDependencyEdge().getHeadTokenIndex());
-                System.out.printf("\tLabel: %s\n\n", token.getDependencyEdge().getLabel());
-            }
-            */
-
             tokensPOSTagsList = tokensList.stream().
                     map(token -> token.getPartOfSpeech().getTag()).
                     collect(Collectors.toList());
@@ -506,7 +483,6 @@ public class ActionMatcher {
                     collect(Collectors.toList());
 
             groups = parser.parse(input);
-            //System.out.println(groups);
 
             if (matchSet()) {
               return;
