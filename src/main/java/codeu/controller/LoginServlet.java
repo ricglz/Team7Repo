@@ -88,6 +88,6 @@ public class LoginServlet extends HttpServlet {
     }
 
     request.getSession().setAttribute("user", username);
-    response.sendRedirect("/activity");
+    response.sendRedirect("/about.jsp");
   }
 }

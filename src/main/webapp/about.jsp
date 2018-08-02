@@ -27,33 +27,37 @@
         <div
           style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
-          <h1>About the CodeU Chat App</h1>
+          <h1>About Bottler</h1>
           <p>
-            This is an example chat application designed to be a starting point
-            for your CodeU project team work. Here's some stuff to think about:
-          </p>
-
+            Welcome to our Chat bot "Bottler". Bottler is built with mindset of saving your precious time to make users life easier and simpler. The cool UI with fresh
+            design is easy to navigate and user-friendly. Below, is the descriptions of various tasks that Bottler can perform:</p>
           <ul>
-            <li><strong>Algorithms and data structures:</strong> We've made the app
-                and the code as simple as possible. You will have to extend the
-                existing data structures to support your enhancements to the app,
-                and also make changes for performance and scalability as your app
-                increases in complexity.</li>
-            <li><strong>Look and feel:</strong> The focus of CodeU is on the Java
-              side of things, but if you're particularly interested you might use
-              HTML, CSS, and JavaScript to make the chat app prettier.</li>
-            <li><strong>Customization:</strong> Think about a group you care about.
-              What needs do they have? How could you help? Think about technical
-              requirements, privacy concerns, and accessibility and
-              internationalization.</li>
+            <li><strong>Changing the User Description: </strong> To change description: change description to" NewDescription". Along with updating description, it
+            also gives link to profile page.</li>
+            <li><strong>Creating new conversation: </strong>To create new conversation:  create conversation "newConversationName"</li>
+            <li><strong>Send message:</strong> To send message to particular conversation: send message to "conversationTitle</li>
+            <li><strong>Retrieve message:</strong> To retrieve messages based on Conversation title: get messages from "conversationTitle"</li>
+            <li><strong>Navigate to any page:</strong> To navigate to any page: navigate to pageName</li>
+            <li><strong>Get all messages: </strong>To get all message user have sent: get my messages</li>
+            <li><strong>Retrieve conversation based on Time: </strong>To get conversation based on time: get conversation
+              made 12:00 AM (or any other Time expressions)</li>
+            <li><strong>Retrieve conversation: </strong> To retrieve conversation based on Author name: get conversation by "AuthorName"</li>
+            <li><strong>Creating new conversation: </strong> Create conversation "newConversationName"</li>
+            <li><strong>Retrieve all conversation: </strong> To get all conversation: Get all conversation</li>
+            <li><strong>Search Keywords: </strong> To search keyword in message: get message about "keyName"</li>
+            <li><strong>Creating new conversation: </strong> Create conversation "newConversationName"</li>
+            <li><strong>Get all stats: </strong> To retrieve your message stats:get all stats. This provides information about
+            Total number of sent messages,Conversations you have participated in and Last conversations that you were involved in. </li>
           </ul>
 
           <p>
-            This is your code now. Get familiar with it and get comfortable
-            working with your team to plan and make changes. Start by updating the
-            homepage and this about page to tell your users more about your team.
-            This page should also be used to describe the features and improvements
-            you've added.
+            <strong>Members: </strong>
+            <ul>
+          <li>Kirielle Singarajah</li>
+          <li>Manjil Gautam</li>
+          <li>Ricardo González Castillo</li>
+          <li>Tofe Salako (Project Advisor)</li>
+        </ul>
           </p>
         </div>
       </div>

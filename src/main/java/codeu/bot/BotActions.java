@@ -192,10 +192,12 @@ public class BotActions {
         GET_HELP{
             @Override
             public void doAction(Object ... argsObjects) {
-                String content = "This are the actions you can do<br />";
-                content += "Send message to a conversation, create a conversation, get messages you have send";
-                content += "Go to a specific page, set your description, get all the conversations";
-                content += "get conversations done by someone and in a specific time";
+                String page = "About";
+                String content = "Please type the command in following way: <br />";
+                content += "To change description type: Change description to \"My name is user.\" '<br/>";
+                content += "To Navigate to specific page: Navigate to pagename </br>";
+                content += "To create new conversation: Create conversation \"TestConvo\"</br> ";
+                content +="To know more about other functions visit: <a href=\"/about.jsp\">"+ page +"</a>";
                 addAnswerMessageToStorage(content);
             }
         },
@@ -360,7 +362,7 @@ public class BotActions {
         NOT_FOUND{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {
-                String content = "The action that you're trying to do can't be executed.";
+                String content = "Looks like something is wrong, let me help you.";
                 addAnswerMessageToStorage(content);
                 Action.GET_HELP.doAction();
             }
