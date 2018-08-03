@@ -94,9 +94,6 @@ public class BotActions {
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
                 response = (HttpServletResponse) argsObjects[1];
-                if(!location.contains("/")){
-                    location = "/" + location;
-                }
                 String content;
                 if (validLocation(location)) {
                     content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
@@ -225,10 +222,14 @@ public class BotActions {
                 String title = (String) argsObjects[0];
                 response = (HttpServletResponse) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
+                String content;
                 if (conversation != null) {
                     response.sendRedirect("/chat/" + title);
+                    content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
                 }
-                String content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
+                else {
+                    content = "That conversation doesn't exist";
+                }
                 addAnswerMessageToStorage(content);
             }
         },
@@ -392,6 +393,7 @@ public class BotActions {
      * Checks if it is a valid conversation
      */
     private static boolean validLocation(String location) {
+        location = "/" + location;
         List<String> valid_locations = Lists.newArrayList("/register", "/login", "/about.jsp", "/activity",
                 "/admin", "/profile", "/conversations");
         return valid_locations.contains(location);
@@ -401,6 +403,7 @@ public class BotActions {
      * Redirects to a location
      */
     private static void goTo(String location) throws IOException {
+        System.out.println(location);
         response.sendRedirect(location);
     }
 
