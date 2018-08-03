@@ -78,7 +78,6 @@ public class ActionMatcher {
 
     public ActionMatcher() {
         distance = new LevenshteinDistance();
-        System.out.println("init2");
         parser = new Parser();
 
         setupLanguageClient();
