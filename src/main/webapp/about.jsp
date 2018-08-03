@@ -46,7 +46,7 @@
             <li><strong>Retrieve all conversation: </strong> To get all conversation: Get all conversation</li>
             <li><strong>Search Keywords: </strong> To search keyword in message: get message about "keyword"</li>
             <li><strong>For Help: </strong> To get information about Bot functions:Get Help</li>
-            <li><strong>Get conversation: </strong> To get COnversation that contains specific keyword: get conversation about "keyword"</li>
+            <li><strong>Get conversation: </strong> To get Conversation that contains specific keyword: get conversation about "keyword"</li>
             <li><strong>Navigate to conversation</strong>: </strong> To navigate to conversation:Navigate to "conversationName"</li>
             <li><strong>Get all stats: </strong> To retrieve your message stats:get all stats. This provides information about
             Total number of sent messages,Conversations you have participated in and Last conversations that you were involved in. </li>
