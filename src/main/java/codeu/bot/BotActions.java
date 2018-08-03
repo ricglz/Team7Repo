@@ -77,7 +77,6 @@ public class BotActions {
                 String content = (String) argsObjects[0];
                 String title = (String) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
-                System.out.println(conversation);
                 UUID id = conversation.getId();
                 UUID author = user.getId();
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
@@ -122,13 +121,13 @@ public class BotActions {
                 response = (HttpServletResponse) argsObjects[1];
                 String content;
                 if (validLocation(location)) {
-                    content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location);
+                    content = "You have been redirect to: <a href=\"/"+ location+ "\">"+ location + "</a>";
                 }
                 else {
                     content = "Location is invalid";
                 }
                 addAnswerMessageToStorage(content);
+                goTo("/" + location);
             }
         },
         // NOT DONE Mistmatch problems currently
@@ -281,13 +280,13 @@ public class BotActions {
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
                 String content;
                 if (conversation != null) {
-                    response.sendRedirect("/chat/" + title);
-                    content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
+                    content = "You have been redirected to: <a href=\"/chat/"+title+"\">"+title+"</a>";
                 }
                 else {
                     content = "That conversation doesn't exist";
                 }
                 addAnswerMessageToStorage(content);
+                goTo("/chat/" + title);
             }
         },
         // NOT DONE
@@ -459,7 +458,6 @@ public class BotActions {
      * Redirects to a location
      */
     private static void goTo(String location) throws IOException {
-        System.out.println(location);
         response.sendRedirect(location);
     }
 

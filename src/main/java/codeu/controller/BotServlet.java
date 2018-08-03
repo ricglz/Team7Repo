@@ -131,6 +131,7 @@ public class BotServlet extends HttpServlet {
         Message message = new Message(UUID.randomUUID(),botConversation.getId(), user.getId(),cleanedMessageContent, Instant.now());
         messageStore.addMessage(message);
 
+        response.sendRedirect("/bot");
         try {
             // TODO Check why here is nullpointer in the test
             actionMatcher.matchAction(cleanedMessageContent, username, response);
@@ -138,7 +139,6 @@ public class BotServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        response.sendRedirect("/bot");
     }
 
     public UserStore getUserStore() {
