@@ -25,7 +25,7 @@
     <main class="mdl-layout__content">
       <div id="container">
         <div
-          style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
+          style="width:90%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
           <h1>About Bottler</h1>
           <p>
@@ -35,17 +35,19 @@
             <li><strong>Changing the User Description: </strong> To change description: change description to" NewDescription". Along with updating description, it
             also gives link to profile page.</li>
             <li><strong>Creating new conversation: </strong>To create new conversation:  create conversation "newConversationName"</li>
-            <li><strong>Send message:</strong> To send message to particular conversation: send message to "conversationTitle</li>
+            <li><strong>Send message:</strong> To send message to particular conversation: send message to "conversationTitle"</li>
             <li><strong>Retrieve message:</strong> To retrieve messages based on Conversation title: get messages from "conversationTitle"</li>
-            <li><strong>Navigate to any page:</strong> To navigate to any page: navigate to pageName</li>
+            <li><strong>Navigate to any page:</strong> To navigate to any page: navigate to pageName(About, Login,Register,Activity)</li>
             <li><strong>Get all messages: </strong>To get all message user have sent: get my messages</li>
             <li><strong>Retrieve conversation based on Time: </strong>To get conversation based on time: get conversation
               made 12:00 AM (or any other Time expressions)</li>
             <li><strong>Retrieve conversation: </strong> To retrieve conversation based on Author name: get conversation by "AuthorName"</li>
             <li><strong>Creating new conversation: </strong> Create conversation "newConversationName"</li>
             <li><strong>Retrieve all conversation: </strong> To get all conversation: Get all conversation</li>
-            <li><strong>Search Keywords: </strong> To search keyword in message: get message about "keyName"</li>
-            <li><strong>Creating new conversation: </strong> Create conversation "newConversationName"</li>
+            <li><strong>Search Keywords: </strong> To search keyword in message: get message about "keyword"</li>
+            <li><strong>For Help: </strong> To get information about Bot functions:Get Help</li>
+            <li><strong>Get conversation: </strong> To get COnversation that contains specific keyword: get conversation about "keyword"</li>
+            <li><strong>Navigate to conversation</strong>: </strong> To navigate to conversation:Navigate to "conversationName"</li>
             <li><strong>Get all stats: </strong> To retrieve your message stats:get all stats. This provides information about
             Total number of sent messages,Conversations you have participated in and Last conversations that you were involved in. </li>
           </ul>
