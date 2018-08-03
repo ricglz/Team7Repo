@@ -417,7 +417,7 @@ public class ActionMatcher {
         int navigateOrTakeIndex = getKeywordIndex(NAVIGATE_KEYWORDS, tokensLemmasList);
         if (foundAndIsRoot(navigateOrTakeIndex)) {
 
-            String conversation = findFuzzyMatch(conversationTitles, 3);
+            String conversation = findFuzzyMatch(conversationTitles, 5);
             if (!conversation.isEmpty()) {
                 System.out.printf("Taking you to %s.",conversation);
                 BotActions.Action.NAVIGATE_TO_CONVERSATION.doAction(conversation,httpServletResponse);
