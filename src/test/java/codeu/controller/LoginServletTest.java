@@ -93,7 +93,7 @@ public class LoginServletTest {
 
     Mockito.verify(mockUserStore, Mockito.never()).addUser(Mockito.any(User.class));
     Mockito.verify(mockSession).setAttribute("user", "test username");
-    Mockito.verify(mockResponse).sendRedirect("/activity");
+    Mockito.verify(mockResponse).sendRedirect("/about.jsp");
   }
 
   @Test
@@ -122,6 +122,6 @@ public class LoginServletTest {
     Mockito.verify(mockUserStore, Mockito.never()).addUser(Mockito.any(User.class));
     Mockito.verify(mockSession).setAttribute("user", "Ricardo");
     Mockito.verify(mockSession).setAttribute("admin", true);
-    Mockito.verify(mockResponse).sendRedirect("/activity");
+    Mockito.verify(mockResponse).sendRedirect("/about.jsp");
   }
 }

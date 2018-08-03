@@ -19,18 +19,13 @@ import codeu.model.data.Message;
 import codeu.model.data.Conversation;
 import codeu.model.data.Activity;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.persistence.PersistentDataStoreException;
+import codeu.model.data.Setting;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.*;
+import java.util.*;
+
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -39,10 +34,9 @@ import java.util.UUID;
  */
 public class PersistentDataStore {
 
-  // Handle to Google AppEngine's Datastore service.
+    // Handle to Google AppEngine's Datastore service.
   private DatastoreService datastore;
-
-  /**
+    /**
    * Constructs a new PersistentDataStore and sets up its state to begin loading objects from the
    * Datastore service.
    */
@@ -199,6 +193,37 @@ public class PersistentDataStore {
     return activities;
   }
 
+  public List<Setting> loadSettings()throws PersistentDataStoreException{
+      Map<Setting.SettingType, Setting> settingMap = new HashMap<>();
+      settingMap.put(Setting.SettingType.COLOR , new Setting(Setting.SettingType.COLOR,"white" ));
+      settingMap.put(Setting.SettingType.FONT_SIZE, new Setting(Setting.SettingType.FONT_SIZE, "normal"));
+    Query query = new Query("settings");
+    PreparedQuery results = datastore.prepare(query);
+
+      for (Entity entity : results.asIterable()) {
+        try {
+          String type = (String) entity.getProperty("type");
+          if (type == null) {
+            System.out.println("Type is null. ");
+          } else {
+            Setting setting = settingMap.get(Setting.SettingType.getSettingType((String) entity.getProperty("type")));
+
+            if (setting ==null) {
+              String value = ((String) entity.getProperty("value"));
+              if (value != null){
+                setting.setValue((String) entity.getProperty("value"));
+              }
+            } else {
+              System.out.println("Unknown setting");
+            }
+          }
+        } catch(Exception e){
+            throw new PersistentDataStoreException(e);
+          }
+        }
+        return (List<Setting>) settingMap.values();
+  }
+
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     Entity userEntity = new Entity("chat-users", user.getId().toString());
@@ -241,5 +266,11 @@ public class PersistentDataStore {
     activityEntity.setProperty("creation_time", activity.getCreationTime().toString());
     activityEntity.setProperty("display_string_parameters", activity.getDisplayStringParameters());
     datastore.put(activityEntity);
+  }
+  public void writeThrough(Setting setting){
+    Entity settingEntity = new Entity("settings",setting.getType().getTypeString());
+    settingEntity.setProperty("type",setting.getType().getTypeString());
+    settingEntity.setProperty("value",setting.getValue());
+    datastore.put(settingEntity);
   }
 }

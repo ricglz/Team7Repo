@@ -1,14 +1,8 @@
 package codeu.controller;
 
-import codeu.bot.ActionMatcher;
-import codeu.model.data.Conversation;
-import codeu.model.data.Message;
-import codeu.model.data.User;
-import codeu.model.data.Activity;
-import codeu.model.store.basic.ActivityStore;
-import codeu.model.store.basic.ConversationStore;
-import codeu.model.store.basic.MessageStore;
-import codeu.model.store.basic.UserStore;
+//import codeu.bot.ActionMatcher;
+import codeu.model.data.*;
+import codeu.model.store.basic.*;
 import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.List;
@@ -25,7 +19,7 @@ public class ServerStartupListener implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent sce) {
     try {
-      ActionMatcher.getInstance();
+     // ActionMatcher.getInstance();
 
       List<User> users = PersistentStorageAgent.getInstance().loadUsers();
       UserStore.getInstance().setUsers(users);

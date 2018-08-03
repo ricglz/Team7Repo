@@ -18,6 +18,7 @@
     <title>Botler</title>
     <%@ include file="/files.jsp" %>
 
+
     <style>
         #chat {
             background-color: white;
