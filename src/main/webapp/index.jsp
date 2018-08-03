@@ -26,7 +26,7 @@
       <div id="container">
         <div
           style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
-          <h1>CodeU Bottler</h1>
+          <h1>CodeU </h1>
           <h2>Welcome!</h2>
           <ul>
             <li><a href="/register">Register</a> to get started!</li>
