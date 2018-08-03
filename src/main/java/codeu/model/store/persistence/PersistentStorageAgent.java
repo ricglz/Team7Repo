@@ -21,7 +21,6 @@ import codeu.model.data.Activity;
 import codeu.model.data.Setting;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles

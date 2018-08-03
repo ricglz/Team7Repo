@@ -27,16 +27,6 @@
             color: #444;
             background-color:#eeeeee;
         }
-        nav {
-            background-color:blue;
-        }
-        nav a {
-            color: white;
-            display: inline-block;
-            font-size: 24px;
-            margin: 15px;
-            text-decoration: none;
-        }
         #navTitle {
             font-size: 36px;
         }
@@ -76,8 +66,8 @@
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <%@ include file="navbar.jsp" %>
         <main class="mdl-layout__content">
-            <h1>Activity</h1>   
             <div id="container">
+                <h1>Activity</h1>
                 <div id="activity">
                     <ul>
                         <% for (Activity activity : activities) { %>

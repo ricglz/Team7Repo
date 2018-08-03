@@ -50,21 +50,28 @@
         <h1>Conversations</h1>
 
         <%
-        List<Conversation> conversations =
-          (List<Conversation>) request.getAttribute("conversations");
-        if(conversations == null || conversations.isEmpty()){
+          List<Conversation> conversations =
+            (List<Conversation>) request.getAttribute("conversations");
+          if(conversations == null || conversations.isEmpty()){
         %>
-          <p>Create a conversation to get started.</p>
+        <p>Create a conversation to get started.</p>
         <%
-        }
-        else{
+          }
+          else{
         %>
-          <ul class="mdl-list">
-        <%
-          for(Conversation conversation : conversations){
-        %>
-          <li><a href="/chat/<%= conversation.getTitle() %>">
-            <%= conversation.getTitle() %></a></li>
+        <ul class="mdl-list">
+        <% for(Conversation conversation : conversations){ %>
+          <li class="mdl-list__item mdl-list__item--two-line">
+            <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-avatar">group</i>
+              <a href="/chat/<%= conversation.getTitle() %>">
+                <%= conversation.getTitle() %></a>
+              </a>
+              <span class="mdl-list__item-sub-title">
+                <%= conversation.getMessageCount() %> Messages
+              </span>
+            </span>
+          </li>
         <%
           }
         %>

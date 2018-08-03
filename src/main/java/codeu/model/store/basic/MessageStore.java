@@ -101,6 +101,22 @@ public class MessageStore {
     return messagesInConversation;
   }
 
+  /** Access the current set of Messages within the given Conversation and from the given user. */
+  public List<Message> getMyMessagesInConversation(UUID conversationId, UUID userId) {
+
+    List<Message> messagesInConversation = new ArrayList<>();
+
+    for (Message message : messages) {
+      boolean equalsConversationId = message.getConversationId().equals(conversationId);
+      boolean equalsUserID = message.getAuthorId().equals(userId);
+      if (equalsConversationId && equalsUserID) {
+        messagesInConversation.add(message);
+      }
+    }
+
+    return messagesInConversation;
+  }
+
   /** Compares the date of 2 Instant times, by truncating the Intants to days. */
   private boolean sameDate(Instant time1, Instant time2) {
     time1 = time1.truncatedTo(ChronoUnit.DAYS);
@@ -108,11 +124,13 @@ public class MessageStore {
     return time1.equals(time2);
   }
 
-  public List<Message> getMessagesInTime(Instant time) {
+  /** Get messages from the user in a given time */
+  public List<Message> getMyMessagesInTime(Instant time, UUID userId) {
     List<Message> messagesInTime = new ArrayList<>();
 
     for (Message message : messages) {
-      if (sameDate(time, message.getCreationTime())) {
+      boolean equalsUserId = message.getAuthorId().equals(userId);
+      if (sameDate(time, message.getCreationTime()) && equalsUserId) {
         messagesInTime.add(message);
       }
     }

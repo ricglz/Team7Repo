@@ -7,7 +7,6 @@ import codeu.model.store.basic.ConversationStore;
 import codeu.model.data.Conversation;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
-import codeu.model.store.persistence.PersistentDataStoreException;
 import codeu.bot.ActionMatcher;
 import java.io.IOException;
 import java.time.Instant;
@@ -49,9 +48,13 @@ public class BotServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         setMessageStore(MessageStore.getInstance());
-        userStore = UserStore.getInstance();
-        conversationStore = ConversationStore.getInstance();
-        actionMatcher = ActionMatcher.getInstance();
+        setUserStore(UserStore.getInstance());
+        setConversationStore(ConversationStore.getInstance());
+        setActionMatcher(new ActionMatcher());
+    }
+
+    void setActionMatcher(ActionMatcher actionMatcher) {
+      this.actionMatcher = actionMatcher;
     }
 
     /**
@@ -135,8 +138,6 @@ public class BotServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        List<Message> messages = messageStore.getMessagesInConversation(botConversation.getId());
         response.sendRedirect("/bot");
     }
 
