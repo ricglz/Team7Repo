@@ -16,7 +16,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Botler</title>
   <%@ include file="/files.jsp" %>  
 </head>
 <body>
@@ -27,10 +27,10 @@
         <div
           style="width:90%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
-          <h1>About Bottler</h1>
+          <h1>About Botler</h1>
           <p>
-            Welcome to our Chat bot "Bottler". Bottler is built with mindset of saving your precious time to make users life easier and simpler. The cool UI with fresh
-            design is easy to navigate and user-friendly. Below, is the descriptions of various tasks that Bottler can perform:</p>
+            Welcome to our Chat bot "Botler". Botler is built with mindset of saving your precious time to make users life easier and simpler. The cool UI with fresh
+            design is easy to navigate and user-friendly. Below, is the descriptions of various tasks that Botler can perform:</p>
           <ul>
             <li><strong>Changing the User Description: </strong> To change description: change description to" NewDescription". Along with updating description, it
             also gives link to profile page.</li>

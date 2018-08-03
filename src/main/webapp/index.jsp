@@ -16,7 +16,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Botler</title>
   <%@ include file="/files.jsp" %>
 </head>
 <body>
