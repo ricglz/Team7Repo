@@ -6,18 +6,12 @@ import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentDataStoreException;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.appengine.repackaged.com.google.common.flogger.parser.ParseException;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
@@ -55,23 +49,16 @@ public class ActionMatcher {
     private static final String[] SET_KEYWORDS = new String[] {"set","update","change"};
     private static final String[] CREATE_KEYWORDS = new String[] {"create","make","by"};
     private static final String[] GET_KEYWORDS = new String[] {"get","find","display","show","give"};
-    private static final String[] SUMMARIZE_KEYWORDS = new String[] {"summarize","summarise","overview","TLDR"};
-    private static final String[] UNREAD_KEYWORDS = new String[] {"unread","response","reply","respond"};
     private static final String[] NAVIGATE_KEYWORDS = new String[] {"navigate","take"};
     private static final String[] HELP_KEYWORDS = new String[] {"help","tutorial","guide"};
     private static final String[] ABOUT_KEYWORDS = new String[] {"contain","about","mention","like"};
 
-    private static final String[] BACKGROUND_COLORS = new String[] {"white","black","grey","gray","red","orange","yellow","green","blue","indigo","violet","purple"};
     private static final HashSet<String> STATS = new HashSet<>(Arrays.asList(new String[] {"conversation count","message count","longest message", "most active conversation"}));
     private static final String[] PAGES = new String[] {"activity","profile","conversations","setting"};
 
     private static final Pattern doubleQuotesPattern = Pattern.compile("\"([^\"]*)\"");
-    private Matcher doubleQuotesMatcher;
 
-    private boolean actionMatched;
     private HttpServletResponse httpServletResponse;
-
-    private static ActionMatcher actionMatcherInstance;
 
     public Parser parser;
     public List<DateGroup> groups;
@@ -443,7 +430,6 @@ public class ActionMatcher {
 
     public void matchAction(String text, String username, HttpServletResponse httpServletResponse) throws Exception, IOException, PersistentDataStoreException {
         System.out.println("Attempting to match action.");
-        actionMatched = false;
         this.input = text;
         this.httpServletResponse = httpServletResponse;
 
