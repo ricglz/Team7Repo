@@ -113,10 +113,8 @@ public class ActionMatcher {
         for (String element : set) {
             for (Integer spaceIndex : spaceIndices) {
                 if (spaceIndex.intValue() + element.length() >= input.length()) {
-                    System.out.println("if statement");
                     break;
                 } else if (distance.apply(input.substring(spaceIndex, spaceIndex + element.length()), element).intValue() < distanceThreshold) {
-                    System.out.println("else statement");
                     ret = element;
                     break outerloop;
                 }
