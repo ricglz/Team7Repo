@@ -24,7 +24,7 @@
 <header class="mdl-layout__header">
     <div class="mdl-layout__header-row">
       <!-- Title -->
-      <a class="mdl-navigation__link" id="navTitle" href="/">CodeU Chat App</a>
+      <a class="mdl-navigation__link" id="navTitle" href="/">Botler</a>
       <!-- Add spacer, to align navigation to the right -->
       <div class="mdl-layout-spacer"></div>
       <!-- Navigation. We hide it in small screens. -->
@@ -33,7 +33,7 @@
             <a class="mdl-navigation__link" href="/register">Register</a>
             <a class="mdl-navigation__link" href="/login">Login</a>
         <% } else { %>
-            <a class="mdl-navigation__link" href="/bot">Bot Conversation</a>
+            <a class="mdl-navigation__link" href="/bot">Botler</a>
             <a class="mdl-navigation__link" href="/conversations">Conversations</a>  
         <% } %>
       </nav>

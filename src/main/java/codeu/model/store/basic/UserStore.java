@@ -34,7 +34,7 @@ public class UserStore {
 
   /** Singleton instance of UserStore. */
   private static UserStore instance;
-  public static final String BOT_USER_NAME = "bot";
+  public static final String BOT_USER_NAME = "Botler";
   public static final String BOT_PASSWORD = BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt());
 
   /**

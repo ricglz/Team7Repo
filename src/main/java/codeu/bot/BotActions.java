@@ -26,17 +26,19 @@ public class BotActions {
     public enum Action {
         MISSING_PARAMETER{
             @Override
-            public void doAction(Object ... argsObjects) {
-                System.out.println("missing parameters");
+            public void doAction(Object ... argsObjects) throws IOException {
+                String content = "Looks like something was missing from your command, let me help you.";
+                addAnswerMessageToStorage(content);
+                Action.GET_HELP.doAction();
             }
         },
         // NOT DONE
-        GET_CONVERSATIONS_WITH_UNREAD_MESSAGES{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                System.out.printf("get conversations with unread messages");
-            }
-        },
+        // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES{
+        //     @Override
+        //     public void doAction(Object ... argsObjects) {
+        //         System.out.printf("get conversations with unread messages");
+        //     }
+        // },
         // DONE (set description to "animate my gifs")
         // Maybe link to profile (or some sort of callback)
         SET_DESCRIPTION{
@@ -64,7 +66,7 @@ public class BotActions {
                     Conversation conversation = new Conversation(UUID.randomUUID(), owner, title, Instant.now());
                     conversationStore.addConversation(conversation);
                     activityStore.addActivity(conversation);
-                    content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> conversation has been created !";
+                    content = "<a href=\"/chat/"+ title+ "\">"+ title + "</a> conversation has been created!";
                 }
                 addAnswerMessageToStorage(content);
             }
@@ -108,12 +110,12 @@ public class BotActions {
             }
         },
         // NOT DONE
-        SET_SETTING{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                return;
-            }
-        },
+        // SET_SETTING{
+        //     @Override
+        //     public void doAction(Object ... argsObjects) {
+        //         return;
+        //     }
+        // },
         // navigate to profile
         NAVIGATE{
             @Override
@@ -165,13 +167,13 @@ public class BotActions {
                 addAnswerMessageToStorage(content);
             }
         },
-        // NOT DONE
-        GET_SETTING{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                System.out.println("get setting");
-            }
-        },
+        // // NOT DONE
+        // GET_SETTING{
+        //     @Override
+        //     public void doAction(Object ... argsObjects) {
+        //         System.out.println("get setting");
+        //     }
+        // },
         // get messages from [time expression]
         // includes bot messages. aka is not specific to user.
         // "get messages from last friday" doesnt work
@@ -259,7 +261,7 @@ public class BotActions {
                 long maxCharactersLength = longestMessage.getContent().length()-1;
                 String title = conversationStore.getMostActiveConversationTitle();
                 long messageCount = conversationStore.getMaxMessageCount();
-                String content = "This are your stats<br />";
+                String content = "These are your stats<br />";
                 content += "Amount of messages: " + userMessages.size() + "<br />";
                 content += "Conversations you have participated: " + conversationCount + "<br />";
                 content += "Longest message with " + maxCharactersLength + " characerts<br />";
@@ -269,12 +271,12 @@ public class BotActions {
             }
         },
         // NOT DONE
-        GET_SETTINGS{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                System.out.println("get settings");
-            }
-        },
+        // GET_SETTINGS{
+        //     @Override
+        //     public void doAction(Object ... argsObjects) {
+        //         System.out.println("get settings");
+        //     }
+        // },
         // navigate to team7bottest
         // take me to team7bottest
         // Currently broken
@@ -292,12 +294,12 @@ public class BotActions {
             }
         },
         // NOT DONE
-        GET_CONVERSATION_SUMMARY{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                System.out.println("getting conversation summary");
-            }
-        },
+        // GET_CONVERSATION_SUMMARY{
+        //     @Override
+        //     public void doAction(Object ... argsObjects) {
+        //         System.out.println("getting conversation summary");
+        //     }
+        // },
         // DONE (get messages about "stats")
         GET_MESSAGES_LIKE_KEYWORD{
             @Override
@@ -352,13 +354,7 @@ public class BotActions {
                 return ids;
             }
         },
-        // NOT DONE
-        GET_CONVERSATION_WITH_UNREAD_MESSAGES{
-            @Override
-            public void doAction(Object ... argsObjects) {
-                return;
-            }
-        },
+
         NOT_FOUND{
             @Override
             public void doAction(Object ... argsObjects) throws IOException {

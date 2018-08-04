@@ -99,6 +99,7 @@ public class ActionMatcher {
 
     public String findFuzzyMatch(HashSet<String> set, int distanceThreshold) {
         System.out.println(distance);
+        System.out.println("searching amongst "+set.toString());
         String ret = "";
         ArrayList<Integer> spaceIndices = new ArrayList<Integer>();
 
@@ -112,12 +113,12 @@ public class ActionMatcher {
         for (String element : set) {
             for (Integer spaceIndex : spaceIndices) {
                 if (spaceIndex.intValue() + element.length() >= input.length()) {
+                    System.out.println("if statement");
                     break;
-                } else {
-                    if (distance.apply(input.substring(spaceIndex, spaceIndex + element.length()), element).intValue() < distanceThreshold) {
-                        ret = element;
-                        break outerloop;
-                    }
+                } else if (distance.apply(input.substring(spaceIndex, spaceIndex + element.length()), element).intValue() < distanceThreshold) {
+                    System.out.println("else statement");
+                    ret = element;
+                    break outerloop;
                 }
             }
         }
@@ -218,9 +219,14 @@ public class ActionMatcher {
             if (messageMatcher.find()) {
                 message = messageMatcher.group(1);
                 String conversationTitle = findFuzzyMatch(conversationTitles, 5);
-                System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
-                BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
-                return true;
+                if (!conversationTitle.isEmpty()) {
+                    System.out.printf("Sending message \"%s\" in conversation <%s>.",message,conversationTitle);
+                    BotActions.Action.SEND_MESSAGE.doAction(message,conversationTitle);
+                    return true;
+                } else {
+                    BotActions.Action.MISSING_PARAMETER.doAction();
+                    return true;
+                }
             } else {
                 BotActions.Action.MISSING_PARAMETER.doAction();
                 return true;
@@ -260,18 +266,18 @@ public class ActionMatcher {
                 }
             }
 
-            String setting = findFuzzyMatch(settingNames, 3);
-            if (!setting.isEmpty()) {
-                System.out.printf("Getting %s.",setting);
-                BotActions.Action.GET_SETTING.doAction(setting);
-                return true;
-            }
+            // String setting = findFuzzyMatch(settingNames, 3);
+            // if (!setting.isEmpty()) {
+            //     System.out.printf("Getting %s.",setting);
+            //     BotActions.Action.GET_SETTING.doAction(setting);
+            //     return true;
+            // }
 
-            if (input.contains("settings")) {
-                System.out.println("Getting all settings.");
-                BotActions.Action.GET_SETTINGS.doAction();
-                return true;
-            }
+            // if (input.contains("settings")) {
+            //     System.out.println("Getting all settings.");
+            //     BotActions.Action.GET_SETTINGS.doAction();
+            //     return true;
+            // }
 
             // STATISTICS
             String statistic = findFuzzyMatch(STATS, 5);
@@ -303,6 +309,7 @@ public class ActionMatcher {
         if (!groups.isEmpty() && !groups.get(0).getDates().isEmpty()) {
             System.out.println(groups.get(0).getDates());
             BotActions.Action.GET_MESSAGES_BY_CREATION_TIME.doAction(groups.get(0).getDates().get(0).toInstant());
+            return true;
         }
 
         // GET_MESSAGES_LIKE_KEYWORD
@@ -324,7 +331,7 @@ public class ActionMatcher {
         // GET_MESSAGES_FROM_CONVERSATION
         int fromOrInIndex = getKeywordIndex(new String[] {"in","from"}, tokensLemmasList);
         if (fromOrInIndex != -1) {
-            String conversationTitle = findFuzzyMatch(conversationTitles, 3);
+            String conversationTitle = findFuzzyMatch(conversationTitles, 5);
             if (!conversationTitle.isEmpty()) {
                 System.out.printf("Getting messsages from %s.",conversationTitle);
                 BotActions.Action.GET_MESSAGES_FROM_CONVERSATION.doAction(conversationTitle);
@@ -354,12 +361,12 @@ public class ActionMatcher {
         }
 
         // GET_CONVERSATIONS_WITH_UNREAD_MESSAGES
-        int unreadOrRespondIndex = getKeywordIndex(UNREAD_KEYWORDS, tokensLemmasList);
-        if (unreadOrRespondIndex != -1) {
-            System.out.printf("Getting conversations with unread messages.");
-            BotActions.Action.GET_CONVERSATIONS_WITH_UNREAD_MESSAGES.doAction();
-            return true;
-        }
+        // int unreadOrRespondIndex = getKeywordIndex(UNREAD_KEYWORDS, tokensLemmasList);
+        // if (unreadOrRespondIndex != -1) {
+        //     System.out.printf("Getting conversations with unread messages.");
+        //     BotActions.Action.GET_CONVERSATIONS_WITH_UNREAD_MESSAGES.doAction();
+        //     return true;
+        // }
 
         // GET_CONVERSATIONS_ABOUT_KEYWORD (encompass the like and content methods)
         int containOrAboutOrMentionIndex = getKeywordIndex(ABOUT_KEYWORDS, tokensLemmasList);
@@ -387,29 +394,29 @@ public class ActionMatcher {
         return false;
     }
 
-    public boolean matchSummarize() throws IOException {
-        int summarizeOrSummariseOrOverviewOrTLDRIndex = getKeywordIndex(
-                SUMMARIZE_KEYWORDS,
-                tokensLemmasList);
-        if (foundAndIsRoot(summarizeOrSummariseOrOverviewOrTLDRIndex)) {
-            String conversationTitle = findFuzzyMatch(conversationTitles,3);
-            if (!conversationTitle.isEmpty()) {
-                System.out.printf("Getting a summary of %s.",conversationTitle);
-                BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
-                return true;
-            } else {
-                BotActions.Action.MISSING_PARAMETER.doAction();
-                return true;
-            }
-        }
-        return false;
-    }
+    // public boolean matchSummarize() throws IOException {
+    //     int summarizeOrSummariseOrOverviewOrTLDRIndex = getKeywordIndex(
+    //             SUMMARIZE_KEYWORDS,
+    //             tokensLemmasList);
+    //     if (foundAndIsRoot(summarizeOrSummariseOrOverviewOrTLDRIndex)) {
+    //         String conversationTitle = findFuzzyMatch(conversationTitles,3);
+    //         if (!conversationTitle.isEmpty()) {
+    //             System.out.printf("Getting a summary of %s.",conversationTitle);
+    //             BotActions.Action.GET_CONVERSATION_SUMMARY.doAction(conversationTitle);
+    //             return true;
+    //         } else {
+    //             BotActions.Action.MISSING_PARAMETER.doAction();
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     public boolean matchNavigate() throws IOException {
         int navigateOrTakeIndex = getKeywordIndex(NAVIGATE_KEYWORDS, tokensLemmasList);
         if (foundAndIsRoot(navigateOrTakeIndex)) {
 
-            String conversation = findFuzzyMatch(conversationTitles, 3);
+            String conversation = findFuzzyMatch(conversationTitles, 5);
             if (!conversation.isEmpty()) {
                 System.out.printf("Taking you to %s.",conversation);
                 BotActions.Action.NAVIGATE_TO_CONVERSATION.doAction(conversation,httpServletResponse);
@@ -491,8 +498,6 @@ public class ActionMatcher {
             } else if (matchCreateConversation()) {
               return;
             } else if (matchGet()) {
-              return;
-            } else if (matchSummarize()) {
               return;
             } else if (matchNavigate()) {
               return;

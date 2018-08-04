@@ -16,7 +16,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Botler</title>
   <%@ include file="/files.jsp" %>
 </head>
 <body>
@@ -26,10 +26,11 @@
       <div id="container">
         <div
           style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
-          <h1>CodeU Bottler</h1>
+          <h1>Botler</h1>
           <h2>Welcome!</h2>
           <ul>
-            <li><a href="/login">Login</a> to get started.</li>
+            <li><a href="/register">Register</a> to get started!</li>
+            <li>Returning user? <a href="/login">Login</a> here.</li>
             <li>Go to the <a href="/conversations">conversations</a> page to
                 create or join a conversation.</li>
             <li>View the <a href="/about.jsp">about</a> to learn more about bot functions.</li>
