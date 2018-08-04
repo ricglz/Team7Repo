@@ -79,7 +79,6 @@ public class BotActions {
                 String content = (String) argsObjects[0];
                 String title = (String) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
-                System.out.println(conversation);
                 UUID id = conversation.getId();
                 UUID author = user.getId();
                 Message message = new Message(UUID.randomUUID(), id, author, content, Instant.now());
@@ -122,18 +121,15 @@ public class BotActions {
             public void doAction(Object ... argsObjects) throws IOException {
                 String location = (String) argsObjects[0];
                 response = (HttpServletResponse) argsObjects[1];
-                if(!location.contains("/")){
-                    location = "/" + location;
-                }
                 String content;
                 if (validLocation(location)) {
-                    content = "You have been redirect to: <a href=\"/chat/"+ location+ "\">"+ location + "</a>";
-                    goTo(location);
+                    content = "You have been redirect to: <a href=\"/"+ location+ "\">"+ location + "</a>";
                 }
                 else {
                     content = "Location is invalid";
                 }
                 addAnswerMessageToStorage(content);
+                goTo("/" + location);
             }
         },
         // NOT DONE Mistmatch problems currently
@@ -286,11 +282,15 @@ public class BotActions {
                 String title = (String) argsObjects[0];
                 response = (HttpServletResponse) argsObjects[1];
                 Conversation conversation = conversationStore.getConversationWithTitle(title);
+                String content;
                 if (conversation != null) {
-                    response.sendRedirect("/chat/" + title);
+                    content = "You have been redirected to: <a href=\"/chat/"+title+"\">"+title+"</a>";
                 }
-                String content = "You have been redirected to <a href\"/chat/"+title+"\">"+title+"</a>";
+                else {
+                    content = "That conversation doesn't exist";
+                }
                 addAnswerMessageToStorage(content);
+                goTo("/chat/" + title);
             }
         },
         // NOT DONE
@@ -446,6 +446,7 @@ public class BotActions {
      * Checks if it is a valid conversation
      */
     private static boolean validLocation(String location) {
+        location = "/" + location;
         List<String> valid_locations = Lists.newArrayList("/register", "/login", "/about.jsp", "/activity",
                 "/admin", "/profile", "/conversations");
         return valid_locations.contains(location);
