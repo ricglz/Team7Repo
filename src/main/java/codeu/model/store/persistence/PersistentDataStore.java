@@ -57,33 +57,39 @@ public class PersistentDataStore {
     // Retrieve all users from the datastore.
     Query query = new Query("chat-users").addSort("message_count", SortDirection.ASCENDING);
     PreparedQuery results = datastore.prepare(query);
+    boolean existsBotUser = false;
 
-    if (!results.asIterator().hasNext()) {
+    for (Entity entity : results.asIterable()) {
+      try {
+        UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
+        String userName = (String) entity.getProperty("username");
+        if (!existsBotUser) {
+          existsBotUser = userName == UserStore.BOT_USER_NAME;
+        }
+        System.out.println(userName);
+        String description = (String) entity.getProperty("description");
+        String passwordHash = (String) entity.getProperty("password_hash");
+        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        long messageCount = (Long) entity.getProperty("message_count");
+        boolean isAdmin = (boolean) entity.getProperty("is_admin");
+        User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
+        users.add(user);
+      } catch (Exception e) {
+        // In a production environment, errors should be very rare. Errors which may
+        // occur include network errors, Datastore service errors, authorization errors,
+        // database entity definition mismatches, or service mismatches.
+        throw new PersistentDataStoreException(e);
+      }
+    }
+
+    if (!existsBotUser) {
       System.out.println("Creating bot user");
       User botUser = new User(UUID.randomUUID(), UserStore.BOT_USER_NAME, UserStore.BOT_PASSWORD, Instant.now());
       writeThrough(botUser);
       users.add(botUser);
     } else {
       System.out.println("Not creating bot user");
-      for (Entity entity : results.asIterable()) {
-        try {
-          UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
-          String userName = (String) entity.getProperty("username");
-          System.out.println(userName);
-          String description = (String) entity.getProperty("description");
-          String passwordHash = (String) entity.getProperty("password_hash");
-          Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-          long messageCount = (Long) entity.getProperty("message_count");
-          boolean isAdmin = (boolean) entity.getProperty("is_admin");
-          User user = new User(uuid, userName, passwordHash, creationTime, messageCount, isAdmin, description);
-          users.add(user);
-        } catch (Exception e) {
-          // In a production environment, errors should be very rare. Errors which may
-          // occur include network errors, Datastore service errors, authorization errors,
-          // database entity definition mismatches, or service mismatches.
-          throw new PersistentDataStoreException(e);
-        }
-      }
+      
     }
 
     return users;    
