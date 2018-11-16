@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-labs</artifactId>
-            <version>1.9.60</version>
+            <version>1.9.68</version>
             <scope>test</scope>
         </dependency>
 
